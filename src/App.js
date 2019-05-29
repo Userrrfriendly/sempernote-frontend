@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
-import "materialize-css/dist/css/materialize.min.css";
+// import "materialize-css/dist/css/materialize.min.css";
 // import "./mat.css"; //core styles from materialize-css
-import M from "materialize-css";
+// import M from "materialize-css";
 
 import Context from "./context/context";
 
@@ -36,7 +36,7 @@ class App extends Component {
   };
 
   componentDidMount() {
-    M.AutoInit();
+    // M.AutoInit();
   }
 
   login = (token, userId, tokenExpiration) => {

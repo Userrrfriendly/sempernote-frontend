@@ -1,7 +1,73 @@
 import React, { Component } from "react";
-import "./authscreen.css";
 import Context from "../../context/context";
 import { logIn, signUp } from "../../helpers/graphQLrequests";
+import {
+  Link,
+  Grid,
+  Box,
+  FormControl,
+  // Avatar,
+  // FormControlLabel,
+  // Checkbox,
+  TextField,
+  CssBaseline,
+  Button,
+  Typography,
+  Container
+} from "@material-ui/core";
+// import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import FavoriteRounded from "@material-ui/icons/FavoriteRounded";
+import red from "@material-ui/core/colors/red";
+import { withStyles } from "@material-ui/styles";
+
+function MadeWithLove() {
+  return (
+    <Typography variant="body2" color="textSecondary" align="center">
+      {"Built with "}
+      <FavoriteRounded style={{ paddingTop: "0.5rem" }} />
+      {" by "}
+      <Link color="inherit" href="https://bentsigourof.cool/" target="_blank">
+        Veniamin Tsigourof.
+      </Link>
+    </Typography>
+  );
+}
+
+const styles = {
+  "@global": {
+    body: {
+      // backgroundColor: theme.palette.common.white
+    }
+  },
+  paper: {
+    // marginTop: theme.spacing(8),
+    marginTop: "8px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center"
+  },
+  avatar: {
+    // margin: theme.spacing(1),
+    // backgroundColor: theme.palette.secondary.main
+    margin: "8px",
+    backgroundColor: "red"
+  },
+  form: {
+    width: "100%", // Fix IE 11 issue.
+    // marginTop: theme.spacing(1)
+    marginTop: "8px"
+  },
+  submit: {
+    // margin: theme.spacing(3, 0, 2)
+    margin: "24px 0 16px"
+  },
+  status: {
+    marginTop: "1rem"
+  },
+  error: {
+    color: red[900]
+  }
+};
 
 class AuthScreen extends Component {
   state = {
@@ -21,6 +87,14 @@ class AuthScreen extends Component {
     });
   };
 
+  guestLogIn = async () => {
+    await this.setState({
+      email: "guest@guest.com",
+      password: "guest"
+    });
+    this.onSubmit();
+  };
+
   onChange = e => {
     this.setState({
       [e.target.id]: e.target.value,
@@ -30,7 +104,8 @@ class AuthScreen extends Component {
   };
 
   onSubmit = e => {
-    e.preventDefault();
+    //since guestLogIn doesnt pass the event, checks if there is an event in the first place
+    e && e.preventDefault();
     const { email, password, username } = { ...this.state };
 
     //SUBMIT SIGN UP
@@ -117,93 +192,127 @@ class AuthScreen extends Component {
   };
 
   render() {
+    // const classes = useStyles();
+    const { classes } = this.props;
+    const { logIn } = this.state;
+    // console.log(login);
     return (
-      <>
-        <h1 className="flow-text" style={{ textAlign: "center" }}>
-          {this.state.logIn ? "Login " : "Sign Up "}
-          To SemperNote
-        </h1>
-        <form
-          className="row hoverable center-text authscreen"
-          onSubmit={this.onSubmit}
-        >
-          <div className="col s12 ">
-            <div className="card white darken-4">
-              <div className="card-content white-text">
-                <span className="card-title black-text center-text">
-                  {this.state.logIn ? "Login" : "Sign Up"}
-                </span>
-                {!this.state.logIn && (
-                  <div className="form-field left-align">
-                    <label htmlFor="username">Username or Full Name</label>
-                    <input
-                      type="text"
-                      id="username"
-                      onChange={this.onChange}
-                      value={this.state.username}
-                    />
-                  </div>
-                )}
-                <div className="form-field left-align">
-                  <label htmlFor="email">Email</label>
-                  <input
-                    autoFocus={true}
-                    onChange={this.onChange}
-                    value={this.state.email}
-                    type="email"
-                    id="email"
-                  />
-                </div>
-                {this.state.failedSignUp && (
-                  <p className="red-text">
-                    A user with this email already exists
-                  </p>
-                )}
-                <div className="form-field left-align">
-                  <label htmlFor="password">Password</label>
-                  <input
-                    type="password"
-                    id="password"
-                    onChange={this.onChange}
-                    value={this.state.password}
-                  />
-                </div>
-                {this.state.failedLogIn && (
-                  <p className="red-text">Invalid Credentials</p>
-                )}
-              </div>
-              <div className="card-action center-align">
-                <button
-                  type="submit"
-                  className="btn btn-large waves-effect waves-green black-text cyan lighten-5"
-                  name="action"
+      <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <div className={classes.paper}>
+          {/* <Avatar className={classes.avatar}>
+            <LockOutlinedIcon />
+          </Avatar> */}
+          <Typography component="h1" variant="h5">
+            {"Wellcome To SemperNote! "}
+          </Typography>
+          <Typography component="h2" variant="h6" className={classes.status}>
+            {this.state.logIn ? "Login " : "Sign Up "}
+          </Typography>
+          <form className={classes.form} onSubmit={this.onSubmit}>
+            <FormControl className={classes.form}>
+              {!this.state.logIn && (
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="username"
+                  label="username"
+                  name="username"
+                  autoComplete="username"
+                  type="text"
+                  autoFocus
+                  onChange={this.onChange}
+                  value={this.state.username}
+                />
+              )}
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                type="email"
+                autoFocus
+                onChange={this.onChange}
+                value={this.state.email}
+              />
+              {this.state.failedSignUp && (
+                <Typography
+                  component="p"
+                  variant="caption"
+                  className={classes.error}
                 >
-                  Submit
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-large cyan lighten-5 black-text waves-effect waves-green"
-                  onClick={this.toggleLogIn}
+                  {"A user with this email already exists"}
+                </Typography>
+              )}
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                onChange={this.onChange}
+                value={this.state.password}
+              />
+              {this.state.failedLogIn && (
+                <Typography
+                  component="p"
+                  variant="caption"
+                  className={classes.error}
                 >
-                  {this.state.logIn ? "Switch to Sign Up" : "Switch to Login"}
-                </button>
-                <button
-                  type="submit"
-                  style={{ borderColor: "#ffb74d" }}
-                  className="btn btn-large orange lighten-2 black-text waves-effect waves-light tooltipped disabled"
-                  data-position="bottom"
-                  data-tooltip="Log in without registration - for demonstration purposes only"
-                  name="action"
-                >
-                  Login as Guest
-                </button>
-              </div>
-            </div>
-          </div>
-        </form>
-      </>
+                  {"Invalid Credentials"}
+                </Typography>
+              )}
+              {/* <FormControlLabel
+                control={<Checkbox value="remember" color="primary" />}
+                label="Remember me"
+              /> */}
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                className={classes.submit}
+              >
+                Sign In
+              </Button>
+              <Grid container>
+                <Grid item xs>
+                  {/* <Link href="#" variant="body2">
+                    Forgot password?
+                  </Link> */}
+                  <Button
+                    type="button"
+                    disabled={!logIn}
+                    onClick={this.guestLogIn}
+                  >
+                    Sign in as Guest
+                  </Button>
+                </Grid>
+                <Grid item>
+                  <Button type="button" onClick={this.toggleLogIn}>
+                    {this.state.logIn ? "Switch to Sign Up" : "Switch to Login"}
+                  </Button>
+                </Grid>
+              </Grid>
+            </FormControl>
+          </form>
+        </div>
+        <Box mt={3}>
+          <MadeWithLove />
+        </Box>
+      </Container>
     );
   }
 }
 
-export default AuthScreen;
+export default withStyles(styles)(AuthScreen);
