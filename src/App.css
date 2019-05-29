@@ -1,5 +1,9 @@
 .App {
-  text-align: center;
+  /* text-align: center; */
+}
+
+body {
+  box-sizing: border-box;
 }
 
 .App-logo {
@@ -31,3 +35,11 @@
     transform: rotate(360deg);
   }
 }
+
+/*
+@media screen and (min-width: 993px) {
+  .nav-hamburger {
+    margin: 0 5rem !important;
+  }
+}
+*/
