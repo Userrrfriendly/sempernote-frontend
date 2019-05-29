@@ -4,6 +4,13 @@
 
 * Login page enable remember me commented out checkbox, along with its functionality
 * Login page enable "forgot password" -> backend
+* On the NotelistItem card you could display a custin avatar indicating the notebook (the user will choose the avatar color/icon/text)
+* create a theme for the app
+* Learn hooks they are awesome!
+
+## MEdium Priority
+* CARDS ON HOVER RAISED OR BIGGER SHADOW
+* CARDS action needs to expand a menu
 <!-- ### `npm start`
 
 Runs the app in the development mode.<br>

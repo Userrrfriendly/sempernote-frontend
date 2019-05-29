@@ -1,8 +1,33 @@
 import React from "react";
 import moment from "moment";
 import Delta from "quill-delta";
+// import { makeStyles } from "@material-ui/core/styles";
+import {
+  Card,
+  IconButton,
+  CardHeader,
+  Typography,
+  CardContent,
+  CardActionArea,
+  makeStyles
+} from "@material-ui/core/";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
 
-const NoteListItem = props => {
+const useStyles = makeStyles({
+  card: {
+    maxWidth: 345,
+    marginBottom: "0.5rem",
+    margin: "0 0.5rem 0.5rem"
+  },
+  media: {
+    height: 140
+  }
+});
+
+const MediaCard = props => {
+  const classes = useStyles(); //hook
+  const matches = useMediaQuery("(min-width:350px)");
   const previewText = str => {
     //toPlaintext() is from https://github.com/purposeindustries/quill-delta-to-plaintext
     function toPlaintext(delta) {
@@ -15,30 +40,39 @@ const NoteListItem = props => {
     }
 
     const parsedDelta = new Delta(JSON.parse(str));
-    const plainText = toPlaintext(parsedDelta);
-
+    let plainText = toPlaintext(parsedDelta);
+    console.log(plainText);
     if (plainText.length > 400) {
-      const sliceIndex = plainText.lastIndexOf(" ", 400);
-      return str.slice(0, sliceIndex).concat("...");
+      return plainText.slice(0, 400).concat("...");
     }
     return plainText;
   };
 
   return (
-    <section
-      onClick={props.expandNote}
-      className="note-thumbnail-container z-depth-2"
-    >
-      <p className="note-thumb-text thumb-date">
-        created at:&nbsp;{moment(props.created).format("LLL")}
-      </p>
-      <p className="note-thumb-text thumb-date">
-        udpdated at:&nbsp;{moment(props.updated).format("LLL")}
-      </p>
-      <h1 className="note-thumb-text thumb-title">{props.name}</h1>
-      <p className="note-thumb-text thumb-body">{previewText(props.body)}</p>
-    </section>
+    <Card className={classes.card} style={matches ? { maxWidth: "100%" } : {}}>
+      <CardHeader
+        action={
+          <IconButton
+            onClick={() => {
+              console.log("test");
+            }}
+          >
+            <MoreVertIcon />
+          </IconButton>
+        }
+        title={props.name}
+        subheader={moment(props.updated).format("LLL")}
+      />
+      <hr style={{ margin: 0 }} />
+      <CardActionArea onClick={props.expandNote}>
+        <CardContent>
+          <Typography variant="body2" color="textSecondary" component="p">
+            {previewText(props.body)}
+          </Typography>
+        </CardContent>
+      </CardActionArea>
+    </Card>
   );
 };
 
-export default NoteListItem;
+export default MediaCard;

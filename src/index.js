@@ -2,12 +2,15 @@ import React from "react";
 import ReactDOM from "react-dom";
 //import { HashRouter as BrowserRouter } from "react-router-dom"; //use only if you want to host it on githubpages
 import { BrowserRouter } from "react-router-dom";
+import CssBaseline from "@material-ui/core/CssBaseline";
+
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 
 ReactDOM.render(
   <BrowserRouter>
+    <CssBaseline />
     <App />
   </BrowserRouter>,
   document.getElementById("root")
