@@ -6,8 +6,8 @@ import { Switch, Route, Redirect } from "react-router-dom";
 
 import Context from "./context/context";
 
-import "./App.css";
-import Nav from "./components/header/nav";
+// import "./App.css";
+// import Nav from "./components/header/nav";
 import Main from "./components/main/main";
 import ErrorRoute from "./components/ErrorRoute/errorRoute";
 import AuthScreen from "./components/authScreen/authscreen";
@@ -245,7 +245,7 @@ class App extends Component {
               path="/main/"
               render={props => (
                 <>
-                  <Nav />
+                  {/* <Nav /> */}
                   <Main />
                 </>
               )}

@@ -2,16 +2,22 @@
 
 ## Small Priority
 
-* Login page enable remember me commented out checkbox, along with its functionality
-* Login page enable "forgot password" -> backend
-* On the NotelistItem card you could display a custin avatar indicating the notebook (the user will choose the avatar color/icon/text)
-* create a theme for the app
-* Learn hooks they are awesome!
+- Login page enable remember me commented out checkbox, along with its functionality
+- Login page enable "forgot password" -> backend
+- On the NotelistItem card you could display a custin avatar indicating the notebook (the user will choose the avatar color/icon/text)
+- create a theme for the app / create a dark theme
+- Learn hooks they are awesome!
+- mobile tollbar for quill https://stackoverflow.com/questions/51706247/quill-how-to-prevent-toolbar-from-scrolling-and-set-the-height
+- (QUILL) If you want the toolbar not to be fixed but appear when you select some text use the bubble theme
 
 ## MEdium Priority
-* CARDS ON HOVER RAISED OR BIGGER SHADOW
-* CARDS action needs to expand a menu
-<!-- ### `npm start`
+
+- CARDS ON HOVER RAISED OR BIGGER SHADOW
+- CARDS action needs to expand a menu
+- Kill margin on cards/editor when the sidenav is hidden
+- when you press the back button on broweser state.activeNote needs to be set to --> null
+- learn context + hooks magic
+  <!-- ### `npm start`
 
 Runs the app in the development mode.<br>
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
