@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -18,9 +18,7 @@ import {
   LibraryAddRounded,
   StyleRounded
 } from "@material-ui/icons";
-
-import Context from "../../context/context";
-import { NOTES, NOTEBOOKS, FAVORITES, TAGS } from "../../context/activeUItypes";
+// import Note_Add from "@material-ui/icons/Note_add";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -38,19 +36,15 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const SelectedListItem = props => {
+function SelectedListItem() {
   const classes = useStyles();
-  const [selectedIndex, setSelectedIndex] = React.useState(NOTES);
-  const context = useContext(Context);
+  const [selectedIndex, setSelectedIndex] = React.useState(4);
 
   function handleListItemClick(event, index) {
-    //Should I be worried here? are hooks syncronous?
     setSelectedIndex(index);
-    context.setActiveUI(index);
-    // console.log(index);
   }
 
-  // console.log(selectedIndex);
+  console.log(selectedIndex);
   return (
     <div className={classes.root}>
       <List component="nav">
@@ -90,8 +84,8 @@ const SelectedListItem = props => {
         <ListItem
           className={classes.list_item}
           button
-          selected={selectedIndex === FAVORITES}
-          onClick={event => handleListItemClick(event, FAVORITES)}
+          selected={selectedIndex === 3}
+          onClick={event => handleListItemClick(event, 3)}
         >
           <ListItemIcon>
             <StarRounded />
@@ -100,8 +94,8 @@ const SelectedListItem = props => {
         <ListItem
           className={classes.list_item}
           button
-          selected={selectedIndex === NOTES}
-          onClick={event => handleListItemClick(event, NOTES)}
+          selected={selectedIndex === 4}
+          onClick={event => handleListItemClick(event, 4)}
         >
           <ListItemIcon>
             <DescriptionRounded />
@@ -110,8 +104,8 @@ const SelectedListItem = props => {
         <ListItem
           className={classes.list_item}
           button
-          selected={selectedIndex === NOTEBOOKS}
-          onClick={event => handleListItemClick(event, NOTEBOOKS)}
+          selected={selectedIndex === 5}
+          onClick={event => handleListItemClick(event, 5)}
         >
           <ListItemIcon>
             <LibraryBooksRounded />
@@ -120,8 +114,8 @@ const SelectedListItem = props => {
         <ListItem
           className={classes.list_item}
           button
-          selected={selectedIndex === TAGS}
-          onClick={event => handleListItemClick(event, TAGS)}
+          selected={selectedIndex === 6}
+          onClick={event => handleListItemClick(event, 6)}
         >
           <ListItemIcon>
             <StyleRounded />
@@ -130,6 +124,6 @@ const SelectedListItem = props => {
       </List>
     </div>
   );
-};
+}
 
 export default SelectedListItem;

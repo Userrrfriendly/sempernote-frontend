@@ -5,15 +5,18 @@ import Context from "../../context/context";
 
 import "./main.css";
 import ExpandedNote from "../editor/expandedNote";
-import NoteListItem from "./NoteListItem";
-import LoadingBlocks from "../loading/loadingBlocks";
-// import NoteHeader from "../noteHeader/noteHeader";
+// import NoteListItem from "./NoteListItem";
+// import LoadingBlocks from "../loading/loadingBlocks";
 import NotebookModal from "../createNotebookModal/notebookModal";
 import NoteModal from "../createNoteModal/noteModal";
 import SideNav from "../sideNav/sidenav";
 //MateriaUI imports
 import { Hidden, Grid } from "@material-ui/core";
-import Fab from "../test/fab";
+// import useMediaQuery from "@material-ui/core/useMediaQuery"; //cant use hooks with class components
+
+import Fab from "../fab/fab";
+import MainAppBar from "../mainAppBar/mainAppBar";
+import Paper from "../paper/paper";
 
 class Main extends Component {
   state = {
@@ -51,35 +54,51 @@ class Main extends Component {
     this.props.history.push(path);
   };
 
-  componentDidUpdate() {
-    console.log("MAIN updated");
-    // console.log(this.context.notes);
+  componentDidUpdate(prevProps) {
+    // console.log("MAIN updated");
+    // console.log(prevProps.location.pathname);
+    // console.log(this.props.location.pathname);
+
+    //when the user presses the back button the activeNote is set to null thus hidding the editor
+    //probably will need more solid logic in the future but this will do for now
+    window.onpopstate = e => {
+      if (
+        this.props.location.pathname === "/main/" &&
+        this.context.activeNote
+      ) {
+        this.context.setActiveNote(null);
+      }
+      //detects if the back button was pressed
+      console.log("back button was pressed");
+    };
   }
 
   render() {
-    const renderNotes = this.context.notes ? (
-      this.context.notes.map(note => {
-        return (
-          <NoteListItem
-            notebookName={note.notebook.name}
-            notebookId={note.notebook._id}
-            key={note._id}
-            name={note.title}
-            updated={note.updatedAt}
-            created={note.createdAt}
-            body={note.body}
-            id={note._id}
-            expandNote={this.expandNote.bind(this, note._id, note.notebook._id)}
-          />
-        );
-      })
-    ) : (
-      <LoadingBlocks />
-    );
+    // const matchesCards = useMediaQuery("(min-width:350px)");
 
-    const containerCssClass = this.context.activeNote
-      ? "hide-on-small-only note-container"
-      : "note-container";
+    // const renderNotes = this.context.notes ? (
+    //   this.context.notes.map(note => {
+    //     return (
+    //       <NoteListItem
+    //         notebookName={note.notebook.name}
+    //         notebookId={note.notebook._id}
+    //         key={note._id}
+    //         name={note.title}
+    //         updated={note.updatedAt}
+    //         created={note.createdAt}
+    //         body={note.body}
+    //         id={note._id}
+    //         expandNote={this.expandNote.bind(this, note._id, note.notebook._id)}
+    //       />
+    //     );
+    //   })
+    // ) : (
+    //   <LoadingBlocks />
+    // );
+
+    // const containerCssClass = this.context.activeNote
+    //   ? "hide-on-small-only note-container"
+    //   : "note-container";
 
     return (
       <main className="main-section l10">
@@ -95,117 +114,68 @@ class Main extends Component {
             </Hidden>
           </Grid>
           <Grid item style={{ marginLeft: "60px" }}>
-            {/* <NoteHeader
+            {/* <MainAppBar
               activeNote={this.context.activeNote}
               notebooks={this.context.notebooks}
             /> */}
-            {/*  */}
-            {/* <Route
-              // exact
-              path="/main/"
-              render={props => (
-                <div className="fixed-action-btn action-btn-editor">
-                  <button
-                    className="btn-floating btn-large green"
-                  >
-                    <i className="material-icons">create</i>
-                  </button>
+            <Paper>
+              <MainAppBar expandNote={this.expandNote} />
+              <Route
+                exact
+                path="/main/"
+                render={props => (
+                  <Fab
+                    createNote={this.openCreateNoteModal}
+                    createNoteBook={this.openCreateNotebookModal}
+                  />
+                )}
+              />
 
+              <div className="main-subcontainer">
+                {/* {!this.context.activeNote && (
+                  <div className="note-container">{renderNotes}</div>
+                )} */}
+                <Switch>
+                  <Route
+                    exact
+                    path="/main/editor/"
+                    render={props => (
+                      <>
+                        {this.context.activeNote && (
+                          <ExpandedNote
+                            note={this.context.activeNote}
+                            updateNoteBody={this.context.updateNoteBody}
+                          />
+                        )}
+                      </>
+                    )}
+                  />
+                </Switch>
+              </div>
+              {/* whats the point of conditional rendering? ther will always be at least one notebook(hopefully) */}
+              {this.context.notebooks && (
+                <>
+                  <NotebookModal
+                    notebooks={this.context.notebooks}
+                    createNotebook={this.context.createNotebook}
+                    openModal={this.openCreateNotebookModal}
+                    closeModal={this.closeCreateNotebookModal}
+                    isOpen={this.state.createNotebookModalIsOpen}
+                  />
 
-                  <ul>
-                    <li>
-                      <button className="btn-floating red">
-                        <i className="material-icons">insert_chart</i>
-                      </button>
-                    </li>
-                    <li>
-                      <button className="btn-floating yellow darken-1">
-                        <i className="material-icons">add</i>
-                      </button>
-                    </li>
-                    <li>
-                      <button className="btn-floating green">
-                        <i className="material-icons">publish</i>
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        title="create note"
-                        aria-label="create note"
-                        onClick={this.openCreateNoteModal}
-                        className="btn-floating btn-large blue"
-                      >
-                        <i className="material-icons">note_add</i>
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className="btn-floating btn-large green btn modal-trigger"
-                        title="create notebook"
-                        onClick={this.openCreateNotebookModal}
-                      >
-                        <i className="material-icons">library_add</i>
-                      </button>
-                    </li>
-                  </ul>
-                </div>
+                  <NoteModal
+                    notes={this.context.notes}
+                    notebooks={this.context.notebooks}
+                    pushNoteToServer={this.context.pushNoteToServer}
+                    openModal={this.openCreateNoteModal}
+                    closeModal={this.closeCreateNoteModal}
+                    isOpen={this.state.createNoteIsOpen}
+                    pushNoteToState={this.context.pushNoteToState}
+                    setActiveNote={this.context.setActiveNote}
+                  />
+                </>
               )}
-            /> */}
-            <Route
-              exact
-              path="/main/"
-              render={props => (
-                <Fab
-                  createNote={this.openCreateNoteModal}
-                  createNoteBook={this.openCreateNotebookModal}
-                />
-              )}
-            />
-
-            {/* {!this.context.activeNote && (
-            )} */}
-            <div className="main-subcontainer">
-              <div className={containerCssClass}>{renderNotes}</div>
-              <Switch>
-                <Route
-                  exact
-                  path="/main/editor/"
-                  render={props => (
-                    <>
-                      {this.context.activeNote && (
-                        <ExpandedNote
-                          note={this.context.activeNote}
-                          updateNoteBody={this.context.updateNoteBody}
-                        />
-                      )}
-                    </>
-                  )}
-                />
-              </Switch>
-            </div>
-            {/* whats the point of conditional rendering? ther will always be at least one notebook(hopefully) */}
-            {this.context.notebooks && (
-              <>
-                <NotebookModal
-                  notebooks={this.context.notebooks}
-                  createNotebook={this.context.createNotebook}
-                  openModal={this.openCreateNotebookModal}
-                  closeModal={this.closeCreateNotebookModal}
-                  isOpen={this.state.createNotebookModalIsOpen}
-                />
-
-                <NoteModal
-                  notes={this.context.notes} //will use for validation to avoid creating duplicate notes
-                  notebooks={this.context.notebooks}
-                  pushNoteToServer={this.context.pushNoteToServer}
-                  openModal={this.openCreateNoteModal}
-                  closeModal={this.closeCreateNoteModal}
-                  isOpen={this.state.createNoteIsOpen}
-                  pushNoteToState={this.context.pushNoteToState}
-                  setActiveNote={this.context.setActiveNote}
-                />
-              </>
-            )}
+            </Paper>
           </Grid>
         </Grid>
       </main>

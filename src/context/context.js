@@ -7,6 +7,7 @@ export default React.createContext({
   notes: null,
   activeNote: null,
   activeNotebook: null,
+  activeUI: "NOTES",
   login: (token, userId, tokenExpiration) => {},
   logout: () => {},
   fetchUserData: () => {},
@@ -15,5 +16,6 @@ export default React.createContext({
   pushNoteToServer: () => {},
   pushNoteToState: () => {},
   updateNoteBody: () => {},
-  createNotebook: () => {}
+  createNotebook: () => {},
+  setActiveUI: () => {}
 });

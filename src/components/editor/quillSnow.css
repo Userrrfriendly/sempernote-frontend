@@ -958,7 +958,11 @@
 
 /* CUSTOM CSS */
 .editor-container {
-  width: inherit;
+  /* width: inherit; */
+  overflow-y: scroll;
+  max-height: calc(100vh - 68px);
+  max-height: calc(100vh - 98px);
+  /* max-height: 90vh; */
 }
 
 /* Override materialUI on <strong> to display in the editor */

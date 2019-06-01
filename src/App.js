@@ -32,7 +32,8 @@ class App extends Component {
     notebooks: null,
     notes: null,
     activeNote: null,
-    activeNotebook: null
+    activeNotebook: null,
+    activeUI: "NOTES"
   };
 
   componentDidMount() {
@@ -55,9 +56,17 @@ class App extends Component {
   };
 
   setActiveNotebook = notebookId => {
+    //can set it to null by passing null
     this.setState({
       activeNotebook: notebookId
       // activeNotebook: notebookId ? notebookId : null
+    });
+  };
+
+  setActiveUI = (ui = "NOTES") => {
+    //in case something goes wrong pass
+    this.setState({
+      activeUI: ui
     });
   };
 
@@ -232,7 +241,9 @@ class App extends Component {
             pushNoteToServer: this.pushNoteToServer,
             createNotebook: this.createNotebook,
             pushNoteToState: this.pushNoteToState,
-            updateNoteBody: this.updateNoteBody
+            updateNoteBody: this.updateNoteBody,
+            setActiveUI: this.setActiveUI
+            // activeUI: this.state.activeUI
           }}
         >
           <Switch>

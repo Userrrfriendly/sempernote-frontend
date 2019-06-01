@@ -7,12 +7,17 @@ import "./main.css";
 import ExpandedNote from "../editor/expandedNote";
 import NoteListItem from "./NoteListItem";
 import LoadingBlocks from "../loading/loadingBlocks";
-import NoteHeader from "../noteHeader/noteHeader";
+// import NoteHeader from "../noteHeader/noteHeader";
 import NotebookModal from "../createNotebookModal/notebookModal";
 import NoteModal from "../createNoteModal/noteModal";
 import SideNav from "../sideNav/sidenav";
 //MateriaUI imports
 import { Hidden, Grid } from "@material-ui/core";
+// import useMediaQuery from "@material-ui/core/useMediaQuery"; //cant use hooks with class components
+
+import Fab from "../fab/fab";
+import NoteHeader from "../noteHeader/noteHeader";
+import Paper from "../paper/paper";
 
 class Main extends Component {
   state = {
@@ -50,12 +55,26 @@ class Main extends Component {
     this.props.history.push(path);
   };
 
-  componentDidUpdate() {
-    console.log("MAIN updated");
-    // console.log(this.context.notes);
+  componentDidUpdate(prevProps) {
+    // console.log("MAIN updated");
+    // console.log(prevProps.location.pathname);
+    // console.log(this.props.location.pathname);
+
+    //probably will need more solid logic in the future but this will do for now
+    window.onpopstate = e => {
+      if (
+        this.props.location.pathname === "/main/" &&
+        this.context.activeNote
+      ) {
+        this.context.setActiveNote(null);
+      }
+      //detects if the back button was pressed
+      console.log("back button was pressed");
+    };
   }
 
   render() {
+    // const matchesCards = useMediaQuery("(min-width:350px)");
     const renderNotes = this.context.notes ? (
       this.context.notes.map(note => {
         return (
@@ -76,120 +95,90 @@ class Main extends Component {
       <LoadingBlocks />
     );
 
-    const containerCssClass = this.context.activeNote
-      ? "hide-on-small-only note-container"
-      : "note-container";
+    // const containerCssClass = this.context.activeNote
+    //   ? "hide-on-small-only note-container"
+    //   : "note-container";
 
     return (
       <main className="main-section l10">
-        <Hidden mdDown>
-          <SideNav />
-        </Hidden>
-        <NoteHeader
-          activeNote={this.context.activeNote}
-          notebooks={this.context.notebooks}
-        />
-        {/*  */}
-        <Route
-          // exact
-          path="/main/"
-          render={props => (
-            <div className="fixed-action-btn action-btn-editor">
-              <button
-                // title="create note"
-                // aria-label="create note"
-                className="btn-floating btn-large green"
-                // onClick={this.context.createNote}
-              >
-                <i className="material-icons">create</i>
-              </button>
-              {/* <button className="btn-floating btn-large red">
-                <i className="large material-icons">mode_edit</i>
-              </button> */}
+        <Grid
+          container
+          direction="row"
+          justify="flex-start"
+          alignItems="flex-start"
+        >
+          <Grid item>
+            <Hidden mdDown>
+              <SideNav />
+            </Hidden>
+          </Grid>
+          <Grid item style={{ marginLeft: "60px" }}>
+            {/* <NoteHeader
+              activeNote={this.context.activeNote}
+              notebooks={this.context.notebooks}
+            /> */}
+            <Paper>
+              <NoteHeader />
+              <Route
+                exact
+                path="/main/"
+                render={props => (
+                  <Fab
+                    createNote={this.openCreateNoteModal}
+                    createNoteBook={this.openCreateNotebookModal}
+                  />
+                )}
+              />
 
-              <ul>
-                <li>
-                  <button className="btn-floating red">
-                    <i className="material-icons">insert_chart</i>
-                  </button>
-                </li>
-                <li>
-                  <button className="btn-floating yellow darken-1">
-                    <i className="material-icons">add</i>
-                  </button>
-                </li>
-                <li>
-                  <button className="btn-floating green">
-                    <i className="material-icons">publish</i>
-                  </button>
-                </li>
-                <li>
-                  <button
-                    title="create note"
-                    aria-label="create note"
-                    // onClick={this.context.createNote}
-                    onClick={this.openCreateNoteModal}
-                    className="btn-floating btn-large blue"
-                  >
-                    <i className="material-icons">note_add</i>
-                  </button>
-                </li>
-                <li>
-                  <button
-                    className="btn-floating btn-large green btn modal-trigger"
-                    title="create notebook"
-                    onClick={this.openCreateNotebookModal}
-                  >
-                    <i className="material-icons">library_add</i>
-                  </button>
-                </li>
-              </ul>
-            </div>
-          )}
-        />
-
-        <div className="main-subcontainer">
-          <div className={containerCssClass}>{renderNotes}</div>
-          <Switch>
-            <Route
-              exact
-              path="/main/editor/"
-              render={props => (
+              {/* {!this.context.activeNote && (
+            )} */}
+              <div className="main-subcontainer">
+                {!this.context.activeNote && (
+                  <div className="note-container">{renderNotes}</div>
+                )}
+                <Switch>
+                  <Route
+                    exact
+                    path="/main/editor/"
+                    render={props => (
+                      <>
+                        {this.context.activeNote && (
+                          <ExpandedNote
+                            note={this.context.activeNote}
+                            updateNoteBody={this.context.updateNoteBody}
+                          />
+                        )}
+                      </>
+                    )}
+                  />
+                </Switch>
+              </div>
+              {/* whats the point of conditional rendering? ther will always be at least one notebook(hopefully) */}
+              {this.context.notebooks && (
                 <>
-                  {this.context.activeNote && (
-                    <ExpandedNote
-                      note={this.context.activeNote}
-                      updateNoteBody={this.context.updateNoteBody}
-                    />
-                  )}
+                  <NotebookModal
+                    notebooks={this.context.notebooks}
+                    createNotebook={this.context.createNotebook}
+                    openModal={this.openCreateNotebookModal}
+                    closeModal={this.closeCreateNotebookModal}
+                    isOpen={this.state.createNotebookModalIsOpen}
+                  />
+
+                  <NoteModal
+                    notes={this.context.notes} //will use for validation to avoid creating duplicate notes
+                    notebooks={this.context.notebooks}
+                    pushNoteToServer={this.context.pushNoteToServer}
+                    openModal={this.openCreateNoteModal}
+                    closeModal={this.closeCreateNoteModal}
+                    isOpen={this.state.createNoteIsOpen}
+                    pushNoteToState={this.context.pushNoteToState}
+                    setActiveNote={this.context.setActiveNote}
+                  />
                 </>
               )}
-            />
-          </Switch>
-        </div>
-        {/* whats the point of conditional rendering? ther will always be at least one notebook(hopefully) */}
-        {this.context.notebooks && (
-          <>
-            <NotebookModal
-              notebooks={this.context.notebooks}
-              createNotebook={this.context.createNotebook}
-              openModal={this.openCreateNotebookModal}
-              closeModal={this.closeCreateNotebookModal}
-              isOpen={this.state.createNotebookModalIsOpen}
-            />
-
-            <NoteModal
-              notes={this.context.notes} //will use for validation to avoid creating duplicate notes
-              notebooks={this.context.notebooks}
-              pushNoteToServer={this.context.pushNoteToServer}
-              openModal={this.openCreateNoteModal}
-              closeModal={this.closeCreateNoteModal}
-              isOpen={this.state.createNoteIsOpen}
-              pushNoteToState={this.context.pushNoteToState}
-              setActiveNote={this.context.setActiveNote}
-            />
-          </>
-        )}
+            </Paper>
+          </Grid>
+        </Grid>
       </main>
     );
   }

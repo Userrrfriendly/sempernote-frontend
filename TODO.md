@@ -1,81 +1,40 @@
-<!-- This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app). -->
-
 ## Small Priority
 
-- Login page enable remember me commented out checkbox, along with its functionality
+- Login page enable 'remember me' commented out checkbox, along with its functionality
 - Login page enable "forgot password" -> backend
-- On the NotelistItem card you could display a custin avatar indicating the notebook (the user will choose the avatar color/icon/text)
+- On the NotelistItem card you could display a custom avatar indicating the notebook (the user will choose the avatar color/icon/text) || the better solution could be to display an icon if it is a note/notebook/tag ?
 - create a theme for the app / create a dark theme
-- Learn hooks they are awesome!
 - mobile tollbar for quill https://stackoverflow.com/questions/51706247/quill-how-to-prevent-toolbar-from-scrolling-and-set-the-height
 - (QUILL) If you want the toolbar not to be fixed but appear when you select some text use the bubble theme
+- create and add sempernote logo in index.html head
+- add font roboto to the list of selected fonts in QUILL
 
 ## MEdium Priority
 
 - CARDS ON HOVER RAISED OR BIGGER SHADOW
 - CARDS action needs to expand a menu
 - Kill margin on cards/editor when the sidenav is hidden
-- when you press the back button on broweser state.activeNote needs to be set to --> null
 - learn context + hooks magic
-  <!-- ### `npm start`
+- tooltips for sidenav
+- MOVE State from the app to a wrapper component
+- BACKEND isTrash --> favorite
+- BACKEND softDeleteNote --> note moves to TrashNotebook
+- BACKEND DeleteNote should target only notes in TrashNotebook
+- QUILL editor's toolbar should be fixed
+- add breakpoint or smth to hide the notesList when the editor is opened
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## High Priority
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+- To hide the notelists when the editor opens you will need <route exact /main> && activenote
+- in order to do it <Main/> must be refactored into a functional component with hooks
+- NoteHeader should encapsulate NoteListItems or whatever it is rendering
 
-### `npm test`
+## Sprint:
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Design the NoteHeader functionality and implement it then->
+- rewrite <main/> as a functional component with hoocks
+- complete the margin on the grid thingy and the media requirement to hide notes when the editor is expanded on big screens
 
-### `npm run build`
+# Tips:
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify -->
+\*useContext hook replaces static context = ....
