@@ -965,6 +965,9 @@
   /* max-height: 90vh; */
 }
 
+.editor {
+  min-height: 85vh;
+}
 /* Override materialUI on <strong> to display in the editor */
 strong {
   font-weight: bold !important;

@@ -11,13 +11,15 @@ import {
   CardActionArea,
   makeStyles
 } from "@material-ui/core/";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
+// import useMediaQuery from "@material-ui/core/useMediaQuery";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 // import { withStyles, Theme, createStyles } from "@material-ui/core/styles";
+// import { useTheme } from "@material-ui/core/styles";
 
 const useStyles = makeStyles({
   card: {
-    maxWidth: 345,
+    // maxWidth: "100%",
+    maxWidth: "345",
     marginBottom: "0.5rem",
     margin: "0 0.5rem 0.5rem",
     boxShadow:
@@ -53,9 +55,11 @@ const useStyles = makeStyles({
 
 const MediaCard = props => {
   const classes = useStyles(); //hook
-
+  // const theme = useTheme();
+  // const smallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   // const { classes } = props;
-  const matches = useMediaQuery("(min-width:350px)");
+  // const matches = useMediaQuery("(min-width:350px)");
+
   const previewText = str => {
     //toPlaintext() is from https://github.com/purposeindustries/quill-delta-to-plaintext
     function toPlaintext(delta) {
@@ -86,7 +90,10 @@ const MediaCard = props => {
       //   title: classes.title
       // }}
       className={classes.card}
-      style={matches ? { maxWidth: "100%" } : {}}
+      // style={matches ? { maxWidth: "100%" } : {}}
+
+      // style={smallScreen && props.activeNote ? { display: "none" } : {}}
+      // style={props.activeNote && { flexBasis: "250px" }}
     >
       {/* <h1>
         MATCHES:

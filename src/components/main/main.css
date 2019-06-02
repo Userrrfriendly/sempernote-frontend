@@ -2,7 +2,7 @@
   background-color: #fff;
   width: 100%;
   min-height: calc(100vh - 3rem);
-  display: flex;
+  /* display: flex; */
   flex-flow: column;
   overflow: hidden;
 }
@@ -158,4 +158,8 @@
 [tooltip]:hover:after {
   visibility: visible;
   opacity: 1;
+}
+
+.brockengrid {
+  width: 100%;
 }

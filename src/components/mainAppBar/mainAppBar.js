@@ -3,29 +3,34 @@ import Context from "../../context/context";
 import { NOTES, NOTEBOOKS, FAVORITES, TAGS } from "../../context/activeUItypes";
 
 // import { makeStyles } from "@material-ui/core/styles";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+// import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 import {
   AppBar,
   Toolbar,
   Typography,
   IconButton,
-  Menu,
-  MenuItem
+  Tooltip
+  // Menu,
+  // MenuItem
 } from "@material-ui/core/";
 import NoteListItem from "../main/NoteListItem";
-// import LoadingBlocks from "../loading/loadingBlocks";
 import LinearProgress from "../loading/linearProgress";
 import {
   DeleteRounded,
   MoreVertRounded,
-  MoreHorizRounded,
+  // MoreHorizRounded,
   StarRounded,
   StyleRounded,
   Info,
   LibraryBooksRounded,
   SaveRounded,
-  SortByAlpha
+  SortByAlpha,
+  ArrowBack
 } from "@material-ui/icons";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+
+import NoteCounter from "./noteCounter";
 
 // const useStyles = makeStyles((theme: Theme) =>
 //   createStyles({
@@ -49,12 +54,17 @@ const useStyles = makeStyles({
     flexGrow: 1,
     marginBottom: "1rem",
     width: "100%"
+    // overflow: "hidden"
   },
   notecontainer: {
     overflowY: "scroll",
-    maxHeight: "calc(100vh - 98px)"
+    maxHeight: "calc(100vh - 98px)",
+    width: "100%"
   },
   title: {
+    flexGrow: 1
+  },
+  notecount: {
     flexGrow: 1
   }
 });
@@ -87,7 +97,17 @@ const useStyles = makeStyles({
 const MainAppBar = props => {
   const classes = useStyles();
   const context = useContext(Context);
+  const theme = useTheme();
+  const smallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   // console.log(context.activeUI);
+  // let noteListStyle = () => {
+  let noteListStyle = {};
+  if (context.activeNote) noteListStyle.flexBasis = "250px";
+  if (smallScreen && context.activeNote) noteListStyle.display = "none";
+  console.log(noteListStyle);
+  // return style;
+  // };
+
   let activeUI = "";
   let title;
   switch (context.activeUI) {
@@ -97,6 +117,7 @@ const MainAppBar = props => {
         context.notes.map(note => {
           return (
             <NoteListItem
+              activeNote={context.activeNote}
               notebookName={note.notebook.name}
               notebookId={note.notebook._id}
               key={note._id}
@@ -114,7 +135,9 @@ const MainAppBar = props => {
           );
         })
       ) : (
-        <LinearProgress width={{ width: "100vw" }} />
+        <LinearProgress
+        // width={{ width: "100vw" }}
+        />
       );
       break;
     case NOTEBOOKS:
@@ -142,7 +165,7 @@ const MainAppBar = props => {
   //   setAnchorEl(null);
   // }
 
-  console.log(context.notes);
+  // console.log(context.notes);
   return (
     <>
       <div className={classes.root}>
@@ -152,91 +175,117 @@ const MainAppBar = props => {
               variant="h6"
               component="h1"
               color="inherit"
-              className={classes.title}
+              // className={classes.title}
             >
               {title}
             </Typography>
+            <NoteCounter>
+              {context.notes ? context.notes.length : ""}
+            </NoteCounter>
             <Typography
               variant="subtitle1"
               component="span"
               display="block"
               color="inherit"
+              className={classes.notecount}
             >
-              {context.notes ? context.notes.length + " notes" : ""}
+              {/* {context.notes ? context.notes.length + " notes" : ""} */}
+              {context.notes && context.notes.length > 1 ? " notes" : " note"}
             </Typography>
-            <IconButton
-              // aria-owns={open ? 'menu-appbar' : undefined}
-              aria-haspopup="true"
-              // onClick={handleMenu}
-              color="inherit"
-              edge="start"
-            >
-              <SaveRounded />
-            </IconButton>
-            <IconButton
-              // aria-owns={open ? 'menu-appbar' : undefined}
-              aria-haspopup="true"
-              // onClick={handleMenu}
-              color="inherit"
-              edge="start"
-            >
-              <LibraryBooksRounded />
-            </IconButton>
-            {/*  */}
-            <IconButton
-              // aria-owns={open ? 'menu-appbar' : undefined}
-              aria-haspopup="true"
-              // onClick={handleMenu}
-              color="inherit"
-              edge="start"
-            >
-              <StyleRounded />
-            </IconButton>{" "}
-            <IconButton
-              // aria-owns={open ? 'menu-appbar' : undefined}
-              aria-haspopup="true"
-              // onClick={handleMenu}
-              color="inherit"
-              edge="start"
-            >
-              <StarRounded />
-            </IconButton>
-            <IconButton
-              // aria-owns={open ? 'menu-appbar' : undefined}
-              aria-haspopup="true"
-              // onClick={handleMenu}
-              color="inherit"
-              edge="start"
-            >
-              <Info />
-            </IconButton>
-            <IconButton
-              // aria-owns={open ? 'menu-appbar' : undefined}
-              aria-haspopup="true"
-              // onClick={handleMenu}
-              color="inherit"
-              edge="start"
-            >
-              <DeleteRounded />
-            </IconButton>
-            <IconButton
-              // aria-owns={open ? 'menu-appbar' : undefined}
-              aria-haspopup="true"
-              // onClick={handleMenu}
-              color="inherit"
-              edge="start"
-            >
-              <SortByAlpha />
-            </IconButton>
-            <IconButton
-              // aria-owns={open ? 'menu-appbar' : undefined}
-              aria-haspopup="true"
-              // onClick={handleMenu}
-              color="inherit"
-              edge="start"
-            >
-              <MoreVertRounded />
-            </IconButton>
+            {context.activeNote && (
+              <>
+                <Tooltip title="Back">
+                  <IconButton
+                    // aria-owns={open ? 'menu-appbar' : undefined}
+                    aria-haspopup="true"
+                    // onClick={handleMenu}
+                    color="inherit"
+                  >
+                    <ArrowBack />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Save changes">
+                  <IconButton
+                    // aria-owns={open ? 'menu-appbar' : undefined}
+                    aria-haspopup="true"
+                    // onClick={handleMenu}
+                    color="inherit"
+                  >
+                    <SaveRounded />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Change Notebook">
+                  <IconButton
+                    // aria-owns={open ? 'menu-appbar' : undefined}
+                    aria-haspopup="true"
+                    // onClick={handleMenu}
+                    color="inherit"
+                  >
+                    <LibraryBooksRounded />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Tags">
+                  <IconButton
+                    // aria-owns={open ? 'menu-appbar' : undefined}
+                    aria-haspopup="true"
+                    // onClick={handleMenu}
+                    color="inherit"
+                  >
+                    <StyleRounded />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Favorites">
+                  <IconButton
+                    // aria-owns={open ? 'menu-appbar' : undefined}
+                    aria-haspopup="true"
+                    // onClick={handleMenu}
+                    color="inherit"
+                  >
+                    <StarRounded />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Note info">
+                  <IconButton
+                    // aria-owns={open ? 'menu-appbar' : undefined}
+                    aria-haspopup="true"
+                    // onClick={handleMenu}
+                    color="inherit"
+                  >
+                    <Info />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Delete Note">
+                  <IconButton
+                    // aria-owns={open ? 'menu-appbar' : undefined}
+                    aria-haspopup="true"
+                    // onClick={handleMenu}
+                    color="inherit"
+                  >
+                    <DeleteRounded />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Sort">
+                  <IconButton
+                    // aria-owns={open ? 'menu-appbar' : undefined}
+                    aria-haspopup="true"
+                    // onClick={handleMenu}
+                    color="inherit"
+                  >
+                    <SortByAlpha />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Settings">
+                  <IconButton
+                    // aria-owns={open ? 'menu-appbar' : undefined}
+                    aria-haspopup="true"
+                    // onClick={handleMenu}
+                    color="inherit"
+                  >
+                    <MoreVertRounded />
+                  </IconButton>
+                </Tooltip>
+              </>
+            )}
           </Toolbar>
         </AppBar>
       </div>
@@ -245,7 +294,9 @@ const MainAppBar = props => {
       )} */}
       <div
         // if the editor is open make max-width:250px
-        style={context.activeNote && { flexBasis: "250px" }}
+        // style={context.activeNote && { flexBasis: "250px" }}
+        style={noteListStyle}
+        // style={smallScreen && context.activeNote ? { display: "none" } : {}}
         className={classes.notecontainer}
       >
         {activeUI}
