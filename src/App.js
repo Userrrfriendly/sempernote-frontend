@@ -22,7 +22,9 @@ import {
   createNote,
   createNotebook,
   updateNoteBody,
-  trashNote
+  trashNote,
+  noteFavoriteTrue,
+  noteFavoriteFalse
 } from "./helpers/graphQLrequests";
 
 class App extends Component {
@@ -91,7 +93,7 @@ class App extends Component {
           this.state.notebooks,
           responseNote.notebook._id
         );
-        updatedNotebook[0] = updatedNotebook[0].notes.map(note =>
+        updatedNotebook[0].notes = updatedNotebook[0].notes.map(note =>
           note._id === responseNote._id ? { ...note, trash: true } : note
         );
         newNotebooks.push(updatedNotebook[0]);
@@ -107,6 +109,69 @@ class App extends Component {
             notes: prevState.notes.map(note =>
               note._id === data.responseNote._id
                 ? { ...note, trash: true }
+                : note
+            ),
+            notebooks: data.newNotebooks
+          };
+        });
+      });
+  };
+
+  noteToggleFavorite = note => {
+    //toggle favorite-> favorite:!value
+    //change color on icon (initially mannually when the theme is added just change it through theme)
+    //send req to server if fail raise a toast
+    const query = !note.favorite ? noteFavoriteTrue : noteFavoriteFalse;
+    const resName = !note.favorite ? "noteFavoriteTrue" : "noteFavoriteFalse";
+
+    const requestBody = {
+      query: query(note._id)
+    };
+
+    fetch("http://localhost:8000/graphql", {
+      method: "POST",
+      body: JSON.stringify(requestBody),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + this.state.token
+      }
+    })
+      .then(res => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error("Failed!");
+        }
+        return res.json();
+      })
+      .then(r => {
+        // console.log(query);
+        const responseNote = r.data[resName];
+        console.log(responseNote);
+        const newNotebooks = this.state.notebooks.filter(
+          notebook => notebook._id !== responseNote.notebook._id
+        );
+        let updatedNotebook = selectNotebook(
+          this.state.notebooks,
+          responseNote.notebook._id
+        );
+        console.log(updatedNotebook[0]);
+        updatedNotebook[0].notes = updatedNotebook[0].notes.map(note =>
+          note._id === responseNote._id
+            ? { ...note, favorite: responseNote.favorite }
+            : note
+        );
+        newNotebooks.push(updatedNotebook[0]);
+        return { responseNote, newNotebooks };
+      })
+      .then(data => {
+        this.setState(prevState => {
+          return {
+            activeNote:
+              prevState.activeNote._id === data.responseNote._id
+                ? data.responseNote
+                : prevState.activeUI,
+            notes: prevState.notes.map(note =>
+              note._id === data.responseNote._id
+                ? { ...note, favorite: data.responseNote.favorite }
                 : note
             ),
             notebooks: data.newNotebooks
@@ -304,7 +369,8 @@ class App extends Component {
             updateNoteBody: this.updateNoteBody,
             setActiveUI: this.setActiveUI,
             updateNotes: this.updateNotes,
-            softDeleteNote: this.softDeleteNote
+            softDeleteNote: this.softDeleteNote,
+            noteToggleFavorite: this.noteToggleFavorite
             // activeUI: this.state.activeUI
           }}
         >

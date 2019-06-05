@@ -177,6 +177,9 @@ export const noteFavoriteTrue = noteID =>
     updatedAt
     favorite
     trash
+    notebook {
+      _id
+    }
   }
   }`;
 
@@ -191,5 +194,8 @@ export const noteFavoriteFalse = noteID =>
     updatedAt
     favorite
     trash
+    notebook{
+      _id
+    }
   }
   }`;

@@ -1,7 +1,4 @@
-import React, {
-  useContext
-  // , useEffect, useState
-} from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Context from "../../context/context";
 import { NOTES, NOTEBOOKS, FAVORITES, TAGS } from "../../context/activeUItypes";
 
@@ -89,8 +86,8 @@ const AdapterLink = React.forwardRef((props, ref) => (
 
 //Its is a legit option to render two different components one for mobile and one for desktop
 const MainAppBar = props => {
-  // let [activeUI, setActiveUI] = useState(null);
-  // const [title, setTitle] = useState(null);
+  let [activeUIel, setActiveUIel] = useState(null);
+  const [title, setTitle] = useState(null);
 
   const classes = useStyles();
   const context = useContext(Context);
@@ -100,54 +97,56 @@ const MainAppBar = props => {
   if (context.activeNote) noteListStyle.flexBasis = "250px";
   if (smallScreen && context.activeNote) noteListStyle.display = "none";
 
-  let activeUI = "";
-  let title;
+  // let activeUI = "";
+  // let title;
 
-  // useEffect(() => {
-  //   console.log("Appbar did update");
-  switch (context.activeUI) {
-    case NOTES:
-      // setTitle(context.activeNote ? context.activeNote.title : "ALL NOTES");
-      title = context.activeNote ? context.activeNote.title : "ALL NOTES";
-      activeUI = context.notes ? (
-        context.notes.map(note => {
-          return (
-            <NoteListItem
-              activeNote={context.activeNote}
-              notebookName={note.notebook.name}
-              notebookId={note.notebook._id}
-              key={note._id}
-              name={note.title}
-              updated={note.updatedAt}
-              created={note.createdAt}
-              body={note.body}
-              id={note._id}
-              expandNote={props.expandNote.bind(
-                this,
-                note._id,
-                note.notebook._id
-              )}
-            />
-          );
-        })
-      ) : (
-        <LinearProgress />
-      );
-      break;
-    case NOTEBOOKS:
-      activeUI = "NOTEBOOKS";
-      break;
-    case FAVORITES:
-      activeUI = "FAVORITES";
-      break;
-    case TAGS:
-      activeUI = "TAGS";
-      break;
-    default:
-      throw new Error("Invalid argument in activeUI");
-  }
-
-  // }, [context.notes, context.activeNote, context.activeUI, props.expandNote]);
+  useEffect(() => {
+    console.log("Appbar did update");
+    switch (context.activeUI) {
+      case NOTES:
+        setTitle(context.activeNote ? context.activeNote.title : "ALL NOTES");
+        // title = context.activeNote ? context.activeNote.title : "ALL NOTES";
+        const tempEl = context.notes ? (
+          context.notes.map(note => {
+            return (
+              <NoteListItem
+                activeNote={context.activeNote}
+                notebookName={note.notebook.name}
+                notebookId={note.notebook._id}
+                key={note._id}
+                name={note.title}
+                updated={note.updatedAt}
+                created={note.createdAt}
+                body={note.body}
+                id={note._id}
+                expandNote={props.expandNote.bind(
+                  this,
+                  note._id,
+                  note.notebook._id
+                )}
+              />
+            );
+          })
+        ) : (
+          <LinearProgress />
+        );
+        setActiveUIel(tempEl);
+        break;
+      case NOTEBOOKS:
+        setActiveUIel("NOTEBOOKS");
+        // setActiveUI("NOTEBOOKS");
+        break;
+      case FAVORITES:
+        setActiveUIel("FAVORITES");
+        // setActiveUI("FAVORITES");
+        break;
+      case TAGS:
+        setActiveUIel("TAGS");
+        break;
+      default:
+        throw new Error("Invalid argument in activeUI");
+    }
+  }, [context.notes, context.activeNote, context.activeUI, props.expandNote]);
 
   // function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
   //   setAuth(event.target.checked);
@@ -250,10 +249,17 @@ const MainAppBar = props => {
                   <IconButton
                     // aria-owns={open ? 'menu-appbar' : undefined}
                     aria-haspopup="true"
-                    // onClick={handleMenu}
+                    onClick={context.noteToggleFavorite.bind(
+                      this,
+                      context.activeNote
+                    )}
                     color="inherit"
                   >
-                    <StarRounded />
+                    <StarRounded
+                      style={
+                        context.activeNote.favorite ? { color: "gold" } : {}
+                      }
+                    />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Note info">
@@ -306,7 +312,7 @@ const MainAppBar = props => {
         style={noteListStyle}
         className={classes.notecontainer}
       >
-        {activeUI}
+        {activeUIel}
       </div>
     </>
   );
