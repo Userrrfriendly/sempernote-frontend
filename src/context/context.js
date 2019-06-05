@@ -17,5 +17,7 @@ export default React.createContext({
   pushNoteToState: () => {},
   updateNoteBody: () => {},
   createNotebook: () => {},
-  setActiveUI: () => {}
+  setActiveUI: () => {},
+  updateNotes: () => {},
+  softDeleteNote: () => {}
 });

@@ -28,7 +28,7 @@ export const sortByDateOldestFirst = (arrOfObjects, key) =>
     (a, b) => new Date(a[key]).getTime() - new Date(b[key]).getTime()
   );
 
-export const shortByTitle = arrOfObjects =>
+export const sortByTitleAsc = arrOfObjects =>
   arrOfObjects.sort((a, b) => {
     const titleA = a.title.toUpperCase();
     const titleB = b.title.toUpperCase();
@@ -42,7 +42,21 @@ export const shortByTitle = arrOfObjects =>
     return 0;
   });
 
-export const shortByNotebookName = arrOfObjects =>
+export const sortByTitleDes = arrOfObjects =>
+  arrOfObjects.sort((a, b) => {
+    const titleA = a.title.toUpperCase();
+    const titleB = b.title.toUpperCase();
+    if (titleB < titleA) {
+      return -1;
+    }
+    if (titleB > titleA) {
+      return 1;
+    }
+    // names must be equal
+    return 0;
+  });
+
+export const sortByNotebookName = arrOfObjects =>
   arrOfObjects.sort((a, b) => {
     const nameA = a.notebook.name.toUpperCase();
     const nameB = b.notebook.name.toUpperCase();

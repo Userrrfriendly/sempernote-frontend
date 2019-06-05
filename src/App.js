@@ -21,7 +21,8 @@ import {
   fetchUserData,
   createNote,
   createNotebook,
-  updateNoteBody
+  updateNoteBody,
+  trashNote
 } from "./helpers/graphQLrequests";
 
 class App extends Component {
@@ -53,6 +54,65 @@ class App extends Component {
     this.setState({
       activeNote: activeNote ? activeNote : null
     });
+  };
+
+  updateNotes = notes => {
+    this.setState({
+      notes
+    });
+  };
+
+  softDeleteNote = noteToTrash => {
+    //Send a request to server then :
+    const requestBody = {
+      query: trashNote(noteToTrash._id)
+    };
+
+    fetch("http://localhost:8000/graphql", {
+      method: "POST",
+      body: JSON.stringify(requestBody),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + this.state.token
+      }
+    })
+      .then(res => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error("Failed!");
+        }
+        return res.json();
+      })
+      .then(r => {
+        const responseNote = r.data.softDeleteNote;
+        const newNotebooks = this.state.notebooks.filter(
+          notebook => notebook._id !== responseNote.notebook._id
+        );
+        let updatedNotebook = selectNotebook(
+          this.state.notebooks,
+          responseNote.notebook._id
+        );
+        updatedNotebook[0] = updatedNotebook[0].notes.map(note =>
+          note._id === responseNote._id ? { ...note, trash: true } : note
+        );
+        newNotebooks.push(updatedNotebook[0]);
+        return { responseNote, newNotebooks };
+      })
+      .then(data => {
+        this.setState(prevState => {
+          return {
+            activeNote:
+              prevState.activeNote._id === data.responseNote._id
+                ? null
+                : prevState.activeNote._id,
+            notes: prevState.notes.map(note =>
+              note._id === data.responseNote._id
+                ? { ...note, trash: true }
+                : note
+            ),
+            notebooks: data.newNotebooks
+          };
+        });
+      });
   };
 
   setActiveNotebook = notebookId => {
@@ -242,7 +302,9 @@ class App extends Component {
             createNotebook: this.createNotebook,
             pushNoteToState: this.pushNoteToState,
             updateNoteBody: this.updateNoteBody,
-            setActiveUI: this.setActiveUI
+            setActiveUI: this.setActiveUI,
+            updateNotes: this.updateNotes,
+            softDeleteNote: this.softDeleteNote
             // activeUI: this.state.activeUI
           }}
         >

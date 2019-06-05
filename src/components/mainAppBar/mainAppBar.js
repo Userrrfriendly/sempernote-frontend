@@ -1,4 +1,7 @@
-import React, { useContext } from "react";
+import React, {
+  useContext
+  // , useEffect, useState
+} from "react";
 import Context from "../../context/context";
 import { NOTES, NOTEBOOKS, FAVORITES, TAGS } from "../../context/activeUItypes";
 
@@ -11,6 +14,7 @@ import {
   Typography,
   IconButton,
   Tooltip
+  // Link
   // Menu,
   // MenuItem
 } from "@material-ui/core/";
@@ -25,29 +29,13 @@ import {
   Info,
   LibraryBooksRounded,
   SaveRounded,
-  SortByAlpha,
   ArrowBack
 } from "@material-ui/icons";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 import NoteCounter from "./noteCounter";
-
-// const useStyles = makeStyles((theme: Theme) =>
-//   createStyles({
-//     root: {
-//       flexGrow: 1,
-//       marginBottom: "1rem",
-//       width: "100%"
-//     },
-//     notecontainer: {
-//       overflowY: "scroll",
-//       maxHeight: "calc(100vh - 98px)"
-//     },
-//     title: {
-//       flexGrow: 1
-//     }
-//   })
-// );
+import SortMenu from "./sortMenu";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles({
   root: {
@@ -93,25 +81,33 @@ const useStyles = makeStyles({
 
   */
 
+// required for react-router-dom < 6.0.0
+// see https://github.com/ReactTraining/react-router/issues/6056#issuecomment-435524678
+const AdapterLink = React.forwardRef((props, ref) => (
+  <Link innerRef={ref} {...props} />
+));
+
 //Its is a legit option to render two different components one for mobile and one for desktop
 const MainAppBar = props => {
+  // let [activeUI, setActiveUI] = useState(null);
+  // const [title, setTitle] = useState(null);
+
   const classes = useStyles();
   const context = useContext(Context);
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-  // console.log(context.activeUI);
-  // let noteListStyle = () => {
   let noteListStyle = {};
   if (context.activeNote) noteListStyle.flexBasis = "250px";
   if (smallScreen && context.activeNote) noteListStyle.display = "none";
-  console.log(noteListStyle);
-  // return style;
-  // };
 
   let activeUI = "";
   let title;
+
+  // useEffect(() => {
+  //   console.log("Appbar did update");
   switch (context.activeUI) {
     case NOTES:
+      // setTitle(context.activeNote ? context.activeNote.title : "ALL NOTES");
       title = context.activeNote ? context.activeNote.title : "ALL NOTES";
       activeUI = context.notes ? (
         context.notes.map(note => {
@@ -135,9 +131,7 @@ const MainAppBar = props => {
           );
         })
       ) : (
-        <LinearProgress
-        // width={{ width: "100vw" }}
-        />
+        <LinearProgress />
       );
       break;
     case NOTEBOOKS:
@@ -153,6 +147,8 @@ const MainAppBar = props => {
       throw new Error("Invalid argument in activeUI");
   }
 
+  // }, [context.notes, context.activeNote, context.activeUI, props.expandNote]);
+
   // function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
   //   setAuth(event.target.checked);
   // }
@@ -165,7 +161,6 @@ const MainAppBar = props => {
   //   setAnchorEl(null);
   // }
 
-  // console.log(context.notes);
   return (
     <>
       <div className={classes.root}>
@@ -176,22 +171,34 @@ const MainAppBar = props => {
               component="h1"
               color="inherit"
               // className={classes.title}
+              style={context.activeNote ? { flexGrow: 1 } : {}}
             >
               {title}
             </Typography>
-            <NoteCounter>
-              {context.notes ? context.notes.length : ""}
-            </NoteCounter>
-            <Typography
-              variant="subtitle1"
-              component="span"
-              display="block"
-              color="inherit"
-              className={classes.notecount}
-            >
-              {/* {context.notes ? context.notes.length + " notes" : ""} */}
-              {context.notes && context.notes.length > 1 ? " notes" : " note"}
-            </Typography>
+            {context.notes && !context.activeNote && (
+              <>
+                <NoteCounter>
+                  {context.notes ? context.notes.length : ""}
+                </NoteCounter>
+                <Typography
+                  variant="subtitle1"
+                  component="span"
+                  display="block"
+                  color="inherit"
+                  className={classes.notecount}
+                >
+                  {context.notes && context.notes.length > 1
+                    ? " notes"
+                    : " note"}
+                </Typography>
+
+                <SortMenu
+                  notes={context.notes}
+                  updateNotes={context.updateNotes}
+                />
+              </>
+            )}
+
             {context.activeNote && (
               <>
                 <Tooltip title="Back">
@@ -200,8 +207,13 @@ const MainAppBar = props => {
                     aria-haspopup="true"
                     // onClick={handleMenu}
                     color="inherit"
+                    component={AdapterLink}
+                    to="/main/"
+                    onClick={context.setActiveNote}
                   >
+                    {/* <Link component={RouterLink} to="/main/"> */}
                     <ArrowBack />
+                    {/* </Link> */}
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Save changes">
@@ -260,20 +272,18 @@ const MainAppBar = props => {
                     aria-haspopup="true"
                     // onClick={handleMenu}
                     color="inherit"
+                    // onClick={handleMenu}
+                    component={AdapterLink}
+                    to="/main/"
+                    onClick={context.softDeleteNote.bind(
+                      this,
+                      context.activeNote
+                    )}
                   >
                     <DeleteRounded />
                   </IconButton>
                 </Tooltip>
-                <Tooltip title="Sort">
-                  <IconButton
-                    // aria-owns={open ? 'menu-appbar' : undefined}
-                    aria-haspopup="true"
-                    // onClick={handleMenu}
-                    color="inherit"
-                  >
-                    <SortByAlpha />
-                  </IconButton>
-                </Tooltip>
+
                 <Tooltip title="Settings">
                   <IconButton
                     // aria-owns={open ? 'menu-appbar' : undefined}
@@ -289,14 +299,11 @@ const MainAppBar = props => {
           </Toolbar>
         </AppBar>
       </div>
-      {/* {!context.activeNote && (
-        <div className={classes.notecontainer}>{activeUI}</div>
-      )} */}
+
       <div
         // if the editor is open make max-width:250px
         // style={context.activeNote && { flexBasis: "250px" }}
         style={noteListStyle}
-        // style={smallScreen && context.activeNote ? { display: "none" } : {}}
         className={classes.notecontainer}
       >
         {activeUI}

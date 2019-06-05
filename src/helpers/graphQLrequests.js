@@ -5,15 +5,19 @@ export const fetchUserData = userId =>
     notebooks {
       _id
       name
+      favorite
       notes{
         _id
         title
         body
+        favorite
+        trash
         createdAt
         updatedAt
         notebook{
           _id
           name
+          favorite
         }
       }
     }
@@ -47,9 +51,12 @@ export const createNote = (title, body, notebook) =>
     body
     createdAt
     updatedAt
+    favorite
+    trash
     notebook{
       _id
       name
+      favorite
     }
   }
 }`;
@@ -62,9 +69,12 @@ export const updateNoteBody = (ID, body) =>
     body
     createdAt
     updatedAt
+    favorite
+    trash
     notebook{
       _id
       name
+      favorite
     }
   }
 }`;
@@ -74,8 +84,112 @@ export const createNotebook = name =>
   createNotebook(name:"${name}"){
     _id
     name
+    favorite
     notes{
       _id
     }
   }
 }`;
+
+export const renameNote = (ID, title) =>
+  `mutation {
+    renameNote(noteID:"${ID}",title:"${title}"){
+    _id
+    title
+    body
+    createdAt
+    updatedAt
+    favorite
+    trash
+    notebook{
+      _id
+      name
+      favorite
+    }
+  }
+}`;
+
+export const moveNote = (noteID, notebookID) =>
+  `mutation {
+  moveNote(noteID:"${noteID}", notebookID:"${notebookID}"){
+    _id
+    title
+    body
+    createdAt
+    updatedAt
+    favorite
+    trash
+    notebook {
+      _id
+      name
+      favorite
+      notes{
+        _id
+        title
+      }
+    }
+  }
+  }`;
+
+//softDelete
+export const trashNote = noteID =>
+  `mutation {
+  softDeleteNote(noteID:"${noteID}"){
+    title
+    _id
+    trash
+    body
+    createdAt
+    updatedAt
+    favorite
+    trash
+    notebook{
+      _id
+    }
+  }
+  }`;
+
+export const restoreNote = noteID =>
+  `mutation {
+    restoreNote(noteID:"${noteID}"){
+    _id
+    title
+    trash
+    body
+    createdAt
+    updatedAt
+    favorite
+    trash
+    notebook{
+      _id
+    }
+  }
+  }`;
+
+export const noteFavoriteTrue = noteID =>
+  `mutation {
+    noteFavoriteTrue(noteID:"${noteID}"){
+    _id
+    title
+    trash
+    body
+    createdAt
+    updatedAt
+    favorite
+    trash
+  }
+  }`;
+
+export const noteFavoriteFalse = noteID =>
+  `mutation {
+    noteFavoriteFalse(noteID:"${noteID}"){
+    _id
+    title
+    trash
+    body
+    createdAt
+    updatedAt
+    favorite
+    trash
+  }
+  }`;

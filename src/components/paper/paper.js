@@ -19,7 +19,6 @@ const PaperSheet = props => {
   const classes = useStyles();
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down("md"));
-  console.log(smallScreen);
   return (
     <div>
       <Paper
