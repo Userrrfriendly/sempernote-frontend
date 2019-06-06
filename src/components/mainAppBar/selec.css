@@ -1,0 +1,13 @@
+.css-1pcexqc-container {
+  min-width: 8rem;
+  flex-grow: 1;
+  max-width: 12rem;
+}
+
+.select-tag {
+  min-width: 12rem;
+  flex-grow: 1;
+  max-width: 30rem;
+  margin-left: 1rem;
+  /* color: red; */
+}

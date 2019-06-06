@@ -1,7 +1,9 @@
-## Small Priority
+## low Priority
 
 - Login page enable 'remember me' commented out checkbox, along with its functionality
 - Login page enable "forgot password" -> backend
+- https://material-ui.com/components/text-fields/  Input Adornments  show/hide password
+- for TAGS SELECT use Material-UI example with chips https://material-ui.com/components/autocomplete/ (it still uses react-select under the hood)
 - create a theme for the app / create a dark theme
 - (QUILL) If you want the toolbar not to be fixed but appear when you select some text use the bubble theme
 - create and add sempernote logo in index.html head

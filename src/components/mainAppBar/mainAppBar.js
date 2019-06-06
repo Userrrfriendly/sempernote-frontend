@@ -22,9 +22,9 @@ import {
   MoreVertRounded,
   // MoreHorizRounded,
   StarRounded,
-  StyleRounded,
+  // StyleRounded,
   Info,
-  LibraryBooksRounded,
+  // LibraryBooksRounded,
   SaveRounded,
   ArrowBack
 } from "@material-ui/icons";
@@ -33,6 +33,9 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import NoteCounter from "./noteCounter";
 import SortMenu from "./sortMenu";
 import { Link } from "react-router-dom";
+
+import SelectNotebook from "./selectNotebook";
+import SelectTag from "./selectTag";
 
 const useStyles = makeStyles({
   root: {
@@ -225,17 +228,13 @@ const MainAppBar = props => {
                     <SaveRounded />
                   </IconButton>
                 </Tooltip>
-                <Tooltip title="Change Notebook">
-                  <IconButton
-                    // aria-owns={open ? 'menu-appbar' : undefined}
-                    aria-haspopup="true"
-                    // onClick={handleMenu}
-                    color="inherit"
-                  >
-                    <LibraryBooksRounded />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Tags">
+
+                <SelectNotebook
+                  activeNote={context.activeNote}
+                  notebooks={context.notebooks}
+                />
+
+                {/* <Tooltip title="Tags">
                   <IconButton
                     // aria-owns={open ? 'menu-appbar' : undefined}
                     aria-haspopup="true"
@@ -244,7 +243,11 @@ const MainAppBar = props => {
                   >
                     <StyleRounded />
                   </IconButton>
-                </Tooltip>
+                </Tooltip> */}
+                <SelectTag
+                  activeNote={context.activeNote}
+                  notebooks={context.notebooks}
+                />
                 <Tooltip title="Favorites">
                   <IconButton
                     // aria-owns={open ? 'menu-appbar' : undefined}
