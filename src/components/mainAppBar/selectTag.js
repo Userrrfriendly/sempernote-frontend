@@ -44,13 +44,13 @@ class SelectTag extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log(this.state.selectedOption);
-    if (this.props.activeNote !== prevProps.activeNote) {
-      const selectedIndex = this.options().findIndex(
-        option => option.value === this.props.activeNote.notebook._id
-      );
-      this.setState({ selectedOption: this.options()[selectedIndex] });
-    }
+    // console.log(this.state.selectedOption);
+    // if (this.props.activeNote !== prevProps.activeNote) {
+    //   const selectedIndex = this.options().findIndex(
+    //     option => option.value === this.props.activeNote.notebook._id
+    //   );
+    //   this.setState({ selectedOption: this.options()[selectedIndex] });
+    // }
   }
 
   options = () => {

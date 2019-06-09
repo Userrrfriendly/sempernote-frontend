@@ -13,6 +13,17 @@ export const mergeNotes = array =>
     return accumulator.flat();
   }, []);
 
+//removes unnesessary data from notebooks.notes and leaves only _id and title
+export const simplifyNotebooks = array =>
+  array.map(notebook => {
+    return {
+      ...notebook,
+      notes: notebook.notes.map(note => {
+        return { _id: note._id, title: note.title };
+      })
+    };
+  });
+
 export const selectNotebook = (arrayOfNotebooks, notebookID) =>
   arrayOfNotebooks.filter(notebook => notebook._id === notebookID);
 

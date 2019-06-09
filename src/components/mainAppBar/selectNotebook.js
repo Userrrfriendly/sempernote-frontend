@@ -58,6 +58,12 @@ class SelectNotebook extends React.Component {
     selectedOption: null
   };
 
+  options = () => {
+    return this.props.notebooks.map(book => {
+      return { value: book._id, label: book.name };
+    });
+  };
+
   componentDidMount() {
     const selectedIndex = this.options().findIndex(
       option => option.value === this.props.activeNote.notebook._id
@@ -69,19 +75,13 @@ class SelectNotebook extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     console.log("select updated");
-    if (this.props.activeNote !== prevProps.activeNote) {
-      const selectedIndex = this.options().findIndex(
-        option => option.value === this.props.activeNote.notebook._id
-      );
-      this.setState({ selectedOption: this.options()[selectedIndex] });
-    }
+    // if (this.props.activeNote !== prevProps.activeNote) {
+    //   const selectedIndex = this.options().findIndex(
+    //     option => option.value === this.props.activeNote.notebook._id
+    //   );
+    //   this.setState({ selectedOption: this.options()[selectedIndex] });
+    // }
   }
-
-  options = () => {
-    return this.props.notebooks.map(book => {
-      return { value: book._id, label: book.name };
-    });
-  };
 
   handleChange = selectedOption => {
     this.setState({ selectedOption });

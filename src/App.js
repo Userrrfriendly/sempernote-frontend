@@ -9,6 +9,7 @@ import ErrorRoute from "./components/ErrorRoute/errorRoute";
 import AuthScreen from "./components/authScreen/authscreen";
 
 import {
+  simplifyNotebooks,
   mergeNotes,
   selectNotebook,
   sortByDateNewestFirst
@@ -51,6 +52,7 @@ class App extends Component {
     });
   };
 
+  //for now used only in sorting notes
   updateNotes = notes => {
     this.setState({
       notes
@@ -79,32 +81,37 @@ class App extends Component {
       })
       .then(r => {
         const responseNote = r.data.softDeleteNote;
-        const newNotebooks = this.state.notebooks.filter(
-          notebook => notebook._id !== responseNote.notebook._id
-        );
-        let updatedNotebook = selectNotebook(
-          this.state.notebooks,
-          responseNote.notebook._id
-        );
-        updatedNotebook[0].notes = updatedNotebook[0].notes.map(note =>
-          note._id === responseNote._id ? { ...note, trash: true } : note
-        );
-        newNotebooks.push(updatedNotebook[0]);
-        return { responseNote, newNotebooks };
+
+        // const newNotebooks = this.state.notebooks.filter(
+        //   notebook => notebook._id !== responseNote.notebook._id
+        // );
+        // let updatedNotebook = selectNotebook(
+        //   this.state.notebooks,
+        //   responseNote.notebook._id
+        // );
+        // updatedNotebook[0].notes = updatedNotebook[0].notes.map(note =>
+        //   note._id === responseNote._id ? { ...note, trash: true } : note
+        // );
+        // newNotebooks.push(updatedNotebook[0]);
+        // return { responseNote, newNotebooks };
+
+        return { responseNote };
       })
       .then(data => {
         this.setState(prevState => {
+          // console.log(prevState);
           return {
             activeNote:
+              prevState.activeNote &&
               prevState.activeNote._id === data.responseNote._id
                 ? null
-                : prevState.activeNote._id,
+                : prevState.activeNote,
             notes: prevState.notes.map(note =>
               note._id === data.responseNote._id
                 ? { ...note, trash: true }
                 : note
-            ),
-            notebooks: data.newNotebooks
+            )
+            // ,notebooks: data.newNotebooks
           };
         });
       });
@@ -184,7 +191,9 @@ class App extends Component {
     //change color on icon (initially mannually when the theme is added just change it through theme)
     //send req to server if fail raise a toast
     const query = !note.favorite ? noteFavoriteTrue : noteFavoriteFalse;
-    const resName = !note.favorite ? "noteFavoriteTrue" : "noteFavoriteFalse";
+    const responseName = !note.favorite
+      ? "noteFavoriteTrue"
+      : "noteFavoriteFalse";
 
     const requestBody = {
       query: query(note._id)
@@ -205,40 +214,44 @@ class App extends Component {
         return res.json();
       })
       .then(r => {
-        const responseNote = r.data[resName];
+        const responseNote = r.data[responseName];
         console.log(responseNote);
-        const newNotebooks = this.state.notebooks.filter(
-          notebook => notebook._id !== responseNote.notebook._id
-        );
-        let updatedNotebook = selectNotebook(
-          this.state.notebooks,
-          responseNote.notebook._id
-        );
-        console.log(updatedNotebook[0]);
-        updatedNotebook[0].notes = updatedNotebook[0].notes.map(note =>
-          note._id === responseNote._id
-            ? { ...note, favorite: responseNote.favorite }
-            : note
-        );
-        newNotebooks.push(updatedNotebook[0]);
-        return { responseNote, newNotebooks };
+
+        // const newNotebooks = this.state.notebooks.filter(
+        //   notebook => notebook._id !== responseNote.notebook._id
+        // );
+        // let updatedNotebook = selectNotebook(
+        //   this.state.notebooks,
+        //   responseNote.notebook._id
+        // );
+        // console.log(updatedNotebook[0]);
+        // updatedNotebook[0].notes = updatedNotebook[0].notes.map(note =>
+        //   note._id === responseNote._id
+        //     ? { ...note, favorite: responseNote.favorite }
+        //     : note
+        // );
+        // newNotebooks.push(updatedNotebook[0]);
+        // return { responseNote, newNotebooks };
+        return { responseNote };
       })
       .then(data => {
         this.setState(prevState => {
           return {
             activeNote:
+              prevState.activeNote &&
               prevState.activeNote._id === data.responseNote._id
                 ? data.responseNote
-                : prevState.activeUI,
+                : prevState.activeNote,
             notes: prevState.notes.map(note =>
               note._id === data.responseNote._id
                 ? { ...note, favorite: data.responseNote.favorite }
                 : note
-            ),
-            notebooks: data.newNotebooks
+            )
+            // ,notebooks: data.newNotebooks
           };
         });
-      });
+      })
+      .catch(err => console.log(err));
   };
 
   setActiveNotebook = notebookId => {
@@ -248,6 +261,7 @@ class App extends Component {
     });
   };
 
+  //Defines what will render in mainAppBar component
   setActiveUI = (ui = "NOTES") => {
     this.setState({
       activeUI: ui
@@ -296,7 +310,11 @@ class App extends Component {
           this.state.notebooks,
           r.data.createNote.notebook._id
         );
-        updatedNotebook[0].notes.push(r.data.createNote);
+        // updatedNotebook[0].notes.push(r.data.createNote);
+        updatedNotebook[0].notes.push({
+          _id: r.data.createNote._id,
+          title: r.data.createNote.title
+        });
         newNotebooks.push(updatedNotebook[0]);
         let updatedNotes = this.state.notes.filter(
           note => !note.hasOwnProperty("temp")
@@ -308,7 +326,8 @@ class App extends Component {
           notes: updatedNotes,
           activeNote: r.data.createNote //this will trigger a re-render on editor and probably break things
         });
-      });
+      })
+      .catch(err => console.log(err));
   };
 
   updateNoteBody = (id, body) => {
@@ -342,7 +361,8 @@ class App extends Component {
         this.setState({
           notes: updatedNotes
         });
-      });
+      })
+      .catch(err => console.log(err));
   };
 
   createNotebook = name => {
@@ -367,7 +387,8 @@ class App extends Component {
       })
       .then(resData => {
         console.log(resData.data.createNotebook);
-        const notebooks = this.state.notebooks;
+        // const notebooks = this.state.notebooks;
+        const notebooks = [...this.state.notebooks];
         notebooks.push(resData.data.createNotebook);
         this.setState({
           notebooks: notebooks
@@ -399,7 +420,7 @@ class App extends Component {
       .then(resData => {
         this.setState({
           userName: resData.data.user.username,
-          notebooks: resData.data.user.notebooks,
+          notebooks: simplifyNotebooks(resData.data.user.notebooks),
           notes: sortByDateNewestFirst(
             mergeNotes(resData.data.user.notebooks),
             "updatedAt"

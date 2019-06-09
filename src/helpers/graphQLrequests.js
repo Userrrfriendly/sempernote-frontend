@@ -87,6 +87,7 @@ export const createNotebook = name =>
     favorite
     notes{
       _id
+      title
     }
   }
 }`;
@@ -145,6 +146,8 @@ export const trashNote = noteID =>
     trash
     notebook{
       _id
+      name
+      favorite
     }
   }
   }`;
@@ -162,6 +165,8 @@ export const restoreNote = noteID =>
     trash
     notebook{
       _id
+      name
+      favorite
     }
   }
   }`;
@@ -179,6 +184,8 @@ export const noteFavoriteTrue = noteID =>
     trash
     notebook {
       _id
+      name
+      favorite
     }
   }
   }`;
@@ -196,6 +203,8 @@ export const noteFavoriteFalse = noteID =>
     trash
     notebook{
       _id
+      name
+      favorite
     }
   }
   }`;

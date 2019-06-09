@@ -15,6 +15,7 @@ class ExpandedNote extends Component {
   editorRef = React.createRef();
 
   componentDidMount() {
+    this._ismounted = true;
     const toolbarOptions = [
       ["bold", "italic", "underline", "strike"], // toggled buttons
       [{ color: [] }, { background: [] }], // dropdown with defaults from theme
@@ -64,19 +65,23 @@ class ExpandedNote extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    //the condition will be true if the user opens a new note
     if (prevProps.note._id !== this.props.note._id) {
-      //the condition will be true if the user opens a new note
-      const newBody = new Delta(JSON.parse(this.props.note.body));
-      this.editor.setContents(newBody);
-      this.setState({
-        delta: newBody
-      });
+      //double check if the component is mounted
+      if (this._ismounted) {
+        const newBody = new Delta(JSON.parse(this.props.note.body));
+        this.editor.setContents(newBody);
+        this.setState({
+          delta: newBody
+        });
+      }
     }
     console.log("EDITOR UPDATED");
   }
 
   componentWillUnmount() {
     this.autoSave.flush();
+    this._ismounted = false;
     console.log("Editor unmounting...");
   }
 
