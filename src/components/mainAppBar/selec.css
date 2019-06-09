@@ -1,4 +1,4 @@
-.css-1pcexqc-container {
+.select-notebook {
   min-width: 8rem;
   flex-grow: 1;
   max-width: 12rem;
@@ -9,5 +9,11 @@
   flex-grow: 1;
   max-width: 30rem;
   margin-left: 1rem;
-  /* color: red; */
+  /* height: 3rem; */
+  /* if i change the height it will drift upwards */
+  /* max-height: 64px; */
 }
+/* .select-tag div:first-child {
+  max-height: 60px;
+  color: red;
+} */

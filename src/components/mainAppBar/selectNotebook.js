@@ -85,13 +85,19 @@ class SelectNotebook extends React.Component {
 
   handleChange = selectedOption => {
     this.setState({ selectedOption });
-    console.log(`Option selected:`, selectedOption);
+    console.log(`Notebook selected:`, selectedOption);
+    this.props.moveNoteToNotebook(
+      this.props.activeNote._id,
+      selectedOption.value
+    );
   };
+
   render() {
     const { selectedOption } = this.state;
 
     return (
       <Select
+        className="select-notebook"
         value={selectedOption}
         onChange={this.handleChange}
         options={this.options()}

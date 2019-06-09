@@ -232,6 +232,7 @@ const MainAppBar = props => {
                 <SelectNotebook
                   activeNote={context.activeNote}
                   notebooks={context.notebooks}
+                  moveNoteToNotebook={context.moveNoteToNotebook}
                 />
 
                 {/* <Tooltip title="Tags">

@@ -1,13 +1,9 @@
 import React, { Component } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
-// import "materialize-css/dist/css/materialize.min.css";
-// import "./mat.css"; //core styles from materialize-css
-// import M from "materialize-css";
 
 import Context from "./context/context";
 
 // import "./App.css";
-// import Nav from "./components/header/nav";
 import Main from "./components/main/main";
 import ErrorRoute from "./components/ErrorRoute/errorRoute";
 import AuthScreen from "./components/authScreen/authscreen";
@@ -24,7 +20,8 @@ import {
   updateNoteBody,
   trashNote,
   noteFavoriteTrue,
-  noteFavoriteFalse
+  noteFavoriteFalse,
+  moveNote
 } from "./helpers/graphQLrequests";
 
 class App extends Component {
@@ -38,10 +35,6 @@ class App extends Component {
     activeNotebook: null,
     activeUI: "NOTES"
   };
-
-  componentDidMount() {
-    // M.AutoInit();
-  }
 
   login = (token, userId, tokenExpiration) => {
     this.setState({ token: token, userId: userId });
@@ -117,6 +110,75 @@ class App extends Component {
       });
   };
 
+  moveNoteToNotebook = (noteID, notebookID) => {
+    //Send a request to server then :
+    const requestBody = {
+      query: moveNote(noteID, notebookID)
+    };
+
+    fetch("http://localhost:8000/graphql", {
+      method: "POST",
+      body: JSON.stringify(requestBody),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + this.state.token
+      }
+    })
+      .then(res => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error("Failed!");
+        }
+        return res.json();
+      })
+      .then(r => {
+        const responseNote = r.data.moveNote;
+        const newNotebooks = this.state.notebooks.filter(
+          notebook =>
+            notebook._id !== responseNote.notebook._id ||
+            notebook._id !== notebookID
+        );
+        //delete the note from the oldnotebook
+        //add the note to the newnotebook
+        let updatedNotebook = selectNotebook(
+          this.state.notebooks,
+          responseNote.notebook._id
+        );
+        // updatedNotebook[0].notes = updatedNotebook[0].notes.map(note =>
+        //   note._id === responseNote._id ? { ...note, trash: true } : note
+        // );
+        updatedNotebook[0].notes.push(responseNote);
+        let oldNotebook = selectNotebook(this.state.notebooks, notebookID);
+        if (oldNotebook.notes && oldNotebook.notes.length > 0) {
+          newNotebooks.push({
+            ...oldNotebook.notes.filter(note => note._id !== noteID)
+          });
+        } else {
+          newNotebooks.push(oldNotebook);
+        }
+        //const newNotebookNotes = responseNote.notebook
+        //const newNotebooksNotes add the new note
+        // newNotebooks.push(updatedNotebook[0]);
+        newNotebooks.push(updatedNotebook[0]);
+        return { responseNote, newNotebooks };
+      })
+      .then(data => {
+        this.setState(prevState => {
+          return {
+            activeNote:
+              prevState.activeNote._id === data.responseNote._id
+                ? data.responseNote
+                : null,
+            notes: prevState.notes.map(note =>
+              note._id === data.responseNote._id ? data.responseNote : note
+            ),
+            notebooks: data.newNotebooks
+          };
+        });
+        console.log("note moved");
+      })
+      .catch(err => console.log(err));
+  };
+
   noteToggleFavorite = note => {
     //toggle favorite-> favorite:!value
     //change color on icon (initially mannually when the theme is added just change it through theme)
@@ -143,7 +205,6 @@ class App extends Component {
         return res.json();
       })
       .then(r => {
-        // console.log(query);
         const responseNote = r.data[resName];
         console.log(responseNote);
         const newNotebooks = this.state.notebooks.filter(
@@ -184,12 +245,10 @@ class App extends Component {
     //can set it to null by passing null
     this.setState({
       activeNotebook: notebookId
-      // activeNotebook: notebookId ? notebookId : null
     });
   };
 
   setActiveUI = (ui = "NOTES") => {
-    //in case something goes wrong pass
     this.setState({
       activeUI: ui
     });
@@ -370,7 +429,8 @@ class App extends Component {
             setActiveUI: this.setActiveUI,
             updateNotes: this.updateNotes,
             softDeleteNote: this.softDeleteNote,
-            noteToggleFavorite: this.noteToggleFavorite
+            noteToggleFavorite: this.noteToggleFavorite,
+            moveNoteToNotebook: this.moveNoteToNotebook
             // activeUI: this.state.activeUI
           }}
         >

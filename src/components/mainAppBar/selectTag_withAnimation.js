@@ -3,7 +3,7 @@ import Select, { components } from "react-select";
 import "./selec.css";
 import { StyleRounded } from "@material-ui/icons";
 import { Tooltip } from "@material-ui/core/";
-// import makeAnimated from "react-select/animated";
+import makeAnimated from "react-select/animated";
 
 /**Change Icon on React-Select dropdown
  * https://github.com/JedWatson/react-select/issues/3493
@@ -11,23 +11,29 @@ import { Tooltip } from "@material-ui/core/";
 const DropdownIndicator = props => {
   return (
     <components.DropdownIndicator {...props}>
-      <Tooltip title="Edit Tags">
+      <Tooltip title="Change Notebook">
         <StyleRounded style={{ color: "#202020" }} />
       </Tooltip>
     </components.DropdownIndicator>
   );
 };
 
-/*
-* animatedComponets cause inconsistencies with height (it's smaller than the select notebook...)
-* will rettry to implement it once I figure out how to target styles in react select
-
 const MultiValueContainer = props => {
   return <components.DropdownIndicator {...props} />;
 };
-
 const animatedComponents = makeAnimated(DropdownIndicator, MultiValueContainer);
-*/
+
+// export default function AnimatedMulti() {
+//   return (
+//     <Select
+//       closeMenuOnSelect={false}
+//       components={animatedComponents}
+//       defaultValue={[colourOptions[4], colourOptions[5]]}
+//       isMulti
+//       options={colourOptions}
+//     />
+//   );
+// }
 
 class SelectTag extends React.Component {
   state = {
@@ -44,7 +50,7 @@ class SelectTag extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log(this.state.selectedOption);
+    console.log("select updated");
     if (this.props.activeNote !== prevProps.activeNote) {
       const selectedIndex = this.options().findIndex(
         option => option.value === this.props.activeNote.notebook._id
@@ -69,14 +75,13 @@ class SelectTag extends React.Component {
     return (
       <Select
         className="select-tag"
+        classNamePrefix="select"
         value={selectedOption}
         onChange={this.handleChange}
         options={this.options()}
-        // components={animatedComponents}
-        components={{ DropdownIndicator }}
+        components={animatedComponents}
         isMulti
         closeMenuOnSelect={false}
-        placeholder="Select Tags"
       />
     );
   }

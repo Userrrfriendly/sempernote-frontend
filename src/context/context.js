@@ -20,5 +20,6 @@ export default React.createContext({
   setActiveUI: () => {},
   updateNotes: () => {},
   softDeleteNote: () => {},
-  noteToggleFavorite: () => {}
+  noteToggleFavorite: () => {},
+  moveNote: () => {}
 });
