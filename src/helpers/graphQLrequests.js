@@ -2,6 +2,14 @@ export const fetchUserData = userId =>
   `query {
   user(userId: "${userId}") {
     username
+    tags{
+      _id
+      tagname
+      notes {
+        _id
+        title
+      }
+    }
     notebooks {
       _id
       name
@@ -14,6 +22,10 @@ export const fetchUserData = userId =>
         trash
         createdAt
         updatedAt
+        tags{
+          _id
+          tagname
+        }
         notebook{
           _id
           name
@@ -208,3 +220,83 @@ export const noteFavoriteFalse = noteID =>
     }
   }
   }`;
+
+//TAGS
+export const createTag = tagname =>
+  `  mutation {
+    createTag(tagName: "${tagname}") {
+      _id
+      tagname
+      favorite
+      notes {
+        _id
+        title
+      }
+    }
+  }`;
+
+export const assignTag = (tagID, noteID) =>
+  `mutation {
+    assignTag(assignTagInput: {tagID: "${tagID}", noteID: "${noteID}"}) {
+      _id
+      tagname
+      favorite
+      notes {
+        _id
+        title
+      }
+    }
+  }`;
+
+export const unAssignTag = (tagID, noteID) =>
+  ` mutation { 
+    unAssignTag (tagID:"${tagID}", noteID:"${noteID}") {
+    _id
+    tagname
+    favorite
+    notes{
+      _id
+      title
+    }
+  }
+}`;
+
+export const tagFavoriteTrue = tagID =>
+  `mutation {
+  tagFavoriteTrue(tagID:"${tagID}") {
+    _id
+    tagname
+    favorite
+    notes{
+      _id
+      title
+    }
+  }
+}`;
+
+export const tagFavoriteFalse = tagID =>
+  `mutation {
+  tagFavoriteFalse(tagID:"${tagID}") {
+    _id
+    tagname
+    favorite
+    notes{
+      _id
+      title
+    }
+  }
+}`;
+
+//returns the deleted Tag object
+export const deleteTag = tagID =>
+  `mutation {
+  deleteTag(tagID:"5cfe6ce5eccbc71ccc20d003") {
+    _id
+    tagname
+    favorite
+    notes{
+      _id
+      title
+    }
+  }
+}`;

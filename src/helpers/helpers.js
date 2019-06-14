@@ -39,10 +39,12 @@ export const sortByDateOldestFirst = (arrOfObjects, key) =>
     (a, b) => new Date(a[key]).getTime() - new Date(b[key]).getTime()
   );
 
-export const sortByTitleAsc = arrOfObjects =>
+export const sortByTitleAsc = (arrOfObjects, sortingProp = "title") =>
   arrOfObjects.sort((a, b) => {
-    const titleA = a.title.toUpperCase();
-    const titleB = b.title.toUpperCase();
+    const titleA = a[sortingProp].toUpperCase();
+    const titleB = b[sortingProp].toUpperCase();
+    // const titleA = a.title.toUpperCase();
+    // const titleB = b.title.toUpperCase();
     if (titleA < titleB) {
       return -1;
     }

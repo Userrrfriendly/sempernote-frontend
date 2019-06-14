@@ -1,22 +1,27 @@
 import React, { Component } from "react";
 import Modal from "react-modal";
+import { Typography, TextField, Button } from "@material-ui/core";
 
 const customStyles = {
   content: {
-    top: "35%",
+    top: "30%",
     left: "50%",
     right: "auto",
     bottom: "auto",
     marginRight: "-50%",
     transform: "translate(-50%, -50%)",
-    width: "95%",
+    width: "85%",
     minHeight: "30vh",
-    maxHeight: "45vh",
+    maxHeight: "calc(100vh - 30%)",
     boxShadow:
-      " 0 24px 38px 3px rgba(0,0,0,0.28), 0 9px 46px 8px rgba(0,0,0,0.24), 0 11px 15px -7px rgba(0,0,0,0.4)"
-  }
+      " 0 24px 38px 3px rgba(0,0,0,0.14), 0 9px 46px 8px rgba(0,0,0,0.12), 0 11px 15px -7px rgba(0,0,0,0.2)",
+    overflow: "visible",
+    borderRadius: "4px"
+  },
+  overlay: { zIndex: 2 }
 };
 
+//required for react-modal
 Modal.setAppElement("#root");
 
 class NotebookModal extends Component {
@@ -25,14 +30,16 @@ class NotebookModal extends Component {
     error: false
   };
 
-  inputRef = React.createRef();
-
   onChange = e => {
     this.setState({
       value: e.target.value,
       error: false
     });
   };
+
+  componentDidUpdate() {
+    console.log("noteBOOK modal updated");
+  }
 
   onSubmit = e => {
     e.preventDefault();
@@ -68,18 +75,6 @@ class NotebookModal extends Component {
     }
   };
 
-  // openModal = () => {
-  //   this.setState({ modalIsOpen: true });
-  // };
-
-  // closeModal = () => {
-  //   this.setState({ modalIsOpen: false });
-  // };
-
-  afterOpenModal = () => {
-    this.inputRef.current.focus();
-  };
-
   render() {
     return (
       <div>
@@ -90,40 +85,30 @@ class NotebookModal extends Component {
           style={customStyles}
           contentLabel="Create Notebook" //improves accessibility
         >
-          <form
-            id="create-notebook"
-            className="modal1 hoberable"
-            onSubmit={this.onSubmit}
-          >
+          <form onSubmit={this.onSubmit}>
             <div className="modal-content1">
-              <h4>Create Notebook</h4>
-              <div
-                className={
-                  this.state.error
-                    ? "red-text input-field col s6"
-                    : "input-field col s6"
-                }
-              >
-                <i className="material-icons prefix">library_add</i>
-                <label htmlFor="notebookmodal__input">
-                  Enter notebook name
-                </label>
-                <input
-                  ref={this.inputRef}
-                  autoFocus={true}
+              <Typography variant="h4" component="h1">
+                Create Notebook
+              </Typography>
+              <div>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  label="Note Title"
                   type="text"
-                  id="notebookmodal__input"
-                  onChange={this.onChange}
+                  fullWidth
                   value={this.state.value}
+                  onChange={this.onChange}
+                  placeholder="Enter Notebook Name"
                 />
               </div>
               {this.state.error && this.state.value && (
-                <p className="red-text">
+                <p style={{ color: "red" }}>
                   Notebook "{this.state.value}" already exists!
                 </p>
               )}
               {this.state.error && !this.state.value && (
-                <p className="red-text">Please enter a notebook title</p>
+                <p style={{ color: "red" }}>Please enter a notebook title</p>
               )}
             </div>
             <div
@@ -133,39 +118,18 @@ class NotebookModal extends Component {
                 justifyContent: "flex-end"
               }}
             >
-              {/* <button
-                style={{ fontWeight: "bold", marginLeft: "1rem" }}
-                type="submit"
-                className="waves-effect waves-green btn-flat btn-large green-text"
-                onClick={this.onSubmit}
-              >
-                Create
-              </button>
-              <button
-                style={{ fontWeight: "bold", order: "-1", marginLeft: "1rem" }}
-                onClick={this.props.closeModal}
-                className="red-text modal-close waves-effect waves-green btn-large btn-flat"
-              >
-                Cancel
-              </button> */}
-              <button
-                //type="button" ensures that upon pressing the enter key the button isn't triggered and the form is not submitted, more:
-                //https://stackoverflow.com/questions/42053775/getting-error-form-submission-canceled-because-the-form-is-not-connected
+              <Button
                 type="button"
-                style={{ fontWeight: "bold" }}
                 onClick={this.props.closeModal}
-                className="red-text modal-close waves-effect waves-green btn-large btn-flat"
+                color="primary"
               >
                 Cancel
-              </button>
-              <button
-                style={{ fontWeight: "bold", marginLeft: "1rem" }}
-                type="submit"
-                className="waves-effect waves-green btn-flat btn-large green-text"
-                onClick={this.onSubmit}
-              >
-                Create
-              </button>
+              </Button>
+              <Button type="submit" onClick={this.onSubmit} color="primary">
+                Create Note
+              </Button>
+              {/*type="button" ensures that upon pressing the enter key the button isn't triggered and the form is not submitted, more:
+                https://stackoverflow.com/questions/42053775/getting-error-form-submission-canceled-because-the-form-is-not-connected */}
             </div>
           </form>
         </Modal>

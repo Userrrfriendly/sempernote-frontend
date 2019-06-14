@@ -97,7 +97,10 @@ class SpeedDialTooltipOpen extends React.Component {
               icon={action.icon}
               tooltipTitle={action.name}
               // tooltipOpen
-              onClick={this.handleClick.bind(this, this.props.createNote)}
+              onClick={this.handleClick.bind(
+                this,
+                this.props.createTag.bind(this, action.name)
+              )}
             />
           ))}
         </SpeedDial>

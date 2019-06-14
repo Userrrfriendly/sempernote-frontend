@@ -93,6 +93,7 @@ const Main = props => {
             <Fab
               createNote={openCreateNoteModal}
               createNoteBook={openCreateNotebookModal}
+              createTag={context.createTag}
             />
           )}
         />

@@ -8,6 +8,7 @@ export default React.createContext({
   activeNote: null,
   activeNotebook: null,
   activeUI: "NOTES",
+  tags: null,
   login: (token, userId, tokenExpiration) => {},
   logout: () => {},
   fetchUserData: () => {},
@@ -21,5 +22,6 @@ export default React.createContext({
   updateNotes: () => {},
   softDeleteNote: () => {},
   noteToggleFavorite: () => {},
-  moveNote: () => {}
+  moveNote: () => {},
+  createTag: () => {}
 });

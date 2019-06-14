@@ -235,20 +235,14 @@ const MainAppBar = props => {
                   moveNoteToNotebook={context.moveNoteToNotebook}
                 />
 
-                {/* <Tooltip title="Tags">
-                  <IconButton
-                    // aria-owns={open ? 'menu-appbar' : undefined}
-                    aria-haspopup="true"
-                    // onClick={handleMenu}
-                    color="inherit"
-                  >
-                    <StyleRounded />
-                  </IconButton>
-                </Tooltip> */}
                 <SelectTag
                   activeNote={context.activeNote}
                   notebooks={context.notebooks}
+                  tags={context.tags}
+                  assignTag={context.assignTag}
+                  unAssignTag={context.unAssignTag}
                 />
+
                 <Tooltip title="Favorites">
                   <IconButton
                     // aria-owns={open ? 'menu-appbar' : undefined}

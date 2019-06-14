@@ -22,8 +22,13 @@ import {
   trashNote,
   noteFavoriteTrue,
   noteFavoriteFalse,
-  moveNote
+  moveNote,
+  createTag,
+  assignTag,
+  unAssignTag
 } from "./helpers/graphQLrequests";
+
+// import { find as _find } from "lodash";
 
 class App extends Component {
   state = {
@@ -32,6 +37,7 @@ class App extends Component {
     userName: null,
     notebooks: null,
     notes: null,
+    tags: null,
     activeNote: null,
     activeNotebook: null,
     activeUI: "NOTES"
@@ -117,7 +123,7 @@ class App extends Component {
       });
   };
 
-  moveNoteToNotebook = (noteID, notebookID) => {
+  moveNoteToNotebook = (noteID, notebookID, oldNotebookID) => {
     //Send a request to server then :
     const requestBody = {
       query: moveNote(noteID, notebookID)
@@ -139,39 +145,49 @@ class App extends Component {
       })
       .then(r => {
         const responseNote = r.data.moveNote;
+        console.log(this.state.notebooks);
         const newNotebooks = this.state.notebooks.filter(
           notebook =>
-            notebook._id !== responseNote.notebook._id ||
-            notebook._id !== notebookID
+            notebook._id !== oldNotebookID && notebook._id !== notebookID
         );
+        // console.log(responseNote.notebook._id, notebookID, oldNotebookID);
+        console.log(newNotebooks);
+
         //delete the note from the oldnotebook
         //add the note to the newnotebook
-        let updatedNotebook = selectNotebook(
-          this.state.notebooks,
-          responseNote.notebook._id
-        );
+        let updatedNotebook = selectNotebook(this.state.notebooks, notebookID);
         // updatedNotebook[0].notes = updatedNotebook[0].notes.map(note =>
         //   note._id === responseNote._id ? { ...note, trash: true } : note
         // );
         updatedNotebook[0].notes.push(responseNote);
-        let oldNotebook = selectNotebook(this.state.notebooks, notebookID);
-        if (oldNotebook.notes && oldNotebook.notes.length > 0) {
-          newNotebooks.push({
-            ...oldNotebook.notes.filter(note => note._id !== noteID)
-          });
-        } else {
-          newNotebooks.push(oldNotebook);
-        }
+        let oldNotebook = selectNotebook(this.state.notebooks, oldNotebookID);
+        oldNotebook[0].notes = oldNotebook[0].notes.filter(
+          note => note._id !== noteID
+        );
+        console.log(oldNotebook);
+        // updatedNotebook[0].notes.push(oldNotebook)
+        // if (oldNotebook.notes && oldNotebook.notes.length > 0) {
+        //   newNotebooks.push({
+        //     ...oldNotebook.notes.filter(note => note._id !== noteID)
+        //   });
+        // } else {
+        //   newNotebooks.push(oldNotebook[0]);
+        // }
         //const newNotebookNotes = responseNote.notebook
         //const newNotebooksNotes add the new note
         // newNotebooks.push(updatedNotebook[0]);
-        newNotebooks.push(updatedNotebook[0]);
+        console.log("newNotebooks:");
+        console.log(newNotebooks);
+        console.log(updatedNotebook[0]);
+        newNotebooks.push(updatedNotebook[0], oldNotebook[0]);
         return { responseNote, newNotebooks };
       })
       .then(data => {
+        console.log(data.responseNote, data.newNotebooks);
         this.setState(prevState => {
           return {
             activeNote:
+              prevState.activeNote &&
               prevState.activeNote._id === data.responseNote._id
                 ? data.responseNote
                 : null,
@@ -421,6 +437,7 @@ class App extends Component {
         this.setState({
           userName: resData.data.user.username,
           notebooks: simplifyNotebooks(resData.data.user.notebooks),
+          tags: resData.data.user.tags,
           notes: sortByDateNewestFirst(
             mergeNotes(resData.data.user.notebooks),
             "updatedAt"
@@ -430,6 +447,127 @@ class App extends Component {
       .catch(err => {
         console.log(err);
       });
+  };
+
+  /** TAGS **/
+  createTag = tagID => {
+    //Send a request to server then :
+    const requestBody = {
+      query: createTag(tagID)
+    };
+
+    fetch("http://localhost:8000/graphql", {
+      method: "POST",
+      body: JSON.stringify(requestBody),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + this.state.token
+      }
+    })
+      .then(res => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error("Failed!");
+        }
+        return res.json();
+      })
+      .then(r => {
+        const newTag = r.data.createTag;
+        console.log(newTag);
+        this.setState(prevState => {
+          return { tags: prevState.tags.concat(newTag) };
+        });
+      })
+      .catch(err => console.log(err));
+  };
+
+  assignTag = (tagID, noteID) => {
+    const requestBody = {
+      query: assignTag(tagID, noteID)
+    };
+
+    fetch("http://localhost:8000/graphql", {
+      method: "POST",
+      body: JSON.stringify(requestBody),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + this.state.token
+      }
+    })
+      .then(res => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error("Failed!");
+        }
+        return res.json();
+      })
+      .then(r => {
+        console.log(r);
+        const assignedTag = r.data.assignTag;
+        const modifiedNote = this.state.notes.filter(
+          note => note._id === noteID
+        );
+        modifiedNote[0].tags = modifiedNote[0].tags.concat({
+          _id: assignedTag._id,
+          tagname: assignedTag.tagname
+        });
+        this.setState(prevState => {
+          return {
+            tags: prevState.tags.map(tag =>
+              tag._id === assignTag._id ? assignTag : tag
+            ),
+            notes: prevState.notes.map(note =>
+              note._id === noteID ? modifiedNote[0] : note
+            )
+          };
+        });
+      })
+      .catch(err => console.log(err));
+  };
+
+  unAssignTag = (tagID, noteID) => {
+    const requestBody = {
+      query: unAssignTag(tagID, noteID)
+    };
+
+    fetch("http://localhost:8000/graphql", {
+      method: "POST",
+      body: JSON.stringify(requestBody),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + this.state.token
+      }
+    })
+      .then(res => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error("Failed!");
+        }
+        return res.json();
+      })
+      .then(r => {
+        console.log(r);
+        const unAssignedTag = r.data.unAssignTag;
+        const modifiedNote = this.state.notes.filter(
+          note => note._id === noteID
+        );
+        modifiedNote[0].tags = modifiedNote[0].tags.filter(
+          tag => tag._id !== unAssignedTag._id
+        );
+        // modifiedNote[0].tags = modifiedNote[0].tags.concat({
+        //   _id: unAssignedTag._id,
+        //   tagname: unAssignedTag.tagname
+        // });
+
+        this.setState(prevState => {
+          return {
+            tags: prevState.tags.map(tag =>
+              tag._id === unAssignedTag._id ? unAssignedTag : tag
+            ),
+            notes: prevState.notes.map(note =>
+              note._id === noteID ? modifiedNote[0] : note
+            )
+          };
+        });
+      })
+      .catch(err => console.log(err));
   };
 
   render() {
@@ -451,7 +589,10 @@ class App extends Component {
             updateNotes: this.updateNotes,
             softDeleteNote: this.softDeleteNote,
             noteToggleFavorite: this.noteToggleFavorite,
-            moveNoteToNotebook: this.moveNoteToNotebook
+            moveNoteToNotebook: this.moveNoteToNotebook,
+            createTag: this.createTag,
+            assignTag: this.assignTag,
+            unAssignTag: this.unAssignTag
             // activeUI: this.state.activeUI
           }}
         >

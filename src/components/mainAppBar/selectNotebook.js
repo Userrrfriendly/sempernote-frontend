@@ -3,6 +3,7 @@ import Select, { components } from "react-select";
 import "./selec.css";
 import { LibraryBooksRounded } from "@material-ui/icons";
 import { Tooltip } from "@material-ui/core/";
+import { sortByTitleAsc } from "../../helpers/helpers";
 
 /**Change Icon on React-Select dropdown
  * https://github.com/JedWatson/react-select/issues/3493
@@ -59,7 +60,8 @@ class SelectNotebook extends React.Component {
   };
 
   options = () => {
-    return this.props.notebooks.map(book => {
+    //display the notebooks in alphabetical order
+    return sortByTitleAsc(this.props.notebooks, "name").map(book => {
       return { value: book._id, label: book.name };
     });
   };
@@ -88,7 +90,8 @@ class SelectNotebook extends React.Component {
     console.log(`Notebook selected:`, selectedOption);
     this.props.moveNoteToNotebook(
       this.props.activeNote._id,
-      selectedOption.value
+      selectedOption.value,
+      this.props.activeNote.notebook._id
     );
   };
 

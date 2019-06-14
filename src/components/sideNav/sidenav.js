@@ -13,6 +13,7 @@ import {
 
 import Context from "../../context/context";
 import { NOTES, NOTEBOOKS, FAVORITES, TAGS } from "../../context/activeUItypes";
+// import NoteDialog from "../createNoteModal/noteModal_failed";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -63,6 +64,12 @@ const SideNav = props => {
             </ListItemIcon>
           </ListItem>
         </Tooltip>
+        {/* <NoteDialog
+          activeNote={context.activeNote}
+          notebooks={context.notebooks}
+          moveNoteToNotebook={context.moveNoteToNotebook}
+        /> */}
+        {/* </Tooltip> */}
         <Tooltip title="Create Notebook" placement="right">
           <ListItem
             className={classes.list_item}
