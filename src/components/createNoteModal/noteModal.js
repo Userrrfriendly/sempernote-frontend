@@ -22,7 +22,7 @@ const customStyles = {
     overflow: "visible",
     borderRadius: "4px"
   },
-  overlay: { zIndex: 2 }
+  overlay: { zIndex: 1302 }
 };
 
 //Custom Icon for React-Select

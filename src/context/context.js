@@ -5,6 +5,8 @@ export default React.createContext({
   userId: null,
   userName: null,
   notes: null,
+  filteredNotes: null,
+  trash: null,
   activeNote: null,
   activeNotebook: null,
   activeUI: "NOTES",
@@ -23,5 +25,6 @@ export default React.createContext({
   softDeleteNote: () => {},
   noteToggleFavorite: () => {},
   moveNote: () => {},
-  createTag: () => {}
+  createTag: () => {},
+  setFilteredNotes: () => {}
 });

@@ -6,14 +6,17 @@ import {
   SearchRounded,
   StarRounded,
   DescriptionRounded,
-  LibraryBooksRounded,
+  // LibraryBooksRounded,
   LibraryAddRounded,
-  StyleRounded
+  StyleRounded,
+  DeleteSweepRounded
 } from "@material-ui/icons";
 
 import Context from "../../context/context";
 import { NOTES, NOTEBOOKS, FAVORITES, TAGS } from "../../context/activeUItypes";
 // import NoteDialog from "../createNoteModal/noteModal_failed";
+
+import NotebookDrawer from "../notebookDrawer/notebookDrawer";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -25,7 +28,7 @@ const useStyles = makeStyles(theme => ({
     top: "0",
     boxShadow:
       "0px 3px 5px -1px rgba(0,0,0,0.2), 0px 5px 8px 0px rgba(0,0,0,0.14), 0px 1px 14px 0px rgba(0,0,0,0.12)",
-    zIndex: 1
+    zIndex: 1301 //override the drawers zIndex
   },
   list_item: {
     marginBottom: "1rem"
@@ -121,18 +124,26 @@ const SideNav = props => {
             </ListItemIcon>
           </ListItem>
         </Tooltip>
-        <Tooltip title="Notebooks" placement="right">
-          <ListItem
-            className={classes.list_item}
-            button
-            selected={selectedIndex === NOTEBOOKS}
-            onClick={event => handleListItemClick(event, NOTEBOOKS)}
-          >
-            <ListItemIcon>
+
+        {/* <Tooltip title="Notebooks" placement="right"> */}
+        {/* <ListItem
+          className={classes.list_item}
+          button
+          selected={selectedIndex === NOTEBOOKS}
+          onClick={event => handleListItemClick(event, NOTEBOOKS)}
+        > */}
+        <NotebookDrawer
+          listSelected={selectedIndex === NOTEBOOKS}
+          listClick={event => handleListItemClick(event, NOTEBOOKS)}
+          createNotebook={props.openCreateNotebookModal}
+        />
+
+        {/* <ListItemIcon>
               <LibraryBooksRounded />
-            </ListItemIcon>
-          </ListItem>
-        </Tooltip>
+            </ListItemIcon> */}
+        {/* </ListItem> */}
+        {/* </Tooltip> */}
+
         <Tooltip title="Tags" placement="right">
           <ListItem
             className={classes.list_item}
@@ -142,6 +153,19 @@ const SideNav = props => {
           >
             <ListItemIcon>
               <StyleRounded />
+            </ListItemIcon>
+          </ListItem>
+        </Tooltip>
+
+        <Tooltip title="Trash" placement="right">
+          <ListItem
+            className={classes.list_item}
+            button
+            selected={selectedIndex === TAGS}
+            onClick={event => handleListItemClick(event, TAGS)}
+          >
+            <ListItemIcon>
+              <DeleteSweepRounded />
             </ListItemIcon>
           </ListItem>
         </Tooltip>

@@ -47,30 +47,36 @@ const SortMenu = props => {
 
   function handleMenuItemClick(event, index) {
     setSelectedIndex(index);
-    const shortedNotes = [...props.notes];
+    const shortedNotes = props.filteredNotes
+      ? [...props.filteredNotes]
+      : [...props.notes];
     switch (index) {
       case 0:
+        // props.setFilteredNotes(
+        //   sortByDateNewestFirst(shortedNotes, "createdAt")
+        // );
         props.updateNotes(sortByDateNewestFirst(shortedNotes, "createdAt"));
         // console.log(options[index]);
         break;
       case 1:
-        props.updateNotes(sortByDateOldestFirst(props.notes, "createdAt"));
+        props.updateNotes(sortByDateOldestFirst(shortedNotes, "createdAt"));
         // console.log(options[index]);
         break;
       case 2:
-        props.updateNotes(sortByDateNewestFirst(props.notes, "updatedAt"));
+        props.updateNotes(sortByDateNewestFirst(shortedNotes, "updatedAt"));
         // console.log(options[index]);
         break;
       case 3:
-        props.updateNotes(sortByDateOldestFirst(props.notes, "updatedAt"));
+        props.updateNotes(sortByDateOldestFirst(shortedNotes, "updatedAt"));
         // console.log(options[index]);
         break;
       case 4:
-        props.updateNotes(sortByTitleAsc(props.notes));
+        // props.setFilteredNotes(sortByTitleAsc(shortedNotes));
+        props.updateNotes(sortByTitleAsc(shortedNotes));
         // console.log(options[index]);
         break;
       case 5:
-        props.updateNotes(sortByTitleDes(props.notes));
+        props.updateNotes(sortByTitleDes(shortedNotes));
         // console.log(options[index]);
         break;
       default:

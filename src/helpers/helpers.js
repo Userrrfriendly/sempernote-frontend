@@ -13,6 +13,20 @@ export const mergeNotes = array =>
     return accumulator.flat();
   }, []);
 
+//seperates notes from trashedNotes (note.trash===soft delete) returns an obj {notes:[...],trash:[...]}
+export const filterTrash = arrOfNotes => {
+  const notes = [];
+  const trash = [];
+  arrOfNotes.forEach(note => {
+    if (note.trash) {
+      trash.push(note);
+    } else {
+      notes.push(note);
+    }
+  });
+  return { notes, trash };
+};
+
 //removes unnesessary data from notebooks.notes and leaves only _id and title
 export const simplifyNotebooks = array =>
   array.map(notebook => {

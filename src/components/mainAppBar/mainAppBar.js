@@ -19,7 +19,7 @@ import NoteListItem from "../main/NoteListItem";
 import LinearProgress from "../loading/linearProgress";
 import {
   DeleteRounded,
-  MoreVertRounded,
+  // MoreVertRounded,
   // MoreHorizRounded,
   StarRounded,
   // StyleRounded,
@@ -108,15 +108,16 @@ const MainAppBar = props => {
     switch (context.activeUI) {
       case NOTES:
         setTitle(context.activeNote ? context.activeNote.title : "ALL NOTES");
-        // title = context.activeNote ? context.activeNote.title : "ALL NOTES";
-        const tempEl = context.notes ? (
-          context.notes.map(note => {
+        let notesToRender;
+        //set notesToRender based on context.filteredNotes OR context.notes
+        if (context.filteredNotes) {
+          notesToRender = context.filteredNotes.map(note => {
             return (
               <NoteListItem
                 activeNote={context.activeNote}
+                key={note._id}
                 notebookName={note.notebook.name}
                 notebookId={note.notebook._id}
-                key={note._id}
                 name={note.title}
                 updated={note.updatedAt}
                 created={note.createdAt}
@@ -129,11 +130,34 @@ const MainAppBar = props => {
                 )}
               />
             );
-          })
-        ) : (
-          <LinearProgress />
-        );
-        setActiveUIel(tempEl);
+          });
+        } else {
+          notesToRender = context.notes ? (
+            context.notes.map(note => {
+              return (
+                <NoteListItem
+                  activeNote={context.activeNote}
+                  notebookName={note.notebook.name}
+                  notebookId={note.notebook._id}
+                  key={note._id}
+                  name={note.title}
+                  updated={note.updatedAt}
+                  created={note.createdAt}
+                  body={note.body}
+                  id={note._id}
+                  expandNote={props.expandNote.bind(
+                    this,
+                    note._id,
+                    note.notebook._id
+                  )}
+                />
+              );
+            })
+          ) : (
+            <LinearProgress />
+          );
+        }
+        setActiveUIel(notesToRender);
         break;
       case NOTEBOOKS:
         setActiveUIel("NOTEBOOKS");
@@ -149,7 +173,13 @@ const MainAppBar = props => {
       default:
         throw new Error("Invalid argument in activeUI");
     }
-  }, [context.notes, context.activeNote, context.activeUI, props.expandNote]);
+  }, [
+    context.notes,
+    context.activeNote,
+    context.activeUI,
+    context.filteredNotes,
+    props.expandNote
+  ]);
 
   // function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
   //   setAuth(event.target.checked);
@@ -162,7 +192,15 @@ const MainAppBar = props => {
   // function handleClose() {
   //   setAnchorEl(null);
   // }
-
+  const numberOfDisplayedNotes = () => {
+    if (context.filteredNotes) {
+      return context.filteredNotes.length;
+    } else if (context.notes) {
+      return context.notes.length;
+    } else {
+      return 0;
+    }
+  };
   return (
     <>
       <div className={classes.root}>
@@ -180,7 +218,8 @@ const MainAppBar = props => {
             {context.notes && !context.activeNote && (
               <>
                 <NoteCounter>
-                  {context.notes ? context.notes.length : ""}
+                  {numberOfDisplayedNotes()}
+                  {/* { context.notes ? context.notes.length : ""} */}
                 </NoteCounter>
                 <Typography
                   variant="subtitle1"
@@ -196,7 +235,9 @@ const MainAppBar = props => {
 
                 <SortMenu
                   notes={context.notes}
+                  filteredNotes={context.filteredNotes}
                   updateNotes={context.updateNotes}
+                  setFilteredNotes={context.setFilteredNotes}
                 />
               </>
             )}
@@ -288,7 +329,7 @@ const MainAppBar = props => {
                   </IconButton>
                 </Tooltip>
 
-                <Tooltip title="Settings">
+                {/* <Tooltip title="Settings">
                   <IconButton
                     // aria-owns={open ? 'menu-appbar' : undefined}
                     aria-haspopup="true"
@@ -297,7 +338,7 @@ const MainAppBar = props => {
                   >
                     <MoreVertRounded />
                   </IconButton>
-                </Tooltip>
+                </Tooltip> */}
               </>
             )}
           </Toolbar>

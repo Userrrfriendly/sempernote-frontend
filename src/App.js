@@ -12,7 +12,8 @@ import {
   simplifyNotebooks,
   mergeNotes,
   selectNotebook,
-  sortByDateNewestFirst
+  sortByDateNewestFirst,
+  filterTrash
 } from "./helpers/helpers";
 import {
   fetchUserData,
@@ -37,6 +38,8 @@ class App extends Component {
     userName: null,
     notebooks: null,
     notes: null,
+    filteredNotes: null,
+    trash: null,
     tags: null,
     activeNote: null,
     activeNotebook: null,
@@ -58,7 +61,12 @@ class App extends Component {
     });
   };
 
-  //for now used only in sorting notes
+  setFilteredNotes = notes => {
+    this.setState({
+      filteredNotes: notes
+    });
+  };
+  //for now used only in sorting notes !!! Probably can depricate it and replace with filtered notes
   updateNotes = notes => {
     this.setState({
       notes
@@ -104,6 +112,7 @@ class App extends Component {
         return { responseNote };
       })
       .then(data => {
+        // console.log(data.responseNote);
         this.setState(prevState => {
           // console.log(prevState);
           return {
@@ -112,13 +121,26 @@ class App extends Component {
               prevState.activeNote._id === data.responseNote._id
                 ? null
                 : prevState.activeNote,
-            notes: prevState.notes.map(note =>
-              note._id === data.responseNote._id
-                ? { ...note, trash: true }
-                : note
-            )
+            notes: prevState.notes.filter(
+              note => note._id !== data.responseNote._id
+            ),
+            trash: prevState.trash.concat(data.responseNote)
             // ,notebooks: data.newNotebooks
           };
+
+          // return {
+          //   activeNote:
+          //     prevState.activeNote &&
+          //     prevState.activeNote._id === data.responseNote._id
+          //       ? null
+          //       : prevState.activeNote,
+          //   notes: prevState.notes.map(note =>
+          //     note._id === data.responseNote._id
+          //       ? { ...note, trash: true }
+          //       : note
+          //   )
+          //   // ,notebooks: data.newNotebooks
+          // };
         });
       });
   };
@@ -434,14 +456,17 @@ class App extends Component {
         return res.json();
       })
       .then(resData => {
+        const notes = sortByDateNewestFirst(
+          mergeNotes(resData.data.user.notebooks),
+          "updatedAt"
+        );
+        const filteredNotes = filterTrash(notes);
         this.setState({
           userName: resData.data.user.username,
           notebooks: simplifyNotebooks(resData.data.user.notebooks),
           tags: resData.data.user.tags,
-          notes: sortByDateNewestFirst(
-            mergeNotes(resData.data.user.notebooks),
-            "updatedAt"
-          )
+          notes: filteredNotes.notes,
+          trash: filteredNotes.trash
         });
       })
       .catch(err => {
@@ -592,7 +617,8 @@ class App extends Component {
             moveNoteToNotebook: this.moveNoteToNotebook,
             createTag: this.createTag,
             assignTag: this.assignTag,
-            unAssignTag: this.unAssignTag
+            unAssignTag: this.unAssignTag,
+            setFilteredNotes: this.setFilteredNotes
             // activeUI: this.state.activeUI
           }}
         >
