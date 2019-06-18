@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import Context from "../../context/context";
-import { NOTES, NOTEBOOKS, FAVORITES, TAGS } from "../../context/activeUItypes";
+import { NOTES, NOTEBOOK, FAVORITES, TAGS } from "../../context/activeUItypes";
 
 // import { makeStyles } from "@material-ui/core/styles";
 // import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
@@ -11,9 +11,6 @@ import {
   Typography,
   IconButton,
   Tooltip
-  // Link
-  // Menu,
-  // MenuItem
 } from "@material-ui/core/";
 import NoteListItem from "../main/NoteListItem";
 import LinearProgress from "../loading/linearProgress";
@@ -51,9 +48,6 @@ const useStyles = makeStyles({
   },
   title: {
     flexGrow: 1
-  },
-  notecount: {
-    flexGrow: 1
   }
 });
 
@@ -87,10 +81,10 @@ const AdapterLink = React.forwardRef((props, ref) => (
   <Link innerRef={ref} {...props} />
 ));
 
-//Its is a legit option to render two different components one for mobile and one for desktop
 const MainAppBar = props => {
-  let [activeUIel, setActiveUIel] = useState(null);
+  const [displayNotes, setdisplayNotes] = useState(null);
   const [title, setTitle] = useState(null);
+  const [noteNumber, setNoteNumber] = useState(null);
 
   const classes = useStyles();
   const context = useContext(Context);
@@ -100,24 +94,23 @@ const MainAppBar = props => {
   if (context.activeNote) noteListStyle.flexBasis = "250px";
   if (smallScreen && context.activeNote) noteListStyle.display = "none";
 
-  // let activeUI = "";
-  // let title;
-
   useEffect(() => {
     console.log("Appbar did update");
-    switch (context.activeUI) {
+    console.log(context.noteFilter.name);
+    let notesToRender;
+    switch (context.noteFilter.name) {
       case NOTES:
         setTitle(context.activeNote ? context.activeNote.title : "ALL NOTES");
-        let notesToRender;
-        //set notesToRender based on context.filteredNotes OR context.notes
-        if (context.filteredNotes) {
-          notesToRender = context.filteredNotes.map(note => {
+        setNoteNumber(context.notes ? context.notes.length : 0);
+
+        notesToRender = context.notes ? (
+          context.notes.map(note => {
             return (
               <NoteListItem
                 activeNote={context.activeNote}
-                key={note._id}
                 notebookName={note.notebook.name}
                 notebookId={note.notebook._id}
+                key={note._id}
                 name={note.title}
                 updated={note.updatedAt}
                 created={note.createdAt}
@@ -130,10 +123,26 @@ const MainAppBar = props => {
                 )}
               />
             );
-          });
-        } else {
-          notesToRender = context.notes ? (
-            context.notes.map(note => {
+          })
+        ) : (
+          <LinearProgress />
+        );
+
+        console.log(notesToRender);
+        setdisplayNotes(notesToRender);
+        break;
+      case NOTEBOOK:
+        setTitle(
+          'Notebook: "' +
+            context.notebooks.filter(
+              notebook => notebook._id === context.noteFilter.options
+            )[0].name +
+            '"'
+        );
+        notesToRender = context.notes ? (
+          context.notes
+            .filter(note => note.notebook._id === context.noteFilter.options)
+            .map(note => {
               return (
                 <NoteListItem
                   activeNote={context.activeNote}
@@ -153,22 +162,21 @@ const MainAppBar = props => {
                 />
               );
             })
-          ) : (
-            <LinearProgress />
-          );
-        }
-        setActiveUIel(notesToRender);
-        break;
-      case NOTEBOOKS:
-        setActiveUIel("NOTEBOOKS");
+        ) : (
+          <LinearProgress />
+        );
+        console.log(context.noteFilter);
+        console.log(notesToRender);
+        setNoteNumber(notesToRender ? notesToRender.length : 0);
+        setdisplayNotes(notesToRender);
         // setActiveUI("NOTEBOOKS");
         break;
       case FAVORITES:
-        setActiveUIel("FAVORITES");
+        setdisplayNotes("FAVORITES");
         // setActiveUI("FAVORITES");
         break;
       case TAGS:
-        setActiveUIel("TAGS");
+        setdisplayNotes("TAGS");
         break;
       default:
         throw new Error("Invalid argument in activeUI");
@@ -178,7 +186,10 @@ const MainAppBar = props => {
     context.activeNote,
     context.activeUI,
     context.filteredNotes,
-    props.expandNote
+    props.expandNote,
+    context.noteFilter,
+    context.filter,
+    context.notebooks
   ]);
 
   // function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -192,15 +203,17 @@ const MainAppBar = props => {
   // function handleClose() {
   //   setAnchorEl(null);
   // }
-  const numberOfDisplayedNotes = () => {
-    if (context.filteredNotes) {
-      return context.filteredNotes.length;
-    } else if (context.notes) {
-      return context.notes.length;
-    } else {
-      return 0;
-    }
-  };
+
+  // const numberOfDisplayedNotes = () => {
+  //   if (context.filteredNotes) {
+  //     return context.filteredNotes.length;
+  //   } else if (context.notes) {
+  //     return context.notes.length;
+  //   } else {
+  //     return 0;
+  //   }
+  // };
+
   return (
     <>
       <div className={classes.root}>
@@ -217,21 +230,7 @@ const MainAppBar = props => {
             </Typography>
             {context.notes && !context.activeNote && (
               <>
-                <NoteCounter>
-                  {numberOfDisplayedNotes()}
-                  {/* { context.notes ? context.notes.length : ""} */}
-                </NoteCounter>
-                <Typography
-                  variant="subtitle1"
-                  component="span"
-                  display="block"
-                  color="inherit"
-                  className={classes.notecount}
-                >
-                  {context.notes && context.notes.length > 1
-                    ? " notes"
-                    : " note"}
-                </Typography>
+                <NoteCounter noteNumber={noteNumber} />
 
                 <SortMenu
                   notes={context.notes}
@@ -351,7 +350,7 @@ const MainAppBar = props => {
         style={noteListStyle}
         className={classes.notecontainer}
       >
-        {activeUIel}
+        {displayNotes}
       </div>
     </>
   );

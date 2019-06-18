@@ -87,7 +87,10 @@
 - \*A)so should I do some short of autosave before trashing the note?
 - \*B)the note that is added to the state is added by the updateNoteBody so I could check there if the note.trash ===true instead of appending it to the
 - \*state.notes, push it into state.trash
-- when createing a notebook or filter notes by notebook should set activenotebook, 
+- when createing a notebook or filter notes by notebook should set activenotebook,
 - also maybe remove setActiveNotebook on noteClick (noteListItem)
 - also activeNotebook should be used to select the notebook by default in createNote modal
-- clicking on Notes on sidenav probably should just clear activeNotebook, filteredNotes 
+- clicking on Notes on sidenav probably should just clear activeNotebook, filteredNotes
+- -rename activeUI
+- activeUI should be deleted?
+- could menu in each notebook be replace with a single menu?

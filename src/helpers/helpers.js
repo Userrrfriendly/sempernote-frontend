@@ -33,7 +33,7 @@ export const simplifyNotebooks = array =>
     return {
       ...notebook,
       notes: notebook.notes.map(note => {
-        return { _id: note._id, title: note.title };
+        return { _id: note._id, title: note.title, trash: note.trash };
       })
     };
   });

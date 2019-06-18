@@ -1,13 +1,7 @@
 import React, { useEffect, useState, useContext, Fragment } from "react";
 // import clsx from "clsx";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
-// import Drawer from "@material-ui/core/Drawer";
-// import CssBaseline from "@material-ui/core/CssBaseline";
-// import AppBar from "@material-ui/core/AppBar";
-// import Toolbar from "@material-ui/core/Toolbar";
-// import List from "@material-ui/core/List";
-// import Typography from "@material-ui/core/Typography";
-// import Divider from "@material-ui/core/Divider";
+import { makeStyles } from "@material-ui/core/styles";
+
 import {
   IconButton,
   List,
@@ -17,23 +11,22 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  ListItemSecondaryAction,
   Typography,
   TextField,
-  InputAdornment
+  InputAdornment,
+  Menu,
+  MenuItem
+  // Popover
 } from "@material-ui/core";
-// import MenuIcon from "@material-ui/icons/Menu";
-import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-// import ListItem from "@material-ui/core/ListItem";
-// import ListItemIcon from "@material-ui/core/ListItemIcon";
-// import ListItemText from "@material-ui/core/ListItemText";
-// import InboxIcon from "@material-ui/icons/MoveToInbox";
-import MailIcon from "@material-ui/icons/Mail";
 
 import {
   LibraryBooksRounded,
   Close,
-  LibraryAddRounded
+  ChevronLeft,
+  MoreVert,
+  StarRounded
+  // LibraryAddRounded
 } from "@material-ui/icons";
 import Context from "../../context/context";
 
@@ -43,20 +36,7 @@ const useStyles = makeStyles(theme => ({
   root: {
     display: "flex"
   },
-  // appBar: {
-  //   transition: theme.transitions.create(["margin", "width"], {
-  //     easing: theme.transitions.easing.sharp,
-  //     duration: theme.transitions.duration.leavingScreen
-  //   })
-  // },
-  // appBarShift: {
-  //   width: `calc(100% - ${drawerWidth}px)`,
-  //   marginLeft: drawerWidth,
-  //   transition: theme.transitions.create(["margin", "width"], {
-  //     easing: theme.transitions.easing.easeOut,
-  //     duration: theme.transitions.duration.enteringScreen
-  //   })
-  // },
+
   menuButton: {
     marginRight: theme.spacing(2),
     position: "fixed",
@@ -82,6 +62,7 @@ const useStyles = makeStyles(theme => ({
     // justifyContent: "flex-end",
     justifyContent: "space-between",
     flexDirection: "column"
+    // minHeight: "150px"
   },
   drawerSubHeader: {
     display: "flex",
@@ -92,23 +73,10 @@ const useStyles = makeStyles(theme => ({
   },
   textField: {
     margin: "8px 8px 16px"
+  },
+  typography: {
+    padding: theme.spacing(2)
   }
-  // content: {
-  //   flexGrow: 1,
-  //   padding: theme.spacing(3),
-  //   transition: theme.transitions.create("margin", {
-  //     easing: theme.transitions.easing.sharp,
-  //     duration: theme.transitions.duration.leavingScreen
-  //   }),
-  //   marginLeft: -drawerWidth
-  // },
-  // contentShift: {
-  //   transition: theme.transitions.create("margin", {
-  //     easing: theme.transitions.easing.easeOut,
-  //     duration: theme.transitions.duration.enteringScreen
-  //   }),
-  //   marginLeft: 0
-  // }
 }));
 
 export default function PersistentDrawerLeft(props) {
@@ -117,6 +85,25 @@ export default function PersistentDrawerLeft(props) {
   const [search, setSearch] = useState("");
   const [notebooks, setNotebooks] = useState(context.notebooks);
 
+  //menu
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorElID, setAnchorElID] = React.useState(null);
+
+  function handleNotebookMenuClick(event, id) {
+    // console.log(event);
+    console.log(id);
+    setAnchorElID(id);
+    setAnchorEl(event.currentTarget);
+  }
+
+  function handleNotebookMenuClose(e) {
+    console.log(e);
+    // console.log(anchorEl); //either extract the value through the data-notebookid
+    console.log(anchorElID); //or get the notebook._id that will be modified from state
+    setAnchorEl(null);
+    setAnchorElID(null);
+  }
+  //end menu
   const classes = useStyles();
   // const theme = useTheme();
 
@@ -145,19 +132,14 @@ export default function PersistentDrawerLeft(props) {
   const handleNotebookClick = notebookID => {
     handleDrawerClose();
     context.setActiveNotebook(notebookID);
-    const filteredNotes = context.notes.filter(
-      note => note.notebook._id === notebookID
-    );
-    context.setFilteredNotes(filteredNotes);
-    //set activeNotebook
-    //set filtered notes
-    //close modal
-  };
 
-  // const createNotebook = () => {
-  //   handleDrawerClose();
-  //   props.createNotebook();
-  // };
+    //set filtered notes
+    context.setNoteFilter("NOTEBOOK", notebookID);
+    // const filteredNotes = context.notes.filter(
+    //   note => note.notebook._id === notebookID
+    // );
+    // context.setFilteredNotes(filteredNotes);
+  };
 
   useEffect(() => {
     console.log("useEffect from Notebook drawer");
@@ -194,16 +176,6 @@ export default function PersistentDrawerLeft(props) {
         </ListItem>
       </Tooltip>
 
-      {/* <IconButton
-        color="inherit"
-        aria-label="Open drawer"
-        onClick={handleDrawerOpen}
-        edge="start"
-        className={clsx(classes.menuButton, open && classes.hide)}
-      >
-        <MenuIcon />
-      </IconButton> */}
-
       <Drawer
         className={classes.drawer}
         // variant="persistent"
@@ -224,56 +196,108 @@ export default function PersistentDrawerLeft(props) {
               Notebooks
             </Typography>
 
-            <IconButton
-              onClick={handleDrawerClose}
-              // onClick={createNotebook}
-            >
-              {/* <LibraryAddRounded /> */}
-              <ChevronLeftIcon />
+            <IconButton onClick={handleDrawerClose}>
+              <ChevronLeft />
             </IconButton>
           </div>
-          <TextField
-            label="Find a notebook"
-            className={classes.textField}
-            value={search}
-            onChange={handleSearch}
-            placeholder="Find a notebook"
-            variant="outlined"
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    // edge="end"
-                    size="small"
-                    aria-label="clear"
-                    onClick={clearSearch}
-                  >
-                    <Close />
-                  </IconButton>
-                </InputAdornment>
-              )
-            }}
-          />
         </div>
+        <TextField
+          label="Find a notebook"
+          className={classes.textField}
+          value={search}
+          onChange={handleSearch}
+          placeholder="Find a notebook"
+          variant="outlined"
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  // edge="end"
+                  size="small"
+                  aria-label="clear"
+                  onClick={clearSearch}
+                >
+                  <Close />
+                </IconButton>
+              </InputAdornment>
+            )
+          }}
+        />
         <Divider />
 
         <List>
           {notebooks
-            ? notebooks.map(notebook => (
-                <Fragment key={notebook._id}>
-                  <ListItem
-                    button
-                    onClick={handleNotebookClick.bind(this, notebook._id)}
-                  >
-                    <ListItemIcon>
-                      <MailIcon />
-                    </ListItemIcon>
-                    <ListItemText primary={notebook.name} />
-                  </ListItem>
-                  <Divider />
-                </Fragment>
-              ))
+            ? notebooks.map(notebook => {
+                const numberOfNotes = notebook.notes.filter(
+                  note => !note.trash
+                );
+                return (
+                  <Fragment key={notebook._id}>
+                    <ListItem
+                      button
+                      onClick={handleNotebookClick.bind(this, notebook._id)}
+                    >
+                      <ListItemIcon style={{ minWidth: "3rem" }}>
+                        <StarRounded
+                          style={notebook.favorite ? { color: "gold" } : {}}
+                        />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={notebook.name}
+                        secondary={numberOfNotes.length + " notes"}
+                      />
+
+                      <ListItemSecondaryAction>
+                        <IconButton
+                          edge="end"
+                          aria-label="More"
+                          aria-controls="long-menu"
+                          aria-haspopup="true"
+                          onClick={e =>
+                            handleNotebookMenuClick(e, notebook._id)
+                          }
+                          // data-notebookid={notebook._id}
+                        >
+                          <MoreVert />
+                        </IconButton>
+
+                        {/* <Menu
+                          elevation={1}
+                          id="simple-menu"
+                          anchorEl={anchorEl}
+                          keepMounted
+                          open={Boolean(anchorEl)}
+                          onClose={handleNotebookMenuClose}
+                        >
+                          <MenuItem onClick={handleNotebookMenuClose}>
+                            Info
+                          </MenuItem>
+                          <MenuItem onClick={handleNotebookMenuClose}>
+                            Delete
+                          </MenuItem>
+                          <MenuItem onClick={handleNotebookMenuClose}>
+                            Favourite
+                          </MenuItem>
+                        </Menu> */}
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                    <Divider />
+                  </Fragment>
+                );
+              })
             : "Loading Notes..."}
+          <Menu
+            elevation={1}
+            id="simple-menu"
+            anchorEl={anchorEl}
+            keepMounted
+            open={Boolean(anchorEl)}
+            onClose={handleNotebookMenuClose}
+          >
+            <MenuItem onClick={handleNotebookMenuClose}>Info</MenuItem>
+            <MenuItem onClick={handleNotebookMenuClose}>Delete</MenuItem>
+            <MenuItem onClick={handleNotebookMenuClose}>Favourite</MenuItem>
+          </Menu>
         </List>
       </Drawer>
     </div>

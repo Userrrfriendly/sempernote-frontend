@@ -39,6 +39,7 @@ class App extends Component {
     notebooks: null,
     notes: null,
     filteredNotes: null,
+    noteFilter: { name: "ALL_NOTES" },
     trash: null,
     tags: null,
     activeNote: null,
@@ -66,6 +67,13 @@ class App extends Component {
       filteredNotes: notes
     });
   };
+
+  setNoteFilter = (name, options) => {
+    this.setState({
+      noteFilter: { name, options }
+    });
+  };
+
   //for now used only in sorting notes !!! Probably can depricate it and replace with filtered notes
   updateNotes = notes => {
     this.setState({
@@ -96,19 +104,6 @@ class App extends Component {
       .then(r => {
         const responseNote = r.data.softDeleteNote;
 
-        // const newNotebooks = this.state.notebooks.filter(
-        //   notebook => notebook._id !== responseNote.notebook._id
-        // );
-        // let updatedNotebook = selectNotebook(
-        //   this.state.notebooks,
-        //   responseNote.notebook._id
-        // );
-        // updatedNotebook[0].notes = updatedNotebook[0].notes.map(note =>
-        //   note._id === responseNote._id ? { ...note, trash: true } : note
-        // );
-        // newNotebooks.push(updatedNotebook[0]);
-        // return { responseNote, newNotebooks };
-
         return { responseNote };
       })
       .then(data => {
@@ -127,20 +122,6 @@ class App extends Component {
             trash: prevState.trash.concat(data.responseNote)
             // ,notebooks: data.newNotebooks
           };
-
-          // return {
-          //   activeNote:
-          //     prevState.activeNote &&
-          //     prevState.activeNote._id === data.responseNote._id
-          //       ? null
-          //       : prevState.activeNote,
-          //   notes: prevState.notes.map(note =>
-          //     note._id === data.responseNote._id
-          //       ? { ...note, trash: true }
-          //       : note
-          //   )
-          //   // ,notebooks: data.newNotebooks
-          // };
         });
       });
   };
@@ -178,26 +159,12 @@ class App extends Component {
         //delete the note from the oldnotebook
         //add the note to the newnotebook
         let updatedNotebook = selectNotebook(this.state.notebooks, notebookID);
-        // updatedNotebook[0].notes = updatedNotebook[0].notes.map(note =>
-        //   note._id === responseNote._id ? { ...note, trash: true } : note
-        // );
         updatedNotebook[0].notes.push(responseNote);
         let oldNotebook = selectNotebook(this.state.notebooks, oldNotebookID);
         oldNotebook[0].notes = oldNotebook[0].notes.filter(
           note => note._id !== noteID
         );
         console.log(oldNotebook);
-        // updatedNotebook[0].notes.push(oldNotebook)
-        // if (oldNotebook.notes && oldNotebook.notes.length > 0) {
-        //   newNotebooks.push({
-        //     ...oldNotebook.notes.filter(note => note._id !== noteID)
-        //   });
-        // } else {
-        //   newNotebooks.push(oldNotebook[0]);
-        // }
-        //const newNotebookNotes = responseNote.notebook
-        //const newNotebooksNotes add the new note
-        // newNotebooks.push(updatedNotebook[0]);
         console.log("newNotebooks:");
         console.log(newNotebooks);
         console.log(updatedNotebook[0]);
@@ -254,22 +221,6 @@ class App extends Component {
       .then(r => {
         const responseNote = r.data[responseName];
         console.log(responseNote);
-
-        // const newNotebooks = this.state.notebooks.filter(
-        //   notebook => notebook._id !== responseNote.notebook._id
-        // );
-        // let updatedNotebook = selectNotebook(
-        //   this.state.notebooks,
-        //   responseNote.notebook._id
-        // );
-        // console.log(updatedNotebook[0]);
-        // updatedNotebook[0].notes = updatedNotebook[0].notes.map(note =>
-        //   note._id === responseNote._id
-        //     ? { ...note, favorite: responseNote.favorite }
-        //     : note
-        // );
-        // newNotebooks.push(updatedNotebook[0]);
-        // return { responseNote, newNotebooks };
         return { responseNote };
       })
       .then(data => {
@@ -285,7 +236,6 @@ class App extends Component {
                 ? { ...note, favorite: data.responseNote.favorite }
                 : note
             )
-            // ,notebooks: data.newNotebooks
           };
         });
       })
@@ -618,7 +568,8 @@ class App extends Component {
             createTag: this.createTag,
             assignTag: this.assignTag,
             unAssignTag: this.unAssignTag,
-            setFilteredNotes: this.setFilteredNotes
+            setFilteredNotes: this.setFilteredNotes,
+            setNoteFilter: this.setNoteFilter
             // activeUI: this.state.activeUI
           }}
         >

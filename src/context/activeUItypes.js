@@ -1,5 +1,5 @@
-export const NOTES = "NOTES";
-export const NOTEBOOKS = "NOTEBOOKS";
+export const NOTES = "ALL_NOTES";
+export const NOTEBOOK = "NOTEBOOK";
 export const FAVORITES = "FAVORITES";
 export const TAGS = "TAGS";
 

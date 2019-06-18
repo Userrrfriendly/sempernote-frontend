@@ -13,7 +13,7 @@ import {
 } from "@material-ui/icons";
 
 import Context from "../../context/context";
-import { NOTES, NOTEBOOKS, FAVORITES, TAGS } from "../../context/activeUItypes";
+import { NOTES, NOTEBOOK, FAVORITES, TAGS } from "../../context/activeUItypes";
 // import NoteDialog from "../createNoteModal/noteModal_failed";
 
 import NotebookDrawer from "../notebookDrawer/notebookDrawer";
@@ -45,9 +45,10 @@ const SideNav = props => {
 
   function handleListItemClick(event, index) {
     //Should I be worried here? are hooks syncronous?
+    console.log(index);
     setSelectedIndex(index);
-    context.setActiveUI(index);
-    // console.log(index);
+    // context.setActiveUI(index);
+    index === NOTES && context.setNoteFilter(NOTES);
   }
 
   return (
@@ -67,12 +68,7 @@ const SideNav = props => {
             </ListItemIcon>
           </ListItem>
         </Tooltip>
-        {/* <NoteDialog
-          activeNote={context.activeNote}
-          notebooks={context.notebooks}
-          moveNoteToNotebook={context.moveNoteToNotebook}
-        /> */}
-        {/* </Tooltip> */}
+
         <Tooltip title="Create Notebook" placement="right">
           <ListItem
             className={classes.list_item}
@@ -125,24 +121,11 @@ const SideNav = props => {
           </ListItem>
         </Tooltip>
 
-        {/* <Tooltip title="Notebooks" placement="right"> */}
-        {/* <ListItem
-          className={classes.list_item}
-          button
-          selected={selectedIndex === NOTEBOOKS}
-          onClick={event => handleListItemClick(event, NOTEBOOKS)}
-        > */}
         <NotebookDrawer
-          listSelected={selectedIndex === NOTEBOOKS}
-          listClick={event => handleListItemClick(event, NOTEBOOKS)}
-          createNotebook={props.openCreateNotebookModal}
+          listSelected={selectedIndex === NOTEBOOK}
+          listClick={event => handleListItemClick(event, NOTEBOOK)}
+          // createNotebook={props.openCreateNotebookModal}
         />
-
-        {/* <ListItemIcon>
-              <LibraryBooksRounded />
-            </ListItemIcon> */}
-        {/* </ListItem> */}
-        {/* </Tooltip> */}
 
         <Tooltip title="Tags" placement="right">
           <ListItem

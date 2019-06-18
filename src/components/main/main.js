@@ -83,9 +83,7 @@ const Main = props => {
           openCreateNotebookModal={openCreateNotebookModal}
         />
       </Hidden>
-      {/*  */}
-      {/* <NotebookDrawer /> */}
-      {/*  */}
+
       <Paper style={matches ? { marginLeft: 0 } : { marginLeft: "60px" }}>
         <MainAppBar expandNote={expandNote} />
         <Route
