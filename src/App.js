@@ -30,6 +30,7 @@ import {
 } from "./helpers/graphQLrequests";
 
 // import { find as _find } from "lodash";
+// import { filter as _filter } from "lodash";
 
 class App extends Component {
   state = {
@@ -108,6 +109,25 @@ class App extends Component {
       })
       .then(data => {
         // console.log(data.responseNote);
+        const tags = this.state.tags.map(tag => {
+          return {
+            ...tag,
+            notes: tag.notes.map(note =>
+              note._id === data.responseNote._id
+                ? {
+                    _id: data.responseNote._id,
+                    title: data.responseNote.title,
+                    trash: data.responseNote.trash
+                  }
+                : note
+            )
+            //           ...tag,
+            // notes:          tag.notes.map(note =>
+            //   note._id === data.responseNote._id ? data.responseNote : note
+            // ));
+          };
+        });
+        console.log(tags);
         this.setState(prevState => {
           // console.log(prevState);
           return {
@@ -119,7 +139,8 @@ class App extends Component {
             notes: prevState.notes.filter(
               note => note._id !== data.responseNote._id
             ),
-            trash: prevState.trash.concat(data.responseNote)
+            trash: prevState.trash.concat(data.responseNote),
+            tags: tags
             // ,notebooks: data.newNotebooks
           };
         });
@@ -173,13 +194,19 @@ class App extends Component {
       })
       .then(data => {
         console.log(data.responseNote, data.newNotebooks);
+        const activeNote =
+          this.state.activeNote._id === data.responseNote._id
+            ? data.responseNote
+            : this.state.activeNote;
+
         this.setState(prevState => {
           return {
-            activeNote:
-              prevState.activeNote &&
-              prevState.activeNote._id === data.responseNote._id
-                ? data.responseNote
-                : null,
+            // activeNote:
+            //   prevState.activeNote &&
+            //   prevState.activeNote._id === data.responseNote._id
+            //     ? data.responseNote
+            //     : null,
+            activeNote: activeNote,
             notes: prevState.notes.map(note =>
               note._id === data.responseNote._id ? data.responseNote : note
             ),
@@ -346,8 +373,13 @@ class App extends Component {
         );
         updatedNotes.push(r.data.updateNoteBody);
         sortByDateNewestFirst(updatedNotes, "updatedAt");
+        const activeNote =
+          this.state.activeNote._id === r.data.updateNoteBody._id
+            ? r.data.updateNoteBody
+            : this.state.activeNote;
         this.setState({
-          notes: updatedNotes
+          notes: updatedNotes,
+          activeNote: activeNote
         });
       })
       .catch(err => console.log(err));
@@ -477,21 +509,35 @@ class App extends Component {
       .then(r => {
         console.log(r);
         const assignedTag = r.data.assignTag;
+        //
         const modifiedNote = this.state.notes.filter(
           note => note._id === noteID
         );
+        console.log(this.state.notes);
+        console.log(modifiedNote[0]);
+        console.log({
+          _id: assignedTag._id,
+          tagname: assignedTag.tagname
+        });
         modifiedNote[0].tags = modifiedNote[0].tags.concat({
           _id: assignedTag._id,
           tagname: assignedTag.tagname
         });
+        const activeNote =
+          this.state.activeNote._id === modifiedNote._id
+            ? modifiedNote
+            : this.state.activeNote;
+        console.log(activeNote);
+        console.log(assignedTag);
         this.setState(prevState => {
           return {
             tags: prevState.tags.map(tag =>
-              tag._id === assignTag._id ? assignTag : tag
+              tag._id === assignedTag._id ? assignedTag : tag
             ),
             notes: prevState.notes.map(note =>
               note._id === noteID ? modifiedNote[0] : note
-            )
+            ),
+            activeNote: activeNote
           };
         });
       })
@@ -526,10 +572,6 @@ class App extends Component {
         modifiedNote[0].tags = modifiedNote[0].tags.filter(
           tag => tag._id !== unAssignedTag._id
         );
-        // modifiedNote[0].tags = modifiedNote[0].tags.concat({
-        //   _id: unAssignedTag._id,
-        //   tagname: unAssignedTag.tagname
-        // });
 
         this.setState(prevState => {
           return {

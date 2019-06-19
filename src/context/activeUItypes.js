@@ -1,7 +1,7 @@
 export const NOTES = "ALL_NOTES";
 export const NOTEBOOK = "NOTEBOOK";
 export const FAVORITES = "FAVORITES";
-export const TAGS = "TAGS";
+export const TAG = "TAG";
 
 // {activeUI:"NOTES"} //all notes
 // {activeUI:"NOTEBOOKS"} //all notebooks

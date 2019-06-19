@@ -18,19 +18,20 @@ const customStyles = {
     overflow: "visible",
     borderRadius: "4px"
   },
-  overlay: { zIndex: 1502 }
+  overlay: { zIndex: 1402 }
 };
 
 //required for react-modal
 Modal.setAppElement("#root");
 
-class NotebookModal extends Component {
+class TagModal extends Component {
   state = {
     value: "",
     error: false
   };
 
   onChange = e => {
+    console.log(e.target.value);
     this.setState({
       value: e.target.value,
       error: false
@@ -43,25 +44,20 @@ class NotebookModal extends Component {
 
   onSubmit = e => {
     e.preventDefault();
-    const existingNotebooks = this.props.notebooks.reduce(
-      (accumulator, currentValue) => {
-        accumulator.push(currentValue.name.toLowerCase());
-        return accumulator;
-      },
-      []
-    );
+    const existingTags = this.props.tags.reduce((accumulator, currentValue) => {
+      accumulator.push(currentValue.tagname.toLowerCase());
+      return accumulator;
+    }, []);
     if (
-      existingNotebooks.includes(this.state.value.toLocaleLowerCase()) ||
+      existingTags.includes(this.state.value.toLocaleLowerCase()) ||
       this.state.value === ""
     ) {
-      // console.log("A notebook with the same name already exists!");
       this.setState({
         error: true
       });
     } else {
-      // console.log(`creating notebook...${this.state.value}`);
       const updateDB = async () => {
-        this.props.createNotebook(this.state.value);
+        this.props.createTag(this.state.value);
       };
 
       updateDB()
@@ -83,32 +79,32 @@ class NotebookModal extends Component {
           onAfterOpen={this.afterOpenModal}
           onRequestClose={this.props.closeModal}
           style={customStyles}
-          contentLabel="Create Notebook" //improves accessibility
+          contentLabel="Create Tag" //improves accessibility
         >
           <form onSubmit={this.onSubmit}>
             <div className="modal-content1">
               <Typography variant="h4" component="h1">
-                Create Notebook
+                Create Tag
               </Typography>
               <div>
                 <TextField
                   autoFocus
                   margin="dense"
-                  label="Note Title"
+                  label="Tag name"
                   type="text"
                   fullWidth
                   value={this.state.value}
                   onChange={this.onChange}
-                  placeholder="Enter Notebook Name"
+                  placeholder="Enter Tag Name"
                 />
               </div>
               {this.state.error && this.state.value && (
                 <p style={{ color: "red" }}>
-                  Notebook "{this.state.value}" already exists!
+                  Tag "{this.state.value}" already exists!
                 </p>
               )}
               {this.state.error && !this.state.value && (
-                <p style={{ color: "red" }}>Please enter a notebook title</p>
+                <p style={{ color: "red" }}>Please enter a tag name</p>
               )}
             </div>
             <div
@@ -126,10 +122,8 @@ class NotebookModal extends Component {
                 Cancel
               </Button>
               <Button type="submit" onClick={this.onSubmit} color="primary">
-                Create Note
+                Create Tag
               </Button>
-              {/*type="button" ensures that upon pressing the enter key the button isn't triggered and the form is not submitted, more:
-                https://stackoverflow.com/questions/42053775/getting-error-form-submission-canceled-because-the-form-is-not-connected */}
             </div>
           </form>
         </Modal>
@@ -138,4 +132,4 @@ class NotebookModal extends Component {
   }
 }
 
-export default NotebookModal;
+export default TagModal;

@@ -1,6 +1,12 @@
 import React, { useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { List, ListItem, ListItemIcon, Tooltip } from "@material-ui/core";
+import {
+  List,
+  ListItem,
+  ListItemIcon,
+  Tooltip
+  // SvgIcon
+} from "@material-ui/core";
 import {
   NoteAddRounded,
   SearchRounded,
@@ -8,15 +14,17 @@ import {
   DescriptionRounded,
   // LibraryBooksRounded,
   LibraryAddRounded,
-  StyleRounded,
+  // StyleRounded,
   DeleteSweepRounded
 } from "@material-ui/icons";
+import CreateTagIcon from "../svgCreateTag/svgCreateTag";
 
 import Context from "../../context/context";
-import { NOTES, NOTEBOOK, FAVORITES, TAGS } from "../../context/activeUItypes";
+import { NOTES, NOTEBOOK, FAVORITES, TAG } from "../../context/activeUItypes";
 // import NoteDialog from "../createNoteModal/noteModal_failed";
 
 import NotebookDrawer from "../notebookDrawer/notebookDrawer";
+import TagsDrawer from "../tagsDrawer/tagsDrawer";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -81,6 +89,20 @@ const SideNav = props => {
             </ListItemIcon>
           </ListItem>
         </Tooltip>
+
+        <Tooltip title="Create Tag" placement="right">
+          <ListItem
+            className={classes.list_item}
+            button
+            selected={selectedIndex === 2}
+            onClick={props.openCreateTagModal}
+          >
+            <ListItemIcon>
+              <CreateTagIcon />
+            </ListItemIcon>
+          </ListItem>
+        </Tooltip>
+
         <hr className={classes.hr} />
         {/* </List>
       <List component="nav"> */}
@@ -127,7 +149,13 @@ const SideNav = props => {
           // createNotebook={props.openCreateNotebookModal}
         />
 
-        <Tooltip title="Tags" placement="right">
+        <TagsDrawer
+          listSelected={selectedIndex === TAG}
+          listClick={event => handleListItemClick(event, TAG)}
+          openCreateTagModal={props.openCreateTagModal}
+        />
+
+        {/* <Tooltip title="Tags" placement="right">
           <ListItem
             className={classes.list_item}
             button
@@ -138,14 +166,14 @@ const SideNav = props => {
               <StyleRounded />
             </ListItemIcon>
           </ListItem>
-        </Tooltip>
+        </Tooltip> */}
 
         <Tooltip title="Trash" placement="right">
           <ListItem
             className={classes.list_item}
             button
-            selected={selectedIndex === TAGS}
-            onClick={event => handleListItemClick(event, TAGS)}
+            selected={selectedIndex === TAG}
+            onClick={event => handleListItemClick(event, TAG)}
           >
             <ListItemIcon>
               <DeleteSweepRounded />

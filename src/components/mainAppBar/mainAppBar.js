@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import Context from "../../context/context";
-import { NOTES, NOTEBOOK, FAVORITES, TAGS } from "../../context/activeUItypes";
+import { NOTES, NOTEBOOK, FAVORITES, TAG } from "../../context/activeUItypes";
 
 // import { makeStyles } from "@material-ui/core/styles";
 // import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
@@ -18,10 +18,10 @@ import {
   DeleteRounded,
   // MoreVertRounded,
   // MoreHorizRounded,
-  StarRounded,
-  // StyleRounded,
-  Info,
   // LibraryBooksRounded,
+  // StyleRounded,
+  StarRounded,
+  Info,
   SaveRounded,
   ArrowBack
 } from "@material-ui/icons";
@@ -33,6 +33,7 @@ import { Link } from "react-router-dom";
 
 import SelectNotebook from "./selectNotebook";
 import SelectTag from "./selectTag";
+import { find as _find } from "lodash";
 
 const useStyles = makeStyles({
   root: {
@@ -128,7 +129,7 @@ const MainAppBar = props => {
           <LinearProgress />
         );
 
-        console.log(notesToRender);
+        // console.log(notesToRender);
         setdisplayNotes(notesToRender);
         break;
       case NOTEBOOK:
@@ -175,8 +176,50 @@ const MainAppBar = props => {
         setdisplayNotes("FAVORITES");
         // setActiveUI("FAVORITES");
         break;
-      case TAGS:
-        setdisplayNotes("TAGS");
+      case TAG:
+        setTitle(
+          'Notes tagged with: "' +
+            context.tags.filter(
+              tag => tag._id === context.noteFilter.options
+            )[0].tagname +
+            '"'
+        );
+        notesToRender = context.notes ? (
+          context.notes
+            //note.tags includes noteFilter.options
+            .filter(
+              note => _find(note.tags, { _id: context.noteFilter.options })
+              // note.tags === context.noteFilter.options
+            )
+            .map(note => {
+              return (
+                <NoteListItem
+                  activeNote={context.activeNote}
+                  notebookName={note.notebook.name}
+                  notebookId={note.notebook._id}
+                  key={note._id}
+                  name={note.title}
+                  updated={note.updatedAt}
+                  created={note.createdAt}
+                  body={note.body}
+                  id={note._id}
+                  expandNote={props.expandNote.bind(
+                    this,
+                    note._id,
+                    note.notebook._id
+                  )}
+                />
+              );
+            })
+        ) : (
+          <LinearProgress />
+        );
+        console.log(context.noteFilter);
+        // console.log(notesToRender);
+        setNoteNumber(notesToRender ? notesToRender.length : 0);
+        setdisplayNotes(notesToRender);
+        // setActiveUI("NOTEBOOKS");
+        // setdisplayNotes("TAG");
         break;
       default:
         throw new Error("Invalid argument in activeUI");
@@ -184,12 +227,13 @@ const MainAppBar = props => {
   }, [
     context.notes,
     context.activeNote,
-    context.activeUI,
+    // context.activeUI,
     context.filteredNotes,
     props.expandNote,
     context.noteFilter,
     context.filter,
-    context.notebooks
+    context.notebooks,
+    context.tags
   ]);
 
   // function handleChange(event: React.ChangeEvent<HTMLInputElement>) {

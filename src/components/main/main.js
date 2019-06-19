@@ -7,6 +7,7 @@ import "./main.css";
 import ExpandedNote from "../editor/expandedNote";
 import NotebookModal from "../createNotebookModal/notebookModal";
 import NoteModal from "../createNoteModal/noteModal";
+import TagModal from "../createTagModal/tagModal";
 import SideNav from "../sideNav/sidenav";
 import { Hidden } from "@material-ui/core";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
@@ -18,6 +19,7 @@ import Paper from "../paper/paper";
 const Main = props => {
   const [noteModal, setNoteModal] = useState(false);
   const [notebookModal, setNotebookModal] = useState(false);
+  const [tagModal, setTagModal] = useState(false);
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -39,6 +41,15 @@ const Main = props => {
 
   const closenoteModal = () => {
     setNoteModal(false);
+  };
+
+  /**TAG Modal */
+  const openCreateTagModal = () => {
+    setTagModal(true);
+  };
+
+  const closeCreateTagModal = () => {
+    setTagModal(false);
   };
 
   const expandNote = (noteId, notebookId) => {
@@ -81,6 +92,7 @@ const Main = props => {
         <SideNav
           openCreateNoteModal={openCreateNoteModal}
           openCreateNotebookModal={openCreateNotebookModal}
+          openCreateTagModal={openCreateTagModal}
         />
       </Hidden>
 
@@ -135,6 +147,13 @@ const Main = props => {
               isOpen={noteModal}
               pushNoteToState={context.pushNoteToState}
               setActiveNote={context.setActiveNote}
+            />
+            <TagModal
+              tags={context.tags}
+              createTag={context.createTag}
+              openModal={openCreateTagModal}
+              closeModal={closeCreateTagModal}
+              isOpen={tagModal}
             />
           </>
         )}

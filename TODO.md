@@ -94,3 +94,10 @@
 - -rename activeUI
 - activeUI should be deleted?
 - could menu in each notebook be replace with a single menu?
+- tags probably include notes in trash
+- FIX THE DOUBLE DRAWERS!!!
+- a newly tagged note doesn't appear in the tags drawer etc...
+- probably need reducers to take care of multiple things updating something
+- *eg: update notebody and add a tag two different kinds of data arrive...
+- the problem lives that too many things modify the same shit and some of them do a very lousy job...
+- some problem lives on the backend how did 2tags dissaper??? something is fucked

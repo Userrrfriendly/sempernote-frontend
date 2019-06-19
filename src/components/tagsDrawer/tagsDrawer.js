@@ -17,11 +17,10 @@ import {
   InputAdornment,
   Menu,
   MenuItem
-  // Popover
 } from "@material-ui/core";
 
 import {
-  LibraryBooksRounded,
+  StyleRounded,
   Close,
   ChevronLeft,
   MoreVert,
@@ -56,10 +55,13 @@ const useStyles = makeStyles(theme => ({
   },
   drawerHeader: {
     display: "flex",
+    // alignItems: "center",
     padding: "0 8px",
     ...theme.mixins.toolbar,
+    // justifyContent: "flex-end",
     justifyContent: "space-between",
     flexDirection: "column"
+    // minHeight: "150px"
   },
   drawerSubHeader: {
     display: "flex",
@@ -70,21 +72,23 @@ const useStyles = makeStyles(theme => ({
   },
   textField: {
     margin: "8px 8px 16px"
+  },
+  fab: {
+    margin: "1rem"
   }
 }));
 
-export default function NotebookDrawer(props) {
+const TagDrawer = props => {
   const context = useContext(Context);
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const [notebooks, setNotebooks] = useState(context.notebooks);
+  const [tags, setTags] = useState(context.tags);
 
   //menu
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorElID, setAnchorElID] = React.useState(null);
 
   function handleNotebookMenuClick(event, id) {
-    // console.log(event);
     console.log(id);
     setAnchorElID(id);
     setAnchorEl(event.currentTarget);
@@ -92,14 +96,12 @@ export default function NotebookDrawer(props) {
 
   function handleNotebookMenuClose(e) {
     console.log(e);
-    // console.log(anchorEl); //either extract the value through the data-notebookid
     console.log(anchorElID); //or get the notebook._id that will be modified from state
     setAnchorEl(null);
     setAnchorElID(null);
   }
   //end menu
   const classes = useStyles();
-  // const theme = useTheme();
 
   function handleDrawerOpen() {
     setOpen(true);
@@ -110,7 +112,6 @@ export default function NotebookDrawer(props) {
   }
 
   const handleListClick = e => {
-    //props.listClick handles listItem selection
     props.listClick();
     handleDrawerOpen();
   };
@@ -123,34 +124,34 @@ export default function NotebookDrawer(props) {
     setSearch("");
   };
 
-  const handleNotebookClick = notebookID => {
+  const handleTagClick = tagID => {
     handleDrawerClose();
-    context.setActiveNotebook(notebookID);
-    context.setNoteFilter("NOTEBOOK", notebookID);
+    // context.setActiveNotebook(notebookID);
+
+    context.setNoteFilter("TAG", tagID);
   };
 
   useEffect(() => {
     console.log("useEffect from Notebook drawer");
-    console.log(context.notebooks);
+    console.log(context.tags);
     if (!search) {
-      setNotebooks(context.notebooks);
+      setTags(context.tags);
     } else {
-      const filteredNotebooks = context.notebooks.filter(notebook =>
-        notebook.name.toLowerCase().includes(search.toLowerCase())
+      const filteredTags = context.tags.filter(tag =>
+        tag.tagname.toLowerCase().includes(search.toLowerCase())
       );
       console.log(`searching... for ${search} & found :`);
-      console.log(filteredNotebooks);
-      setNotebooks(filteredNotebooks);
+      console.log(filteredTags);
+      setTags(filteredTags);
     }
-  }, [search, context.notebooks]);
+  }, [search, context.tags]);
 
   return (
     <div
       className={classes.root}
       // role="presentation"
-      // onClick={handleDrawerClose}
     >
-      <Tooltip title="Notebooks" placement="right">
+      <Tooltip title="Tags" placement="right">
         <ListItem
           className={classes.list_item}
           button
@@ -159,7 +160,7 @@ export default function NotebookDrawer(props) {
           style={{ marginBottom: "1rem" }}
         >
           <ListItemIcon>
-            <LibraryBooksRounded />
+            <StyleRounded />
           </ListItemIcon>
         </ListItem>
       </Tooltip>
@@ -181,7 +182,7 @@ export default function NotebookDrawer(props) {
               component="p"
               className={classes.drawerTitle}
             >
-              Notebooks
+              TAGS
             </Typography>
 
             <IconButton onClick={handleDrawerClose}>
@@ -190,11 +191,11 @@ export default function NotebookDrawer(props) {
           </div>
         </div>
         <TextField
-          label="Find a notebook"
+          label="Find a Tag"
           className={classes.textField}
           value={search}
           onChange={handleSearch}
-          placeholder="Find a notebook"
+          placeholder="Find a tag"
           variant="outlined"
           InputProps={{
             endAdornment: (
@@ -211,27 +212,27 @@ export default function NotebookDrawer(props) {
             )
           }}
         />
+
         <Divider />
 
         <List>
-          {notebooks
-            ? notebooks.map(notebook => {
-                const numberOfNotes = notebook.notes.filter(
-                  note => !note.trash
-                );
+          {tags
+            ? tags.map(tag => {
+                const numberOfNotes = tag.notes.filter(note => !note.trash);
+                console.log(numberOfNotes);
                 return (
-                  <Fragment key={notebook._id}>
+                  <Fragment key={tag._id}>
                     <ListItem
                       button
-                      onClick={handleNotebookClick.bind(this, notebook._id)}
+                      onClick={handleTagClick.bind(this, tag._id)}
                     >
                       <ListItemIcon style={{ minWidth: "3rem" }}>
                         <StarRounded
-                          style={notebook.favorite ? { color: "gold" } : {}}
+                          style={tag.favorite ? { color: "gold" } : {}}
                         />
                       </ListItemIcon>
                       <ListItemText
-                        primary={notebook.name}
+                        primary={tag.tagname}
                         secondary={numberOfNotes.length + " notes"}
                       />
 
@@ -241,32 +242,11 @@ export default function NotebookDrawer(props) {
                           aria-label="More"
                           aria-controls="long-menu"
                           aria-haspopup="true"
-                          onClick={e =>
-                            handleNotebookMenuClick(e, notebook._id)
-                          }
+                          onClick={e => handleNotebookMenuClick(e, tag._id)}
                           // data-notebookid={notebook._id}
                         >
                           <MoreVert />
                         </IconButton>
-
-                        {/* <Menu
-                          elevation={1}
-                          id="simple-menu"
-                          anchorEl={anchorEl}
-                          keepMounted
-                          open={Boolean(anchorEl)}
-                          onClose={handleNotebookMenuClose}
-                        >
-                          <MenuItem onClick={handleNotebookMenuClose}>
-                            Info
-                          </MenuItem>
-                          <MenuItem onClick={handleNotebookMenuClose}>
-                            Delete
-                          </MenuItem>
-                          <MenuItem onClick={handleNotebookMenuClose}>
-                            Favourite
-                          </MenuItem>
-                        </Menu> */}
                       </ListItemSecondaryAction>
                     </ListItem>
                     <Divider />
@@ -290,4 +270,6 @@ export default function NotebookDrawer(props) {
       </Drawer>
     </div>
   );
-}
+};
+
+export default TagDrawer;

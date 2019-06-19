@@ -5,9 +5,11 @@ export const fetchUserData = userId =>
     tags{
       _id
       tagname
+      favorite
       notes {
         _id
         title
+        trash
       }
     }
     notebooks {
@@ -65,6 +67,10 @@ export const createNote = (title, body, notebook) =>
     updatedAt
     favorite
     trash
+    tags{
+      _id
+      tagname
+    }
     notebook{
       _id
       name
@@ -83,6 +89,10 @@ export const updateNoteBody = (ID, body) =>
     updatedAt
     favorite
     trash
+    tags{
+      _id
+      tagname
+    }
     notebook{
       _id
       name
@@ -132,6 +142,10 @@ export const moveNote = (noteID, notebookID) =>
     updatedAt
     favorite
     trash
+    tags {
+      _id
+      tagname
+    }
     notebook {
       _id
       name
@@ -139,6 +153,7 @@ export const moveNote = (noteID, notebookID) =>
       notes{
         _id
         title
+        trash
       }
     }
   }
@@ -244,6 +259,7 @@ export const assignTag = (tagID, noteID) =>
       notes {
         _id
         title
+        trash
       }
     }
   }`;
@@ -257,6 +273,7 @@ export const unAssignTag = (tagID, noteID) =>
     notes{
       _id
       title
+      trash
     }
   }
 }`;
@@ -270,6 +287,7 @@ export const tagFavoriteTrue = tagID =>
     notes{
       _id
       title
+      trash
     }
   }
 }`;
@@ -283,6 +301,7 @@ export const tagFavoriteFalse = tagID =>
     notes{
       _id
       title
+      trash
     }
   }
 }`;
@@ -297,6 +316,7 @@ export const deleteTag = tagID =>
     notes{
       _id
       title
+      trash
     }
   }
 }`;
