@@ -28,6 +28,7 @@ import {
   // LibraryAddRounded
 } from "@material-ui/icons";
 import Context from "../../context/context";
+import { TAG } from "../../context/activeUItypes";
 
 const drawerWidth = 340;
 
@@ -84,6 +85,12 @@ const TagDrawer = props => {
   const [search, setSearch] = useState("");
   const [tags, setTags] = useState(context.tags);
 
+  useEffect(() => {
+    console.log("tags useEffect");
+    if (props.closed !== TAG) {
+      setOpen(false);
+    }
+  }, [props.closed]);
   //menu
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorElID, setAnchorElID] = React.useState(null);

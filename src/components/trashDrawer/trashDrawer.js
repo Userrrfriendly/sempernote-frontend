@@ -26,6 +26,7 @@ import {
   // StarRounded
 } from "@material-ui/icons";
 import Context from "../../context/context";
+import { TRASH } from "../../context/activeUItypes";
 
 const drawerWidth = 340;
 
@@ -75,6 +76,14 @@ export default function TrashDrawer(props) {
   const [open, setOpen] = useState(false);
   const [trash, setTrash] = useState(context.notebooks);
 
+  //closes this drawer if another one is opened
+  useEffect(() => {
+    console.log("tags useEffect");
+    if (props.closed !== TRASH) {
+      setOpen(false);
+    }
+  }, [props.closed]);
+
   //menu
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorElID, setAnchorElID] = React.useState(null);
@@ -112,8 +121,7 @@ export default function TrashDrawer(props) {
 
   const handleTrashNoteClick = trashID => {
     handleDrawerClose();
-    // context.setActiveNotebook(trashID);
-    context.setNoteFilter("TRASH", trashID);
+    context.setNoteFilter(TRASH, trashID);
   };
 
   useEffect(() => {
@@ -183,9 +191,6 @@ export default function TrashDrawer(props) {
         <List>
           {trash
             ? trash.map(trashNote => {
-                // const numberOfNotes = notebook.notes.filter(
-                //   note => !note.trash
-                // );
                 return (
                   <Fragment key={trashNote._id}>
                     <ListItem

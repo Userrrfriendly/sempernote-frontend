@@ -1,23 +1,13 @@
 import React, { useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  List,
-  ListItem,
-  ListItemIcon,
-  Tooltip
-  // SvgIcon
-} from "@material-ui/core";
+import { List, ListItem, ListItemIcon, Tooltip } from "@material-ui/core";
 import {
   NoteAddRounded,
   SearchRounded,
   StarRounded,
   DescriptionRounded,
-  // LibraryBooksRounded,
   LibraryAddRounded
-  // StyleRounded,
-  // DeleteSweepRounded
 } from "@material-ui/icons";
-import CreateTagIcon from "../svgCreateTag/svgCreateTag";
 
 import Context from "../../context/context";
 import {
@@ -27,11 +17,11 @@ import {
   TAG,
   TRASH
 } from "../../context/activeUItypes";
-// import NoteDialog from "../createNoteModal/noteModal_failed";
 
 import NotebookDrawer from "../notebookDrawer/notebookDrawer";
 import TagsDrawer from "../tagsDrawer/tagsDrawer";
 import TrashDrawer from "../trashDrawer/trashDrawer";
+import CreateTagIcon from "../svgCreateTag/svgCreateTag";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -56,15 +46,36 @@ const useStyles = makeStyles(theme => ({
 const SideNav = props => {
   const classes = useStyles();
   const [selectedIndex, setSelectedIndex] = React.useState(NOTES);
+  const [openDrawer, setOpenDrawer] = React.useState("");
   const context = useContext(Context);
 
   function handleListItemClick(event, index) {
-    //Should I be worried here? are hooks syncronous?
     console.log(index);
+    closeDrawers(index);
     setSelectedIndex(index);
-    // context.setActiveUI(index);
     index === NOTES && context.setNoteFilter(NOTES);
   }
+
+  const closeDrawers = openDrawer => {
+    setOpenDrawer(openDrawer);
+  };
+
+  const openCreateNoteModal = async () => {
+    //why async/await? beacause the drawer needs to close before the modal opens
+    //otherwise the focus stays on sidenav (conflic between react-modal and materialUI drawer which is also a modal)
+    await closeDrawers("");
+    props.openCreateNoteModal();
+  };
+
+  const openCreateNotebook = async () => {
+    await closeDrawers("");
+    props.openCreateNotebookModal();
+  };
+
+  const openCreateTag = async () => {
+    await closeDrawers("");
+    props.openCreateTagModal();
+  };
 
   return (
     <div className={classes.root}>
@@ -75,7 +86,8 @@ const SideNav = props => {
             className={classes.list_item}
             button
             selected={selectedIndex === 0}
-            onClick={props.openCreateNoteModal}
+            onClick={openCreateNoteModal}
+            // onClick={props.openCreateNoteModal}
             // onClick={event => handleListItemClick(event, 0)}
           >
             <ListItemIcon>
@@ -89,7 +101,8 @@ const SideNav = props => {
             className={classes.list_item}
             button
             selected={selectedIndex === 1}
-            onClick={props.openCreateNotebookModal}
+            // onClick={props.openCreateNotebookModal}
+            onClick={openCreateNotebook}
           >
             <ListItemIcon>
               <LibraryAddRounded />
@@ -102,7 +115,8 @@ const SideNav = props => {
             className={classes.list_item}
             button
             selected={selectedIndex === 2}
-            onClick={props.openCreateTagModal}
+            // onClick={props.openCreateTagModal}
+            onClick={openCreateTag}
           >
             <ListItemIcon>
               <CreateTagIcon />
@@ -153,6 +167,7 @@ const SideNav = props => {
         <NotebookDrawer
           listSelected={selectedIndex === NOTEBOOK}
           listClick={event => handleListItemClick(event, NOTEBOOK)}
+          closed={openDrawer}
           // createNotebook={props.openCreateNotebookModal}
         />
 
@@ -160,25 +175,14 @@ const SideNav = props => {
           listSelected={selectedIndex === TAG}
           listClick={event => handleListItemClick(event, TAG)}
           openCreateTagModal={props.openCreateTagModal}
+          closed={openDrawer}
         />
 
         <TrashDrawer
           listSelected={selectedIndex === TRASH}
           listClick={event => handleListItemClick(event, TRASH)}
+          closed={openDrawer}
         />
-        {/* 
-        <Tooltip title="Trash" placement="right">
-          <ListItem
-            className={classes.list_item}
-            button
-            selected={selectedIndex === TAG}
-            onClick={event => handleListItemClick(event, TAG)}
-          >
-            <ListItemIcon>
-              <DeleteSweepRounded />
-            </ListItemIcon>
-          </ListItem>
-        </Tooltip> */}
       </List>
     </div>
   );

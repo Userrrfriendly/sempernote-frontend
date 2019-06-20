@@ -29,6 +29,7 @@ import {
   // LibraryAddRounded
 } from "@material-ui/icons";
 import Context from "../../context/context";
+import { NOTEBOOK } from "../../context/activeUItypes";
 
 const drawerWidth = 340;
 
@@ -79,6 +80,14 @@ export default function NotebookDrawer(props) {
   const [search, setSearch] = useState("");
   const [notebooks, setNotebooks] = useState(context.notebooks);
 
+  //closes this drawer if another one is opened
+  useEffect(() => {
+    console.log("tags useEffect");
+    if (props.closed !== NOTEBOOK) {
+      setOpen(false);
+    }
+  }, [props.closed]);
+
   //menu
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorElID, setAnchorElID] = React.useState(null);
@@ -126,7 +135,7 @@ export default function NotebookDrawer(props) {
   const handleNotebookClick = notebookID => {
     handleDrawerClose();
     context.setActiveNotebook(notebookID);
-    context.setNoteFilter("NOTEBOOK", notebookID);
+    context.setNoteFilter(NOTEBOOK, notebookID);
   };
 
   useEffect(() => {
@@ -248,25 +257,6 @@ export default function NotebookDrawer(props) {
                         >
                           <MoreVert />
                         </IconButton>
-
-                        {/* <Menu
-                          elevation={1}
-                          id="simple-menu"
-                          anchorEl={anchorEl}
-                          keepMounted
-                          open={Boolean(anchorEl)}
-                          onClose={handleNotebookMenuClose}
-                        >
-                          <MenuItem onClick={handleNotebookMenuClose}>
-                            Info
-                          </MenuItem>
-                          <MenuItem onClick={handleNotebookMenuClose}>
-                            Delete
-                          </MenuItem>
-                          <MenuItem onClick={handleNotebookMenuClose}>
-                            Favourite
-                          </MenuItem>
-                        </Menu> */}
                       </ListItemSecondaryAction>
                     </ListItem>
                     <Divider />
