@@ -442,6 +442,7 @@ class App extends Component {
           mergeNotes(resData.data.user.notebooks),
           "updatedAt"
         );
+
         const filteredNotes = filterTrash(notes);
         this.setState({
           userName: resData.data.user.username,

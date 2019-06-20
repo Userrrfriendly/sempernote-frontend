@@ -13,18 +13,25 @@ import {
   StarRounded,
   DescriptionRounded,
   // LibraryBooksRounded,
-  LibraryAddRounded,
+  LibraryAddRounded
   // StyleRounded,
-  DeleteSweepRounded
+  // DeleteSweepRounded
 } from "@material-ui/icons";
 import CreateTagIcon from "../svgCreateTag/svgCreateTag";
 
 import Context from "../../context/context";
-import { NOTES, NOTEBOOK, FAVORITES, TAG } from "../../context/activeUItypes";
+import {
+  NOTES,
+  NOTEBOOK,
+  FAVORITES,
+  TAG,
+  TRASH
+} from "../../context/activeUItypes";
 // import NoteDialog from "../createNoteModal/noteModal_failed";
 
 import NotebookDrawer from "../notebookDrawer/notebookDrawer";
 import TagsDrawer from "../tagsDrawer/tagsDrawer";
+import TrashDrawer from "../trashDrawer/trashDrawer";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -155,19 +162,11 @@ const SideNav = props => {
           openCreateTagModal={props.openCreateTagModal}
         />
 
-        {/* <Tooltip title="Tags" placement="right">
-          <ListItem
-            className={classes.list_item}
-            button
-            selected={selectedIndex === TAGS}
-            onClick={event => handleListItemClick(event, TAGS)}
-          >
-            <ListItemIcon>
-              <StyleRounded />
-            </ListItemIcon>
-          </ListItem>
-        </Tooltip> */}
-
+        <TrashDrawer
+          listSelected={selectedIndex === TRASH}
+          listClick={event => handleListItemClick(event, TRASH)}
+        />
+        {/* 
         <Tooltip title="Trash" placement="right">
           <ListItem
             className={classes.list_item}
@@ -179,7 +178,7 @@ const SideNav = props => {
               <DeleteSweepRounded />
             </ListItemIcon>
           </ListItem>
-        </Tooltip>
+        </Tooltip> */}
       </List>
     </div>
   );

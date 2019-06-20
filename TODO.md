@@ -14,10 +14,6 @@
 - limit the number of characters that the notebook / note can have
 - CARDS ON HOVER RAISED OR BIGGER SHADOW
 - Probably X^y should be removed (at least from the small screen) and replaced with link wich is more usefull
-- - When notes are sorted and the user modifies a note and presses the <- button the notes are re-sorted with modified first
-- - this is triggered by updateNoteBody() in the App.js file, either I should keep sorting persistant or leave it for
-- - convinience since with that behaviour the lastly modified note will always display first
-- - also there probably? should be an option to sort notes when the editor is expanded
 - mobile tollbar for quill https://stackoverflow.com/questions/51706247/quill-how-to-prevent-toolbar-from-scrolling-and-set-the-height
 
 ## MEdium Priority
@@ -40,12 +36,9 @@
 
 ## Sprint:
 
-- Add tags to a note then move it to a new notebook -> tags will dissapear!
 - the render UI could be depricated, establish if it is needed
 - at login add password visible/invisible icon
-- add a trash icon to the sidenav
 - noteInfo in appBar will have to wait till sidenav is done the same goes for save
-- Design the NoteHeader functionality and implement it then
 - make trash and default notebook undeletable
 - when moving a note to a different notebook upDatedAt is modified but the sorting doesnt change in AppBar
 
@@ -57,22 +50,24 @@
 - BACKEND DeleteNote should target only notes in TrashNotebook
 
 * Favorites on Notebooks & TAGS
-* AT DELETENOTEBOOK ->
-  - 1 all notes in the notebook trash=true
-  - 2 all notes inside it must be moved to default notebook
 * delteNote (hard Delete needs to be modified accordingly)
 
 # Tags:
 
-- createTAg needs to check wether a tag with the same name already exists
-- Create TAGS needs UI
+- Add to favorites
 
 # BUGS
 
-- when a tag is added or removed from the SelectTag component it triggers a re-render, making the tag to disappear and reappear (when the response from the server hits back) which looks like a glitch
-- when starring/unstarring a note the active tags dissapear for no reason!!!
-- when a note is expanded if you click on another note the notebook select is not updated
-- when editing note,notebooks it would be better not to push/pull but destructure & replace so the order of the items stays consistent
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+**_STARRING NOTES SEEMS TO KILL TAGS _**
+
+- 1)add tag 2)star 3)remove tag -> || 1)open note with a tag, 2)star 3) remove tag -> tag is killed forever
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+* when a tag is added or removed from the SelectTag component it triggers a re-render, making the tag to disappear and reappear (when the response from the server hits back) which looks like a glitch
+* when starring/unstarring a note the active tags dissapear for no reason!!!
+* when a note is expanded if you click on another note the notebook select is not updated
+* when editing note,notebooks it would be better not to push/pull but destructure & replace so the order of the items stays consistent
 
 # Various things to think about:
 
@@ -96,8 +91,5 @@
 - could menu in each notebook be replace with a single menu?
 - tags probably include notes in trash
 - FIX THE DOUBLE DRAWERS!!!
-- a newly tagged note doesn't appear in the tags drawer etc...
 - probably need reducers to take care of multiple things updating something
-- *eg: update notebody and add a tag two different kinds of data arrive...
-- the problem lives that too many things modify the same shit and some of them do a very lousy job...
-- some problem lives on the backend how did 2tags dissaper??? something is fucked
+- !@! REFACTOR NOTELISTS! needs to have star icon

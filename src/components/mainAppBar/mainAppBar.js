@@ -1,6 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 import Context from "../../context/context";
-import { NOTES, NOTEBOOK, FAVORITES, TAG } from "../../context/activeUItypes";
+import {
+  NOTES,
+  NOTEBOOK,
+  FAVORITES,
+  TAG,
+  TRASH
+} from "../../context/activeUItypes";
 
 // import { makeStyles } from "@material-ui/core/styles";
 // import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
@@ -186,10 +192,8 @@ const MainAppBar = props => {
         );
         notesToRender = context.notes ? (
           context.notes
-            //note.tags includes noteFilter.options
-            .filter(
-              note => _find(note.tags, { _id: context.noteFilter.options })
-              // note.tags === context.noteFilter.options
+            .filter(note =>
+              _find(note.tags, { _id: context.noteFilter.options })
             )
             .map(note => {
               return (
@@ -218,8 +222,46 @@ const MainAppBar = props => {
         // console.log(notesToRender);
         setNoteNumber(notesToRender ? notesToRender.length : 0);
         setdisplayNotes(notesToRender);
+        break;
+      case TRASH:
+        setTitle(
+          'Notebook: "' +
+            context.notebooks.filter(
+              notebook => notebook._id === context.noteFilter.options
+            )[0].name +
+            '"'
+        );
+        notesToRender = context.notes ? (
+          context.notes
+            .filter(note => note.notebook._id === context.noteFilter.options)
+            .map(note => {
+              return (
+                <NoteListItem
+                  activeNote={context.activeNote}
+                  notebookName={note.notebook.name}
+                  notebookId={note.notebook._id}
+                  key={note._id}
+                  name={note.title}
+                  updated={note.updatedAt}
+                  created={note.createdAt}
+                  body={note.body}
+                  id={note._id}
+                  expandNote={props.expandNote.bind(
+                    this,
+                    note._id,
+                    note.notebook._id
+                  )}
+                />
+              );
+            })
+        ) : (
+          <LinearProgress />
+        );
+        console.log(context.noteFilter);
+        console.log(notesToRender);
+        setNoteNumber(notesToRender ? notesToRender.length : 0);
+        setdisplayNotes(notesToRender);
         // setActiveUI("NOTEBOOKS");
-        // setdisplayNotes("TAG");
         break;
       default:
         throw new Error("Invalid argument in activeUI");
@@ -227,7 +269,6 @@ const MainAppBar = props => {
   }, [
     context.notes,
     context.activeNote,
-    // context.activeUI,
     context.filteredNotes,
     props.expandNote,
     context.noteFilter,
@@ -235,28 +276,6 @@ const MainAppBar = props => {
     context.notebooks,
     context.tags
   ]);
-
-  // function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-  //   setAuth(event.target.checked);
-  // }
-
-  // function handleMenu(event: React.MouseEvent<HTMLElement>) {
-  //   setAnchorEl(event.currentTarget);
-  // }
-
-  // function handleClose() {
-  //   setAnchorEl(null);
-  // }
-
-  // const numberOfDisplayedNotes = () => {
-  //   if (context.filteredNotes) {
-  //     return context.filteredNotes.length;
-  //   } else if (context.notes) {
-  //     return context.notes.length;
-  //   } else {
-  //     return 0;
-  //   }
-  // };
 
   return (
     <>
@@ -348,7 +367,6 @@ const MainAppBar = props => {
                   <IconButton
                     // aria-owns={open ? 'menu-appbar' : undefined}
                     aria-haspopup="true"
-                    // onClick={handleMenu}
                     color="inherit"
                   >
                     <Info />
@@ -358,9 +376,7 @@ const MainAppBar = props => {
                   <IconButton
                     // aria-owns={open ? 'menu-appbar' : undefined}
                     aria-haspopup="true"
-                    // onClick={handleMenu}
                     color="inherit"
-                    // onClick={handleMenu}
                     component={AdapterLink}
                     to="/main/"
                     onClick={context.softDeleteNote.bind(

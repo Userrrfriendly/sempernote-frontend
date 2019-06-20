@@ -203,12 +203,15 @@ export const noteFavoriteTrue = noteID =>
     noteFavoriteTrue(noteID:"${noteID}"){
     _id
     title
-    trash
     body
     createdAt
     updatedAt
     favorite
     trash
+    tags{
+      _id
+      tagname
+    }
     notebook {
       _id
       name
@@ -222,12 +225,15 @@ export const noteFavoriteFalse = noteID =>
     noteFavoriteFalse(noteID:"${noteID}"){
     _id
     title
-    trash
     body
     createdAt
     updatedAt
     favorite
     trash
+    tags{
+      _id
+      tagname
+    }
     notebook{
       _id
       name
