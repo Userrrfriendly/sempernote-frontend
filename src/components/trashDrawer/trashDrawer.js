@@ -78,7 +78,7 @@ export default function TrashDrawer(props) {
 
   //closes this drawer if another one is opened
   useEffect(() => {
-    console.log("tags useEffect");
+    console.log("Trash useEffect");
     if (props.closed !== TRASH) {
       setOpen(false);
     }

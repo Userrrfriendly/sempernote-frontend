@@ -5,7 +5,8 @@ import {
   NOTEBOOK,
   FAVORITES,
   TAG,
-  TRASH
+  TRASH,
+  SEARCH
 } from "../../context/activeUItypes";
 
 // import { makeStyles } from "@material-ui/core/styles";
@@ -65,20 +66,6 @@ const useStyles = makeStyles({
  * Tags
  * Search
  * Favorites
- * 
- -By clicking on the sidenav.icon an action is dispatched that changes the state of context
- -When the state the context is modified Noteheader will rerender with the correct UI
-  {activeUI:"NOTES"} //all notes
-  {activeUI:"NOTEBOOKS"} //all notebooks
-  {activeUI:"FAVORITES"} //FAVORITES
-  {activeUI:"TAG"} // TAGs
-  {activeUI:"SINGLE_NOTE"} // Single Note  
-  {activeUI:"SINGLE_TAG"} //One TAG
-  {activeUI:"SINGLE_NOTEBOOK"},{activeNotebook:notebookID} //One notebook
-  {activeUI:"SEARCH"},{searchResults:[notebook,tag,note]} // search
- <--Proposed Solution: both SideNav & NoteHeader subscribe to the context and do whatever they please
- all functionality will still be dumped into App.js 
- -->
 
   */
 
@@ -180,6 +167,10 @@ const MainAppBar = props => {
         break;
       case FAVORITES:
         setdisplayNotes("FAVORITES");
+        // setActiveUI("FAVORITES");
+        break;
+      case SEARCH:
+        setdisplayNotes("SEARCH RESULTS");
         // setActiveUI("FAVORITES");
         break;
       case TAG:

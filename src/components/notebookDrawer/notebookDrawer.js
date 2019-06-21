@@ -82,7 +82,7 @@ export default function NotebookDrawer(props) {
 
   //closes this drawer if another one is opened
   useEffect(() => {
-    console.log("tags useEffect");
+    console.log("Notebook Drawer useEffect");
     if (props.closed !== NOTEBOOK) {
       setOpen(false);
     }

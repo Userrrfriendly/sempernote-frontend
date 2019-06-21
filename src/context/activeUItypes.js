@@ -3,6 +3,7 @@ export const NOTEBOOK = "NOTEBOOK";
 export const FAVORITES = "FAVORITES";
 export const TAG = "TAG";
 export const TRASH = "TRASH";
+export const SEARCH = "SEARCH";
 
 // {activeUI:"NOTES"} //all notes
 // {activeUI:"NOTEBOOKS"} //all notebooks

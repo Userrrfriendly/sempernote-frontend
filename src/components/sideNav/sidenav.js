@@ -2,8 +2,8 @@ import React, { useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { List, ListItem, ListItemIcon, Tooltip } from "@material-ui/core";
 import {
+  // SearchRounded,
   NoteAddRounded,
-  SearchRounded,
   StarRounded,
   DescriptionRounded,
   LibraryAddRounded
@@ -15,13 +15,15 @@ import {
   NOTEBOOK,
   FAVORITES,
   TAG,
-  TRASH
+  TRASH,
+  SEARCH
 } from "../../context/activeUItypes";
 
+import CreateTagIcon from "../svgCreateTag/svgCreateTag";
 import NotebookDrawer from "../notebookDrawer/notebookDrawer";
 import TagsDrawer from "../tagsDrawer/tagsDrawer";
 import TrashDrawer from "../trashDrawer/trashDrawer";
-import CreateTagIcon from "../svgCreateTag/svgCreateTag";
+import SearchDrawer from "../searchDrawer/searchDrawer";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -127,7 +129,12 @@ const SideNav = props => {
         <hr className={classes.hr} />
         {/* </List>
       <List component="nav"> */}
-        <Tooltip title="Search" placement="right">
+        <SearchDrawer
+          listSelected={selectedIndex === SEARCH}
+          listClick={event => handleListItemClick(event, SEARCH)}
+          closed={openDrawer}
+        />
+        {/* <Tooltip title="Search" placement="right">
           <ListItem
             className={classes.list_item}
             button
@@ -138,7 +145,8 @@ const SideNav = props => {
               <SearchRounded />
             </ListItemIcon>
           </ListItem>
-        </Tooltip>
+        </Tooltip> */}
+
         <Tooltip title="Favorites" placement="right">
           <ListItem
             className={classes.list_item}
@@ -174,7 +182,7 @@ const SideNav = props => {
         <TagsDrawer
           listSelected={selectedIndex === TAG}
           listClick={event => handleListItemClick(event, TAG)}
-          openCreateTagModal={props.openCreateTagModal}
+          // openCreateTagModal={props.openCreateTagModal}
           closed={openDrawer}
         />
 

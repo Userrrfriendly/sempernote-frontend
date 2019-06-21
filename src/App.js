@@ -373,10 +373,17 @@ class App extends Component {
         );
         updatedNotes.push(r.data.updateNoteBody);
         sortByDateNewestFirst(updatedNotes, "updatedAt");
-        const activeNote =
-          this.state.activeNote._id === r.data.updateNoteBody._id
-            ? r.data.updateNoteBody
-            : this.state.activeNote;
+        let activeNote;
+        if (this.state.activeNote) {
+          activeNote =
+            this.state.activeNote._id === r.data.updateNoteBody._id
+              ? r.data.updateNoteBody
+              : this.state.activeNote;
+        }
+        // const activeNote =
+        //   this.state.activeNote._id === r.data.updateNoteBody._id
+        //     ? r.data.updateNoteBody
+        //     : this.state.activeNote;
         this.setState({
           notes: updatedNotes,
           activeNote: activeNote

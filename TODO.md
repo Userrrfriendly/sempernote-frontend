@@ -29,10 +29,7 @@
 
 *** SIDENAV ITEMS ***
 # Search
-- Should have modal
-- Search (live in note.name)
-- by clicking enter it should search in note.bodies for the search querry
-- should have access to quill delta (in order to be able to search in note.body)
+- Nice to have: Highlighted search result text (either in result name or the body text in case of note deep search)
 
 # Favorites:
 - Should have a modal
@@ -74,7 +71,8 @@
 - RenameNotebook/Note
 - BACKEND DeleteNote should target only notes in TrashNotebook
 - HardDelete 
-
+- - - Reset Password/Send Email Validation/Security Questions
+  
 *** BUGS ***
 - when a tag is added or removed from the SelectTag component it triggers a re-render, making the tag to disappear and reappear (when the response from the server hits back) which looks like a glitch
 - when a note is expanded if you click on another note the notebook select is not updated
@@ -109,7 +107,7 @@
 
 ## low Priority
 - Login page enable 'remember me' commented out checkbox, along with its functionality
-- Login page enable "forgot password" -> backend
+
 - https://material-ui.com/components/text-fields/ Input Adornments show/hide password
 - for TAGS SELECT could use Material-UI example with chips https://material-ui.com/components/autocomplete/
   (it still uses react-select under the hood)

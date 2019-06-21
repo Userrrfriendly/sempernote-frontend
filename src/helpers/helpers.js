@@ -96,3 +96,13 @@ export const sortByNotebookName = arrOfObjects =>
     // if names are equal return 0 that doesnt change the order
     return 0;
   });
+
+//deltaToPlainText() is from https://github.com/purposeindustries/quill-delta-to-plaintext
+export const deltaToPlainText = delta => {
+  return delta.reduce(function(text, op) {
+    if (!op.insert)
+      throw new TypeError("only `insert` operations can be transformed!");
+    if (typeof op.insert !== "string") return text + " ";
+    return text + op.insert;
+  }, "");
+};

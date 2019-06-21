@@ -13,6 +13,7 @@ import {
 } from "@material-ui/core/";
 // import useMediaQuery from "@material-ui/core/useMediaQuery";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
+import { deltaToPlainText } from "../../helpers/helpers";
 // import { withStyles, Theme, createStyles } from "@material-ui/core/styles";
 // import { useTheme } from "@material-ui/core/styles";
 
@@ -61,18 +62,8 @@ const MediaCard = props => {
   // const matches = useMediaQuery("(min-width:350px)");
 
   const previewText = str => {
-    //toPlaintext() is from https://github.com/purposeindustries/quill-delta-to-plaintext
-    function toPlaintext(delta) {
-      return delta.reduce(function(text, op) {
-        if (!op.insert)
-          throw new TypeError("only `insert` operations can be transformed!");
-        if (typeof op.insert !== "string") return text + " ";
-        return text + op.insert;
-      }, "");
-    }
-
     const parsedDelta = new Delta(JSON.parse(str));
-    let plainText = toPlaintext(parsedDelta);
+    let plainText = deltaToPlainText(parsedDelta);
     // console.log(plainText);
     if (plainText.length > 300) {
       return plainText.slice(0, 300).concat("...");
