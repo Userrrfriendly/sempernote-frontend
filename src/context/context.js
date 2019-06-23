@@ -10,7 +10,7 @@ export default React.createContext({
   trash: null,
   activeNote: null,
   activeNotebook: null,
-  activeUI: "NOTES", //delete or change
+  // activeUI: "NOTES", //delete or change
   tags: null,
   login: (token, userId, tokenExpiration) => {},
   logout: () => {},
@@ -21,7 +21,6 @@ export default React.createContext({
   pushNoteToState: () => {},
   updateNoteBody: () => {},
   createNotebook: () => {},
-  setActiveUI: () => {}, //delete or change
   updateNotes: () => {},
   softDeleteNote: () => {},
   noteToggleFavorite: () => {},

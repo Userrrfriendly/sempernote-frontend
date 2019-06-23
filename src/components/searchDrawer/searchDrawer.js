@@ -140,7 +140,6 @@ const SearchDrawer = props => {
         context.setNoteFilter(NOTEBOOK, resultID);
         break;
       case NOTES:
-        // context.setActiveNotebook(resultID);
         context.setNoteFilter(NOTES);
         context.setActiveNote(resultID);
         let path = `/main/editor`;

@@ -16,7 +16,7 @@
 
 **_ APPBAR _**
 
-- Note Info
+- Note Info icon
 - LogOut/ User info
 - SaveNote Button
 - SaveNote Button Animation when the note is beeing saved
@@ -34,7 +34,7 @@
 # Favorites:
 
 - Should have a modal
-- Search
+- No Search
 - Display Notes/Notebooks/Tags with different icon
 - each item in favorites should have a clickable star/unstar icon
 - Upon clicking the favorite item it should display either:
@@ -84,42 +84,40 @@
 **_ BUGS _**
 
 - when a tag is added or removed from the SelectTag component it triggers a re-render, making the tag to disappear and reappear (when the response from the server hits back) which looks like a glitch
-- when a note is expanded if you click on another note the notebook select is not updated
-
-# UI Bugs:
-
-- Extremely long tag (without spaces) can underflow in drawer sneaking up to the ... button,
-  - Extremely long tag expands the appbars height and causes a slight scrolling vertical scroll
-
-# Various things to think about:
-
-- the render UI could be depricated, establish if it is needed
 - when moving a note to a different notebook upDatedAt is modified but the sorting doesnt change in AppBar
-- React Select inside a MaterialUI Dialog causes the dialog to overflow see:
-- \*https://github.com/mui-org/material-ui/issues/11824
-- (_modals_) Could not ditch Reac-modal since MAterialUI (Modal/Dialog) overflows
-- check the app by spamming component did update in every component to check for rerenders
+- 
 - - edit a note and quickpress trash --> this will trigger two posts:
 - \*1)update notebody 2)moveNotetotrash, since moveNoteToTrash is fired instantly the trashed note will not have the last edits
 - \*but the note will stay in state with the edit in state.notes.
 - \*A)so should I do some short of autosave before trashing the note?
 - \*B)the note that is added to the state is added by the updateNoteBody so I could check there if the note.trash ===true instead of appending it to the
 - \*state.notes, push it into state.trash
-- when createing a notebook or filter notes by notebook should set activenotebook,
-- also maybe remove setActiveNotebook on noteClick (noteListItem)
-- also activeNotebook should be used to select the notebook by default in createNote modal
+
+# UI Bugs:
+
+- Extremely long tag (without spaces) can underflow in drawer sneaking up to the ... button, (shorten long names?)
+  - Extremely long tag expands the appbars height and causes a slight scrolling vertical scroll
+
+# Various things to think about:
+
+- check the app by spamming component did update in every component to check for rerenders
+- React Select inside a MaterialUI Dialog causes the dialog to overflow see:
+- \*https://github.com/mui-org/material-ui/issues/11824
+- (_modals_) Could not ditch Reac-modal since MAterialUI (Modal/Dialog) overflows
+
+ 
+- activeNotebook is an unused property of the state, either delete it or it could be used to select the notebook by default in createNote modal (when createing a notebook or filter notes by notebook should set activenotebook,) <-- Nice2have
 - -rename activeUITypes (CONSTANT)
-- activeUI should be deleted?
 - probably need reducers to take care of multiple things updating something
 - !@! REFACTOR NOTELISTS! needs to have star/delete/info button either static or appear on hover
 - The way you close previously openned modals if another one is clicked is not great... better think of smth better
 - when editing note,notebooks it would be better not to push/pull but destructure & replace so the order of the items stays consistent
-
+- It looks like there are several instances of `@material-ui/styles` initialized in this application. This may cause theme propagation issues, broken class names and makes your application bigger without a good reason.
+* See https://material-ui.com/getting-started/faq#i-have-several-instances-of-styles-on-the-page for more info.
 ## low Priority
 
 - Login page enable 'remember me' commented out checkbox, along with its functionality
 
-- https://material-ui.com/components/text-fields/ Input Adornments show/hide password
 - for TAGS SELECT could use Material-UI example with chips https://material-ui.com/components/autocomplete/
   (it still uses react-select under the hood)
 - create a theme for the app global styles / create a dark theme
@@ -129,14 +127,13 @@
 - add font roboto to the list of selected fonts in QUILL -->
   https://stackoverflow.com/questions/43728080/how-to-add-font-types-on-quill-js-with-toolbar-options
 - limit the number of characters that the notebook / note can have
-- CARDS ON HOVER RAISED OR BIGGER SHADOW
-- Probably X^y should be removed (at least from the small screen) and replaced with link wich is more usefull
+- Probably X^y should be removed (at least from the small screen) and replaced with link, image, indentation which are more usefull
 - mobile tollbar for quill https://stackoverflow.com/questions/51706247/quill-how-to-prevent-toolbar-from-scrolling-and-set-the-height
 
 ## MEdium Priority
 
 - MOVE State from the app to a wrapper component
 - Select Tag can overflow-y very very badly.... need to find a way to target the coresponding div and set its max-height to ~60px
-- Create Documentation
 
 ## High Priority
+- Create Documentation

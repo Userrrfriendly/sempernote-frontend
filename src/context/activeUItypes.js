@@ -4,12 +4,3 @@ export const FAVORITES = "FAVORITES";
 export const TAG = "TAG";
 export const TRASH = "TRASH";
 export const SEARCH = "SEARCH";
-
-// {activeUI:"NOTES"} //all notes
-// {activeUI:"NOTEBOOKS"} //all notebooks
-// {activeUI:"FAVORITES"} //FAVORITES
-// {activeUI:"TAG"} // TAGs
-// {activeUI:"SINGLE_NOTE"} // Single Note
-// {activeUI:"SINGLE_TAG"} //One TAG
-// {activeUI:"SINGLE_NOTEBOOK"},{activeNotebook:notebookID} //One notebook
-// {activeUI:"SEARCH"},{searchResults:[notebook,tag,note]} // search

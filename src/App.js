@@ -44,8 +44,8 @@ class App extends Component {
     trash: null,
     tags: null,
     activeNote: null,
-    activeNotebook: null,
-    activeUI: "NOTES"
+    activeNotebook: null
+    // activeUI: "NOTES"
   };
 
   login = (token, userId, tokenExpiration) => {
@@ -83,7 +83,6 @@ class App extends Component {
   };
 
   softDeleteNote = noteToTrash => {
-    //Send a request to server then :
     const requestBody = {
       query: trashNote(noteToTrash._id)
     };
@@ -108,7 +107,6 @@ class App extends Component {
         return { responseNote };
       })
       .then(data => {
-        // console.log(data.responseNote);
         const tags = this.state.tags.map(tag => {
           return {
             ...tag,
@@ -121,15 +119,10 @@ class App extends Component {
                   }
                 : note
             )
-            //           ...tag,
-            // notes:          tag.notes.map(note =>
-            //   note._id === data.responseNote._id ? data.responseNote : note
-            // ));
           };
         });
         console.log(tags);
         this.setState(prevState => {
-          // console.log(prevState);
           return {
             activeNote:
               prevState.activeNote &&
@@ -273,13 +266,6 @@ class App extends Component {
     //can set it to null by passing null
     this.setState({
       activeNotebook: notebookId
-    });
-  };
-
-  //Defines what will render in mainAppBar component
-  setActiveUI = (ui = "NOTES") => {
-    this.setState({
-      activeUI: ui
     });
   };
 
@@ -610,7 +596,6 @@ class App extends Component {
             createNotebook: this.createNotebook,
             pushNoteToState: this.pushNoteToState,
             updateNoteBody: this.updateNoteBody,
-            setActiveUI: this.setActiveUI,
             updateNotes: this.updateNotes,
             softDeleteNote: this.softDeleteNote,
             noteToggleFavorite: this.noteToggleFavorite,
@@ -620,7 +605,6 @@ class App extends Component {
             unAssignTag: this.unAssignTag,
             setFilteredNotes: this.setFilteredNotes,
             setNoteFilter: this.setNoteFilter
-            // activeUI: this.state.activeUI
           }}
         >
           <Switch>

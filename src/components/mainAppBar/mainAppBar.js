@@ -163,15 +163,12 @@ const MainAppBar = props => {
         console.log(notesToRender);
         setNoteNumber(notesToRender ? notesToRender.length : 0);
         setdisplayNotes(notesToRender);
-        // setActiveUI("NOTEBOOKS");
         break;
       case FAVORITES:
         setdisplayNotes("FAVORITES");
-        // setActiveUI("FAVORITES");
         break;
       case SEARCH:
         setdisplayNotes("SEARCH RESULTS");
-        // setActiveUI("FAVORITES");
         break;
       case TAG:
         setTitle(
@@ -252,7 +249,6 @@ const MainAppBar = props => {
         console.log(notesToRender);
         setNoteNumber(notesToRender ? notesToRender.length : 0);
         setdisplayNotes(notesToRender);
-        // setActiveUI("NOTEBOOKS");
         break;
       default:
         throw new Error("Invalid argument in activeUI");

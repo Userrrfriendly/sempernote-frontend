@@ -56,7 +56,6 @@ const Main = props => {
     console.log(
       `note with ID ${noteId} and notebookID: ${notebookId} expanded`
     );
-    context.setActiveNotebook(notebookId);
     context.setActiveNote(noteId);
     let path = `/main/editor`;
     props.history.push(path);

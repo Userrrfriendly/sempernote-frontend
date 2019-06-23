@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import moment from "moment";
 import Delta from "quill-delta";
 // import { makeStyles } from "@material-ui/core/styles";
@@ -22,9 +22,9 @@ const useStyles = makeStyles({
     // maxWidth: "100%",
     maxWidth: "345",
     marginBottom: "0.5rem",
-    margin: "0 0.5rem 0.5rem",
-    boxShadow:
-      "0px 1px 8px 0px rgba(0,0,0,0.2), 0px 3px 4px 0px rgba(0,0,0,0.14), 0px 3px 3px -2px rgba(0,0,0,0.12)"
+    margin: "0 0.5rem 0.5rem"
+    // boxShadow:
+    //   "0px 1px 8px 0px rgba(0,0,0,0.2), 0px 3px 4px 0px rgba(0,0,0,0.14), 0px 3px 3px -2px rgba(0,0,0,0.12)"
   },
   media: {
     height: 140
@@ -55,11 +55,16 @@ const useStyles = makeStyles({
 // });
 
 const MediaCard = props => {
-  const classes = useStyles(); //hook
+  const classes = useStyles();
+  const [raised, setRaised] = useState(false);
   // const theme = useTheme();
   // const smallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   // const { classes } = props;
   // const matches = useMediaQuery("(min-width:350px)");
+
+  const toggleRaised = () => {
+    setRaised(!raised);
+  };
 
   const previewText = str => {
     const parsedDelta = new Delta(JSON.parse(str));
@@ -74,7 +79,9 @@ const MediaCard = props => {
   // console.log(matches);
   return (
     <Card
-      // raised
+      onMouseOver={toggleRaised}
+      onMouseOut={toggleRaised}
+      raised={raised}
       // classes={{
       //   root: classes.root,
       //   media: classes.media,

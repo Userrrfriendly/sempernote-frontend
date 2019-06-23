@@ -133,8 +133,6 @@ const TagDrawer = props => {
 
   const handleTagClick = tagID => {
     handleDrawerClose();
-    // context.setActiveNotebook(notebookID);
-
     context.setNoteFilter("TAG", tagID);
   };
 
