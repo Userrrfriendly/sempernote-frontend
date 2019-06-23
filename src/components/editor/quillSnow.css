@@ -960,27 +960,32 @@
 .editor-container {
   /* width: inherit; */
   overflow-y: scroll;
-  max-height: calc(100vh - 68px);
+  /* max-height: calc(100vh - 68px); */
   max-height: calc(100vh - 98px);
-  /* max-height: 90vh; */
+}
+/* expands the actual ediatable area */
+.editor,
+.ql-editor {
+  min-height: 85vh;
+  /* min-height: calc(100vh - 98px); */
 }
 
-.editor {
+/* .ql-editor {
   min-height: 85vh;
-}
+} */
 /* Override materialUI on <strong> to display in the editor */
 strong {
   font-weight: bold !important;
 }
 
 /* make toolbar fixed on top sticks it on top of the up, not the desired thingy*/
-/* .ql-toolbar {
-  position: absolute;
+.ql-toolbar {
+  position: sticky;
   top: 0;
-  left: 0;
-  right: 0;
-} */
-/* a bit better probably will work once i wrap it all in a paper element */
+  z-index: 1;
+  background-color: #fff;
+}
+/* alternative: wrap it all in a paper element */
 /* .ql-toolbar {
   position: fixed;
   top: 0;

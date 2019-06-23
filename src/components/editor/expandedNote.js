@@ -13,8 +13,14 @@ class ExpandedNote extends Component {
   }
 
   editorRef = React.createRef();
+  containerRef = React.createRef();
 
   componentDidMount() {
+    // console.log(this.editorRef.current);
+    // console.log(this.editorRef.current.querySelector(".ql-editor"));
+
+    // this.editorRef.current.querySelector(".ql-editor").focus();
+
     this._ismounted = true;
     const toolbarOptions = [
       ["bold", "italic", "underline", "strike"], // toggled buttons
@@ -62,9 +68,20 @@ class ExpandedNote extends Component {
         delta: currentDelta
       });
     });
+
+    //Prevent Scrolling to Top when a .ql-picker(font-size picker, color-picker,etc ) is clicked
+    // https://github.com/quilljs/quill/issues/1690
+    const qlPickers = this.containerRef.current.querySelectorAll(".ql-picker");
+    qlPickers.forEach(picker =>
+      picker.addEventListener("mousedown", e => e.preventDefault())
+    );
+
+    //focus the text area in the editor once it opens
+    this.editorRef.current.querySelector(".ql-editor").focus();
   }
 
   componentDidUpdate(prevProps, prevState) {
+    console.log(this.editorRef.current.querySelector(".ql-picker"));
     //the condition will be true if the user opens a new note
     if (prevProps.note._id !== this.props.note._id) {
       //double check if the component is mounted
@@ -118,7 +135,7 @@ class ExpandedNote extends Component {
 
   render() {
     return (
-      <div className="editor-container">
+      <div ref={this.containerRef} className="editor-container">
         <div ref={this.editorRef} className="editor z-depth-3" />
 
         {/* THE BUTTONS ARE USED ONLY IN DEBUGGING  */}

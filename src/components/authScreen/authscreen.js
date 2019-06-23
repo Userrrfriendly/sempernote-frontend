@@ -13,12 +13,15 @@ import {
   CssBaseline,
   Button,
   Typography,
-  Container
+  Container,
+  InputAdornment,
+  IconButton
 } from "@material-ui/core";
 // import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import FavoriteRounded from "@material-ui/icons/FavoriteRounded";
 import red from "@material-ui/core/colors/red";
 import { withStyles } from "@material-ui/styles";
+import { Visibility, VisibilityOff } from "@material-ui/icons/";
 
 function MadeWithLove() {
   return (
@@ -76,7 +79,8 @@ class AuthScreen extends Component {
     password: "",
     email: "",
     failedLogIn: false,
-    failedSignUp: false
+    failedSignUp: false,
+    showPassword: false
   };
 
   static contextType = Context;
@@ -100,6 +104,13 @@ class AuthScreen extends Component {
       [e.target.id]: e.target.value,
       failedLogIn: false,
       failedSignUp: false
+    });
+  };
+
+  handleClickShowPassword = () => {
+    // setValues({ ...values, showPassword: !values.showPassword });
+    this.setState({
+      showPassword: !this.state.showPassword
     });
   };
 
@@ -128,12 +139,12 @@ class AuthScreen extends Component {
           return res.json();
         })
         .then(resData => {
-          console.log(resData);
+          // console.log(resData);
           if (resData.data.createUser) {
-            window.M.toast({
-              html: `User ${username} created succesfully! You can now Login`,
-              classes: "rounded green"
-            });
+            // window.M.toast({
+            //   html: `User ${username} created succesfully! You can now Login`,
+            //   classes: "rounded green"
+            // });
             this.setState({
               logIn: true,
               password: ""
@@ -195,15 +206,12 @@ class AuthScreen extends Component {
     // const classes = useStyles();
     const { classes } = this.props;
     const { logIn } = this.state;
-    // console.log(login);
+
     return (
       <>
         <Container component="main" maxWidth="xs">
           <CssBaseline />
           <div className={classes.paper}>
-            {/* <Avatar className={classes.avatar}>
-            <LockOutlinedIcon />
-          </Avatar> */}
             <Typography component="h1" variant="h5">
               {"Wellcome To SemperNote! "}
             </Typography>
@@ -258,11 +266,29 @@ class AuthScreen extends Component {
                   fullWidth
                   name="password"
                   label="Password"
-                  type="password"
                   id="password"
                   autoComplete="current-password"
                   onChange={this.onChange}
                   value={this.state.password}
+                  type={this.state.showPassword ? "text" : "password"}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          // edge="end"
+                          // size="small"
+                          aria-label="Toggle password visibility"
+                          onClick={this.handleClickShowPassword}
+                        >
+                          {this.state.showPassword ? (
+                            <Visibility />
+                          ) : (
+                            <VisibilityOff />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    )
+                  }}
                 />
                 {this.state.failedLogIn && (
                   <Typography
@@ -273,10 +299,7 @@ class AuthScreen extends Component {
                     {"Invalid Credentials"}
                   </Typography>
                 )}
-                {/* <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
-              /> */}
+
                 <Button
                   type="submit"
                   fullWidth
@@ -288,9 +311,6 @@ class AuthScreen extends Component {
                 </Button>
                 <Grid container>
                   <Grid item xs>
-                    {/* <Link href="#" variant="body2">
-                    Forgot password?
-                  </Link> */}
                     <Button
                       type="button"
                       disabled={!logIn}

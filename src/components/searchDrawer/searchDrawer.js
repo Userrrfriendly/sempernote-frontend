@@ -14,13 +14,10 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  ListItemSecondaryAction,
+  // ListItemSecondaryAction,
   Typography,
   TextField,
-  InputAdornment,
-  Menu,
-  MenuItem,
-  FormControl
+  InputAdornment
 } from "@material-ui/core";
 
 import {
@@ -28,8 +25,7 @@ import {
   SearchRounded,
   Close,
   ChevronLeft,
-  MoreVert,
-  StarRounded,
+  // StarRounded,
   DescriptionRounded,
   LibraryBooksRounded,
   StyleRounded
@@ -39,7 +35,7 @@ import Context from "../../context/context";
 import { SEARCH, NOTEBOOK, NOTES, TAG } from "../../context/activeUItypes";
 
 import { deltaToPlainText } from "../../helpers/helpers";
-import { switchCase } from "@babel/types";
+
 const drawerWidth = 340;
 
 const useStyles = makeStyles(theme => ({
@@ -103,24 +99,7 @@ const SearchDrawer = props => {
       setOpen(false);
     }
   }, [props.closed]);
-  //menu
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [anchorElID, setAnchorElID] = React.useState(null);
 
-  function handleNotebookMenuClick(event, id) {
-    console.log(id);
-    setAnchorElID(id);
-    setAnchorEl(event.currentTarget);
-  }
-
-  function handleNotebookMenuClose(e) {
-    console.log(e);
-    console.log(anchorElID); //or get the notebook._id that will be modified from state
-    setAnchorEl(null);
-    setAnchorElID(null);
-  }
-
-  //end menu
   const classes = useStyles();
 
   function handleDrawerOpen() {
