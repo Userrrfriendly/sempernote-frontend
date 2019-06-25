@@ -21,11 +21,13 @@ export default React.createContext({
   pushNoteToState: () => {},
   updateNoteBody: () => {},
   createNotebook: () => {},
+  notebookToggleFavorite: () => {},
   updateNotes: () => {},
   softDeleteNote: () => {},
   noteToggleFavorite: () => {},
   moveNote: () => {},
-  createTag: () => {},
   setFilteredNotes: () => {}, //delete or change
-  setNoteFilter: () => {}
+  setNoteFilter: () => {},
+  createTag: () => {}
+  // starToggleFavorite: () => {} //rename this
 });

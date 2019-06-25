@@ -5,6 +5,8 @@ import { makeStyles } from "@material-ui/core/styles";
 
 import Delta from "quill-delta";
 
+// import { truncate as _truncate } from "lodash";
+
 import {
   IconButton,
   List,
@@ -14,29 +16,27 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  // ListItemSecondaryAction,
   Typography,
-  TextField,
-  InputAdornment
+  ListItemSecondaryAction
+  // useMediaQuery
+  // TextField,
+  // InputAdornment
 } from "@material-ui/core";
 
 import {
-  // StyleRounded,
-  SearchRounded,
-  Close,
   ChevronLeft,
-  // StarRounded,
+  StarRounded,
   DescriptionRounded,
   LibraryBooksRounded,
-  StyleRounded
-  // LibraryAddRounded
+  StyleRounded,
+  RemoveCircleRounded
 } from "@material-ui/icons";
 import Context from "../../context/context";
-import { SEARCH, NOTEBOOK, NOTES, TAG } from "../../context/activeUItypes";
+import { NOTEBOOK, NOTES, TAG, FAVORITES } from "../../context/activeUItypes";
 
 import { deltaToPlainText } from "../../helpers/helpers";
 
-const drawerWidth = 340;
+const drawerWidth = 400;
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -84,23 +84,53 @@ const useStyles = makeStyles(theme => ({
   },
   fab: {
     margin: "1rem"
+  },
+  primaryTypography: {
+    marginRight: "1.25rem"
+  },
+  secondaryTypography: {
+    marginRight: "1.25rem"
   }
 }));
 
-const SearchDrawer = props => {
+const FavoritesDrawer = props => {
   const context = useContext(Context);
+
+  const initialState = () => {
+    const notes = context.notes
+      ? context.notes.filter(note => note.favorite === true)
+      : [];
+    const notebooks = context.notebooks
+      ? context.notebooks.filter(book => book.favorite === true)
+      : [];
+    const tags = context.tags
+      ? context.tags.filter(tag => tag.favorite === true)
+      : [];
+    return notes.concat(notebooks, tags);
+  };
+
   const [open, setOpen] = useState(false);
-  const [search, setSearch] = useState("");
-  const [results, setResults] = useState([]);
+  const [hoveredItemID, sethoveredItemID] = useState(false);
+  const [results, setResults] = useState(initialState());
+  const classes = useStyles();
+
+  // const matches = useMediaQuery('(min-width:600px)');
+  const hoverIn = id => {
+    sethoveredItemID(id);
+    // console.log("mousein");
+  };
+
+  const hoverOut = (e, g) => {
+    console.log(g.target);
+    sethoveredItemID(null);
+  };
 
   useEffect(() => {
     console.log("tags useEffect");
-    if (props.closed !== SEARCH) {
+    if (props.closed !== FAVORITES) {
       setOpen(false);
     }
   }, [props.closed]);
-
-  const classes = useStyles();
 
   function handleDrawerOpen() {
     setOpen(true);
@@ -115,9 +145,9 @@ const SearchDrawer = props => {
     handleDrawerOpen();
   };
 
-  const handleSearch = e => {
-    setSearch(e.target.value);
-  };
+  // const handleSearch = e => {
+  //   setSearch(e.target.value);
+  // };
 
   const previewText = str => {
     const parsedDelta = new Delta(JSON.parse(str));
@@ -128,7 +158,7 @@ const SearchDrawer = props => {
     return plainText;
   };
 
-  const handleTagClick = (resultID, resultType) => {
+  const handleFavoriteClick = (resultID, resultType) => {
     handleDrawerClose();
     // Tag
     switch (resultType) {
@@ -150,17 +180,6 @@ const SearchDrawer = props => {
     }
   };
 
-  const deepSearch = e => {
-    e.preventDefault();
-    console.log(`DeepSearching ${search} in notes`);
-    const deepSearch = context.notes.filter(note => {
-      const parsedDelta = new Delta(JSON.parse(note.body));
-      const plainText = deltaToPlainText(parsedDelta);
-      return plainText.toLowerCase().includes(search.toLowerCase());
-    });
-    setResults(deepSearch);
-  };
-
   //determines if the result is a tag,notebook or note
   const resultType = result => {
     if (result.hasOwnProperty("name")) return NOTEBOOK;
@@ -169,38 +188,29 @@ const SearchDrawer = props => {
   };
 
   useEffect(() => {
-    console.log("useEffect from Notebook drawer");
-    if (!search) {
-      setResults([]);
-    } else {
-      const filteredTags = context.tags.filter(tag =>
-        tag.tagname.toLowerCase().includes(search.toLowerCase())
-      );
-      const filteredNotebooks = context.notebooks.filter(notebook =>
-        notebook.name.toLowerCase().includes(search.toLowerCase())
-      );
-      const filteredNotes = context.notes.filter(note =>
-        note.title.toLowerCase().includes(search.toLowerCase())
-      );
-      const filteredResults = filteredTags.concat(
-        filteredNotebooks,
-        filteredNotes
-      );
+    console.log("useEffect from Favorites drawer");
+    const notes = context.notes
+      ? context.notes.filter(note => note.favorite === true)
+      : [];
+    const notebooks = context.notebooks
+      ? context.notebooks.filter(book => book.favorite === true)
+      : [];
+    const tags = context.tags
+      ? context.tags.filter(tag => tag.favorite === true)
+      : [];
+    setResults(notes.concat(notebooks, tags));
+  }, [context.tags, context.notebooks, context.notes]);
 
-      setResults(filteredResults);
-    }
-  }, [search, context.tags, context.notebooks, context.notes]);
-
-  const clearSearch = () => {
-    setSearch("");
-  };
+  // const clearSearch = () => {
+  //   setSearch("");
+  // };
 
   return (
     <div
       className={classes.root}
       // role="presentation"
     >
-      <Tooltip title="Search" placement="right">
+      <Tooltip title="Favorites" placement="right">
         <ListItem
           className={classes.list_item}
           button
@@ -209,7 +219,7 @@ const SearchDrawer = props => {
           style={{ marginBottom: "1rem" }}
         >
           <ListItemIcon>
-            <SearchRounded />
+            <StarRounded />
           </ListItemIcon>
         </ListItem>
       </Tooltip>
@@ -231,7 +241,7 @@ const SearchDrawer = props => {
               component="p"
               className={classes.drawerTitle}
             >
-              Search
+              Favorites
             </Typography>
 
             <IconButton onClick={handleDrawerClose}>
@@ -239,34 +249,6 @@ const SearchDrawer = props => {
             </IconButton>
           </div>
         </div>
-        <form onSubmit={deepSearch} style={{ display: "flex" }}>
-          <TextField
-            autoFocus
-            label="Search Notes"
-            className={classes.textField}
-            style={{ width: "100%" }}
-            value={search}
-            onChange={handleSearch}
-            placeholder="Search..."
-            variant="outlined"
-            type="text"
-            //type ="search" buggs in firefox because we can't have nice things in firefox :(
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    // edge="end"
-                    size="small"
-                    aria-label="clear"
-                    onClick={clearSearch}
-                  >
-                    <Close />
-                  </IconButton>
-                </InputAdornment>
-              )
-            }}
-          />
-        </form>
 
         <Divider />
 
@@ -277,7 +259,11 @@ const SearchDrawer = props => {
                   <Fragment key={result._id}>
                     <ListItem
                       button
-                      onClick={handleTagClick.bind(
+                      onMouseEnter={hoverIn.bind(this, result._id)}
+                      onMouseLeave={hoverOut.bind(this, result._id)}
+                      // onMouseOver={hoverIn.bind(this, result._id)}
+                      // onMouseOut={hoverOut.bind(this, result._id)}
+                      onClick={handleFavoriteClick.bind(
                         this,
                         result._id,
                         resultType(result)
@@ -295,6 +281,20 @@ const SearchDrawer = props => {
                               " notes"
                             }
                           />
+                          {hoveredItemID === result._id && (
+                            <ListItemSecondaryAction>
+                              <IconButton
+                                edge="end"
+                                aria-label="More"
+                                aria-controls="long-menu"
+                                aria-haspopup="true"
+                                // onClick={e => handleNotebookMenuClick(e, tag._id)}
+                                // data-notebookid={notebook._id}
+                              >
+                                <RemoveCircleRounded />
+                              </IconButton>
+                            </ListItemSecondaryAction>
+                          )}
                         </>
                       )}
                       {result.name && (
@@ -309,6 +309,20 @@ const SearchDrawer = props => {
                               " notes"
                             }
                           />
+                          {hoveredItemID === result._id && (
+                            <ListItemSecondaryAction>
+                              <IconButton
+                                edge="end"
+                                aria-label="More"
+                                aria-controls="long-menu"
+                                aria-haspopup="true"
+                                // onClick={e => handleNotebookMenuClick(e, tag._id)}
+                                // data-notebookid={notebook._id}
+                              >
+                                <RemoveCircleRounded />
+                              </IconButton>
+                            </ListItemSecondaryAction>
+                          )}
                         </>
                       )}
                       {result.title && (
@@ -317,9 +331,47 @@ const SearchDrawer = props => {
                             <DescriptionRounded />
                           </ListItemIcon>
                           <ListItemText
+                            classes={{
+                              primary: classes.primaryTypography,
+                              secondary: classes.secondaryTypography
+                            }}
+                            primaryTypographyProps={
+                              hoveredItemID === result._id
+                                ? {
+                                    noWrap: true,
+                                    component: "p"
+                                  }
+                                : {}
+                            }
+                            // primaryTypographyProps={{
+                            //   noWrap: true,
+                            //   component: "p"
+                            // }}
+                            secondaryTypographyProps={{
+                              noWrap: true
+                            }}
+                            // primary={
+                            //   hoveredItemID === result._id
+                            //     ? _truncate(result.title, { length: 30 })
+                            //     : result.title
+                            // }
                             primary={result.title}
                             secondary={previewText(result.body)}
                           />
+                          {hoveredItemID === result._id && (
+                            <ListItemSecondaryAction>
+                              <IconButton
+                                edge="end"
+                                aria-label="More"
+                                aria-controls="long-menu"
+                                aria-haspopup="true"
+                                // onClick={e => handleNotebookMenuClick(e, tag._id)}
+                                // data-notebookid={notebook._id}
+                              >
+                                <RemoveCircleRounded />
+                              </IconButton>
+                            </ListItemSecondaryAction>
+                          )}
                         </>
                       )}
                     </ListItem>
@@ -328,15 +380,9 @@ const SearchDrawer = props => {
                 );
               })
             : "Loading Results..."}
-          {search !== "" && results.length === 0 && (
+          {results.length === 0 && (
             <Typography variant="body2" gutterBottom style={{ margin: "1rem" }}>
-              No results...
-            </Typography>
-          )}
-          {search === "" && (
-            <Typography variant="body2" gutterBottom style={{ margin: "1rem" }}>
-              Type a query in the search box above and hit the Enter key to
-              perform a deep search inside notes.
+              Nothing in favorites...
             </Typography>
           )}
         </List>
@@ -345,4 +391,4 @@ const SearchDrawer = props => {
   );
 };
 
-export default withRouter(SearchDrawer);
+export default withRouter(FavoritesDrawer);

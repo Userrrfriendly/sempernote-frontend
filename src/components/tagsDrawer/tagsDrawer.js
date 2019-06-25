@@ -101,12 +101,19 @@ const TagDrawer = props => {
     setAnchorEl(event.currentTarget);
   }
 
-  function handleNotebookMenuClose(e) {
+  function closeMenu(e) {
     console.log(e);
     console.log(anchorElID); //or get the notebook._id that will be modified from state
     setAnchorEl(null);
     setAnchorElID(null);
   }
+
+  const starTag = e => {
+    console.log(anchorElID);
+    closeMenu();
+    context.tagToggleFavorite(anchorElID);
+  };
+
   //end menu
   const classes = useStyles();
 
@@ -265,11 +272,11 @@ const TagDrawer = props => {
             anchorEl={anchorEl}
             keepMounted
             open={Boolean(anchorEl)}
-            onClose={handleNotebookMenuClose}
+            onClose={closeMenu}
           >
-            <MenuItem onClick={handleNotebookMenuClose}>Info</MenuItem>
-            <MenuItem onClick={handleNotebookMenuClose}>Delete</MenuItem>
-            <MenuItem onClick={handleNotebookMenuClose}>Favourite</MenuItem>
+            <MenuItem onClick={closeMenu}>Info</MenuItem>
+            <MenuItem onClick={closeMenu}>Delete</MenuItem>
+            <MenuItem onClick={starTag}>Favourite</MenuItem>
           </Menu>
         </List>
       </Drawer>

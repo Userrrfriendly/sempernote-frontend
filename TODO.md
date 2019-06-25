@@ -1,12 +1,15 @@
 **_ AUTH SCREEN _**
+
 - Sign Up should display info if user was created or an error occured (user created successfully, etc)
 - Nice2Have: needs more than just a logIn/SignUp (halfPage Stylish Side with bla bla about the app maybe? )
 
 **_ EDITOR _**
+
 - Check the various Quill elements that should be used (link is a must, indent, custom headers...)
 
 **_ FAB _**
 
+- make FAB expanded when clicked
 - CreateNote
 - Create NoteBook
 - Create Tag
@@ -21,7 +24,7 @@
 - SaveNote Button
 - SaveNote Button Animation when the note is beeing saved
 - Maybe a Toast notification when the note is moved/saved/tagged/starred
-- It would be nice to be able to create a tag on the fly, straight from the react-select in the appBar
+- Nice2Have: create a tag on the fly, straight from the react-select in the appBar
 
 * BUG: When the drawer is opened(notebooks/tags/etc) and then a note is expanded the appBar title doesn't update to the note name
 
@@ -30,17 +33,11 @@
 # Search
 
 - Nice2have: Highlighted search result text (either in result name or the body text in case of note deep search)
+- DeepSearch should also look into notes names
 
 # Favorites:
 
-- Should have a modal
-- No Search
-- Display Notes/Notebooks/Tags with different icon
 - each item in favorites should have a clickable star/unstar icon
-- Upon clicking the favorite item it should display either:
-  - note -> open the note and on the side display all notes
-  - notebook -> same as clicking on a notebook in notebook drawer
-  - tag -> same as clicking on a tag in tag drawer
 
 # Notes:
 
@@ -55,7 +52,7 @@
 - Delete Notebook (puts all notes into trash and moves them to default notebook)
 
 # Tags:
-
+* BUG:overflow-x with long names
 - Star Tag
 - Delete Tag (Should also delete all references from all notes)
 
@@ -85,7 +82,7 @@
 
 - when a tag is added or removed from the SelectTag component it triggers a re-render, making the tag to disappear and reappear (when the response from the server hits back) which looks like a glitch
 - when moving a note to a different notebook upDatedAt is modified but the sorting doesnt change in AppBar
-- 
+-
 - - edit a note and quickpress trash --> this will trigger two posts:
 - \*1)update notebody 2)moveNotetotrash, since moveNoteToTrash is fired instantly the trashed note will not have the last edits
 - \*but the note will stay in state with the edit in state.notes.
@@ -105,15 +102,16 @@
 - \*https://github.com/mui-org/material-ui/issues/11824
 - (_modals_) Could not ditch Reac-modal since MAterialUI (Modal/Dialog) overflows
 
- 
-- activeNotebook is an unused property of the state, either delete it or it could be used to select the notebook by default in createNote modal (when createing a notebook or filter notes by notebook should set activenotebook,) <-- Nice2have
-- -rename activeUITypes (CONSTANT)
-- probably need reducers to take care of multiple things updating something
-- !@! REFACTOR NOTELISTS! needs to have star/delete/info button either static or appear on hover
-- The way you close previously openned modals if another one is clicked is not great... better think of smth better
-- when editing note,notebooks it would be better not to push/pull but destructure & replace so the order of the items stays consistent
-- It looks like there are several instances of `@material-ui/styles` initialized in this application. This may cause theme propagation issues, broken class names and makes your application bigger without a good reason.
-* See https://material-ui.com/getting-started/faq#i-have-several-instances-of-styles-on-the-page for more info.
+* activeNotebook is an unused property of the state, either delete it or it could be used to select the notebook by default in createNote modal (when createing a notebook or filter notes by notebook should set activenotebook,) <-- Nice2have
+* -rename activeUITypes (CONSTANT)
+* probably need reducers to take care of multiple things updating something
+* !@! REFACTOR NOTELISTS! needs to have star/delete/info button either static or appear on hover
+* The way you close previously openned modals if another one is clicked is not great... better think of smth better
+* when editing note,notebooks it would be better not to push/pull but destructure & replace so the order of the items stays consistent
+* It looks like there are several instances of `@material-ui/styles` initialized in this application. This may cause theme propagation issues, broken class names and makes your application bigger without a good reason.
+
+- See https://material-ui.com/getting-started/faq#i-have-several-instances-of-styles-on-the-page for more info.
+
 ## low Priority
 
 - Login page enable 'remember me' commented out checkbox, along with its functionality
@@ -136,4 +134,10 @@
 - Select Tag can overflow-y very very badly.... need to find a way to target the coresponding div and set its max-height to ~60px
 
 ## High Priority
+
 - Create Documentation
+- https://github.com/material-components/material-components-web/issues/1912
+- https://material-ui.com/api/typography/ -> nowrap
+- godbless \_lodash https://lodash.com/docs/4.17.11#truncate
+- 25 chars on 400px wide drawer seems good
+- https://stackoverflow.com/questions/1199352/smart-way-to-shorten-long-strings-with-javascript

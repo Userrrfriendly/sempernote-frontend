@@ -56,6 +56,46 @@ export const logIn = (email, password) =>
   }
 }`;
 
+/** NOTEBOOKS **/
+export const createNotebook = name =>
+  `mutation {
+  createNotebook(name:"${name}"){
+    _id
+    name
+    favorite
+    notes{
+      _id
+      title
+    }
+  }
+}`;
+
+export const notebookFavoriteTrue = id =>
+  `mutation {
+  notebookFavoriteTrue(notebookID:"${id}"){
+    _id
+    name
+    favorite
+    notes{
+      _id
+      title
+    }
+  }
+}`;
+
+export const notebookFavoriteFalse = id =>
+  `mutation {
+  notebookFavoriteFalse(notebookID:"${id}"){
+    _id
+    name
+    favorite
+    notes{
+      _id
+      title
+    }
+  }
+}`;
+
 /** SUPER IMPORTANT: DO NOT WRAP the BODY with DOUBLE QUOTES "" */
 export const createNote = (title, body, notebook) =>
   `mutation {
@@ -97,19 +137,6 @@ export const updateNoteBody = (ID, body) =>
       _id
       name
       favorite
-    }
-  }
-}`;
-
-export const createNotebook = name =>
-  `mutation {
-  createNotebook(name:"${name}"){
-    _id
-    name
-    favorite
-    notes{
-      _id
-      title
     }
   }
 }`;

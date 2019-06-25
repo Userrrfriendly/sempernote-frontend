@@ -153,6 +153,12 @@ export default function NotebookDrawer(props) {
     }
   }, [search, context.notebooks]);
 
+  const starNotebook = e => {
+    console.log(anchorElID);
+    handleNotebookMenuClose();
+    context.notebookToggleFavorite(anchorElID);
+  };
+
   return (
     <div
       className={classes.root}
@@ -274,7 +280,7 @@ export default function NotebookDrawer(props) {
           >
             <MenuItem onClick={handleNotebookMenuClose}>Info</MenuItem>
             <MenuItem onClick={handleNotebookMenuClose}>Delete</MenuItem>
-            <MenuItem onClick={handleNotebookMenuClose}>Favourite</MenuItem>
+            <MenuItem onClick={starNotebook}>Favourite</MenuItem>
           </Menu>
         </List>
       </Drawer>

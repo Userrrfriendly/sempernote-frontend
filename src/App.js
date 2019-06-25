@@ -18,6 +18,8 @@ import {
 import {
   fetchUserData,
   createNote,
+  notebookFavoriteTrue,
+  notebookFavoriteFalse,
   createNotebook,
   updateNoteBody,
   trashNote,
@@ -26,7 +28,9 @@ import {
   moveNote,
   createTag,
   assignTag,
-  unAssignTag
+  unAssignTag,
+  tagFavoriteTrue,
+  tagFavoriteFalse
 } from "./helpers/graphQLrequests";
 
 // import { find as _find } from "lodash";
@@ -412,6 +416,68 @@ class App extends Component {
       });
   };
 
+  notebookToggleFavorite = notebookID => {
+    const notebook = this.state.notebooks.filter(
+      book => book._id === notebookID
+    )[0];
+
+    //toggle favorite-> favorite:!value
+    //change color on icon (initially mannually when the theme is added just change it through theme)
+    //send req to server if fail raise a toast
+    const query = !notebook.favorite
+      ? notebookFavoriteTrue
+      : notebookFavoriteFalse;
+    const responseName = !notebook.favorite
+      ? "notebookFavoriteTrue"
+      : "notebookFavoriteFalse";
+
+    const requestBody = {
+      query: query(notebook._id)
+    };
+
+    fetch("http://localhost:8000/graphql", {
+      method: "POST",
+      body: JSON.stringify(requestBody),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + this.state.token
+      }
+    })
+      .then(res => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error("Failed!");
+        }
+        return res.json();
+      })
+      .then(r => {
+        const responseNotebook = r.data[responseName];
+        console.log(responseNotebook);
+        return { responseNotebook };
+      })
+      .then(data => {
+        this.setState(prevState => {
+          return {
+            activeNote:
+              prevState.activeNote &&
+              prevState.activeNote._id === data.responseNotebook._id
+                ? data.responseNote
+                : prevState.activeNote,
+            notes: prevState.notes.map(note =>
+              note.notebook._id === data.responseNotebook._id
+                ? { ...note, notebook: data.responseNotebook }
+                : note
+            ),
+            notebooks: prevState.notebooks.map(notebook =>
+              notebook._id === data.responseNotebook._id
+                ? data.responseNotebook
+                : notebook
+            )
+          };
+        });
+      })
+      .catch(err => console.log(err));
+  };
+
   fetchUserData = () => {
     let requestBody = {
       query: fetchUserData(this.state.userId)
@@ -581,6 +647,63 @@ class App extends Component {
       .catch(err => console.log(err));
   };
 
+  tagToggleFavorite = tagID => {
+    const tag = this.state.tags.filter(tag => tag._id === tagID)[0];
+    console.log(tag);
+    //toggle favorite-> favorite:!value
+    //change color on icon (initially mannually when the theme is added just change it through theme)
+    //send req to server if fail raise a toast
+    const query = !tag.favorite ? tagFavoriteTrue : tagFavoriteFalse;
+    const responseName = !tag.favorite ? "tagFavoriteTrue" : "tagFavoriteFalse";
+
+    const requestBody = {
+      query: query(tag._id)
+    };
+
+    fetch("http://localhost:8000/graphql", {
+      method: "POST",
+      body: JSON.stringify(requestBody),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + this.state.token
+      }
+    })
+      .then(res => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error("Failed!");
+        }
+        return res.json();
+      })
+      .then(r => {
+        const responseTag = r.data[responseName];
+        console.log(responseTag);
+        return { responseTag };
+      })
+      .then(data => {
+        console.log(data);
+        this.setState(prevState => {
+          return {
+            activeNote:
+              prevState.activeNote &&
+              prevState.activeNote._id === data.responseNote._id
+                ? data.responseNote
+                : prevState.activeNote,
+            // notes: prevState.notes.map(note =>
+            //   note._id === data.responseNote._id
+            //     ? { ...note, favorite: data.responseNote.favorite }
+            //     : note
+            // )
+            tags: prevState.tags.map(tag =>
+              tag._id === data.responseTag._id
+                ? { ...tag, favorite: data.responseTag.favorite }
+                : tag
+            )
+          };
+        });
+      })
+      .catch(err => console.log(err));
+  };
+
   render() {
     return (
       <div className="App">
@@ -594,6 +717,7 @@ class App extends Component {
             setActiveNotebook: this.setActiveNotebook,
             pushNoteToServer: this.pushNoteToServer,
             createNotebook: this.createNotebook,
+            notebookToggleFavorite: this.notebookToggleFavorite,
             pushNoteToState: this.pushNoteToState,
             updateNoteBody: this.updateNoteBody,
             updateNotes: this.updateNotes,
@@ -603,6 +727,7 @@ class App extends Component {
             createTag: this.createTag,
             assignTag: this.assignTag,
             unAssignTag: this.unAssignTag,
+            tagToggleFavorite: this.tagToggleFavorite,
             setFilteredNotes: this.setFilteredNotes,
             setNoteFilter: this.setNoteFilter
           }}

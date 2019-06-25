@@ -3,8 +3,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import { List, ListItem, ListItemIcon, Tooltip } from "@material-ui/core";
 import {
   // SearchRounded,
+  // StarRounded,
   NoteAddRounded,
-  StarRounded,
   DescriptionRounded,
   LibraryAddRounded
 } from "@material-ui/icons";
@@ -24,6 +24,7 @@ import NotebookDrawer from "../notebookDrawer/notebookDrawer";
 import TagsDrawer from "../tagsDrawer/tagsDrawer";
 import TrashDrawer from "../trashDrawer/trashDrawer";
 import SearchDrawer from "../searchDrawer/searchDrawer";
+import FavoritesDrawer from "../favoritesDrawer/favoritesDrawer";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -134,20 +135,14 @@ const SideNav = props => {
           listClick={event => handleListItemClick(event, SEARCH)}
           closed={openDrawer}
         />
-        {/* <Tooltip title="Search" placement="right">
-          <ListItem
-            className={classes.list_item}
-            button
-            selected={selectedIndex === 2}
-            onClick={event => handleListItemClick(event, 2)}
-          >
-            <ListItemIcon>
-              <SearchRounded />
-            </ListItemIcon>
-          </ListItem>
-        </Tooltip> */}
 
-        <Tooltip title="Favorites" placement="right">
+        <FavoritesDrawer
+          listSelected={selectedIndex === FAVORITES}
+          listClick={event => handleListItemClick(event, FAVORITES)}
+          closed={openDrawer}
+        />
+
+        {/* <Tooltip title="Favorites" placement="right">
           <ListItem
             className={classes.list_item}
             button
@@ -158,7 +153,8 @@ const SideNav = props => {
               <StarRounded />
             </ListItemIcon>
           </ListItem>
-        </Tooltip>
+        </Tooltip> */}
+
         <Tooltip title="Notes" placement="right">
           <ListItem
             className={classes.list_item}
