@@ -79,6 +79,7 @@ export const notebookFavoriteTrue = id =>
     notes{
       _id
       title
+      trash
     }
   }
 }`;
@@ -92,7 +93,22 @@ export const notebookFavoriteFalse = id =>
     notes{
       _id
       title
+      trash
     }
+  }
+}`;
+
+export const notebookRename = (ID, name) =>
+  `mutation {
+    notebookRename(notebookID:"${ID}",name:"${name}"){
+      _id
+      name
+      favorite
+      notes{
+        _id
+        title
+        trash
+      }
   }
 }`;
 

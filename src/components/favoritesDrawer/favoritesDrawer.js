@@ -85,12 +85,12 @@ const useStyles = makeStyles(theme => ({
   fab: {
     margin: "1rem"
   },
-  primaryTypography: {
-    marginRight: "1.25rem"
-  },
-  secondaryTypography: {
+  listItemTextTypography: {
     marginRight: "1.25rem"
   }
+  // secondaryTypography: {
+  //   marginRight: "1.25rem"
+  // }
 }));
 
 const FavoritesDrawer = props => {
@@ -110,19 +110,33 @@ const FavoritesDrawer = props => {
   };
 
   const [open, setOpen] = useState(false);
-  const [hoveredItemID, sethoveredItemID] = useState(false);
+  const [hoveredItemID, setHoveredItemID] = useState(false);
   const [results, setResults] = useState(initialState());
   const classes = useStyles();
 
+  const removeFavorite = (result, resultType, e) => {
+    e.stopPropagation();
+    switch (resultType) {
+      case TAG:
+        context.tagToggleFavorite(result);
+        break;
+      case NOTEBOOK:
+        context.notebookToggleFavorite(result);
+        break;
+      case NOTES:
+        context.noteToggleFavorite(result);
+        break;
+      default:
+        break;
+    }
+  };
   // const matches = useMediaQuery('(min-width:600px)');
   const hoverIn = id => {
-    sethoveredItemID(id);
-    // console.log("mousein");
+    setHoveredItemID(id);
   };
 
-  const hoverOut = (e, g) => {
-    console.log(g.target);
-    sethoveredItemID(null);
+  const hoverOut = e => {
+    setHoveredItemID(null);
   };
 
   useEffect(() => {
@@ -145,10 +159,6 @@ const FavoritesDrawer = props => {
     handleDrawerOpen();
   };
 
-  // const handleSearch = e => {
-  //   setSearch(e.target.value);
-  // };
-
   const previewText = str => {
     const parsedDelta = new Delta(JSON.parse(str));
     let plainText = deltaToPlainText(parsedDelta);
@@ -158,7 +168,17 @@ const FavoritesDrawer = props => {
     return plainText;
   };
 
-  const handleFavoriteClick = (resultID, resultType) => {
+  const handleFavoriteClick = (resultID, resultType, e) => {
+    // console.log(e.target.type);
+    // if (
+    //   e.target.type === "button" ||
+    //   e.target.type === "path" ||
+    //   e.target.type === "svg"
+    // ) {
+    //   console.log("this is WROOOOOOOOOOOOOOOONG!!!!!!!!!!!!!!!!!!!!!");
+    //   //executes only if the star icon was clicked:
+    // } else {
+    //default behaviour (if the list item was clicked anywhere except the remove buton)
     handleDrawerClose();
     // Tag
     switch (resultType) {
@@ -178,6 +198,7 @@ const FavoritesDrawer = props => {
       default:
         break;
     }
+    // }
   };
 
   //determines if the result is a tag,notebook or note
@@ -201,10 +222,6 @@ const FavoritesDrawer = props => {
     setResults(notes.concat(notebooks, tags));
   }, [context.tags, context.notebooks, context.notes]);
 
-  // const clearSearch = () => {
-  //   setSearch("");
-  // };
-
   return (
     <div
       className={classes.root}
@@ -226,7 +243,6 @@ const FavoritesDrawer = props => {
 
       <Drawer
         className={classes.drawer}
-        // variant="persistent"
         anchor="left"
         open={open}
         onClose={handleDrawerClose}
@@ -261,8 +277,6 @@ const FavoritesDrawer = props => {
                       button
                       onMouseEnter={hoverIn.bind(this, result._id)}
                       onMouseLeave={hoverOut.bind(this, result._id)}
-                      // onMouseOver={hoverIn.bind(this, result._id)}
-                      // onMouseOut={hoverOut.bind(this, result._id)}
                       onClick={handleFavoriteClick.bind(
                         this,
                         result._id,
@@ -280,23 +294,48 @@ const FavoritesDrawer = props => {
                               result.notes.filter(note => !note.trash).length +
                               " notes"
                             }
+                            primaryTypographyProps={
+                              //if the  name is very long and doesn't contain spaces it is trancated
+                              (result.tagname.length > 25 &&
+                                result.tagname.indexOf(" ") > 30) ||
+                              result.tagname.indexOf(" ") === -1
+                                ? {
+                                    noWrap: true,
+                                    component: "p"
+                                  }
+                                : {}
+                            }
+                            classes={{
+                              primary: classes.listItemTextTypography
+                            }}
                           />
                           {hoveredItemID === result._id && (
                             <ListItemSecondaryAction>
-                              <IconButton
-                                edge="end"
-                                aria-label="More"
-                                aria-controls="long-menu"
-                                aria-haspopup="true"
-                                // onClick={e => handleNotebookMenuClick(e, tag._id)}
-                                // data-notebookid={notebook._id}
+                              <Tooltip
+                                title="Remove from Favorites"
+                                placement="right"
                               >
-                                <RemoveCircleRounded />
-                              </IconButton>
+                                <IconButton
+                                  edge="end"
+                                  aria-label="More"
+                                  aria-controls="long-menu"
+                                  aria-haspopup="false"
+                                  onClick={removeFavorite.bind(
+                                    this,
+                                    result._id,
+                                    resultType(result)
+                                  )}
+
+                                  // data-notebookid={notebook._id}
+                                >
+                                  <RemoveCircleRounded />
+                                </IconButton>
+                              </Tooltip>
                             </ListItemSecondaryAction>
                           )}
                         </>
                       )}
+                      {/* NOTEBOOKSS: */}
                       {result.name && (
                         <>
                           <ListItemIcon style={{ minWidth: "3rem" }}>
@@ -308,23 +347,48 @@ const FavoritesDrawer = props => {
                               result.notes.filter(note => !note.trash).length +
                               " notes"
                             }
+                            primaryTypographyProps={
+                              //if the  name is very long and doesn't contain spaces it is trancated
+                              (result.name.length > 25 &&
+                                result.name.indexOf(" ") > 30) ||
+                              result.name.indexOf(" ") === -1
+                                ? {
+                                    noWrap: true,
+                                    component: "p"
+                                  }
+                                : {}
+                            }
+                            classes={{
+                              primary: classes.listItemTextTypography
+                            }}
                           />
                           {hoveredItemID === result._id && (
                             <ListItemSecondaryAction>
-                              <IconButton
-                                edge="end"
-                                aria-label="More"
-                                aria-controls="long-menu"
-                                aria-haspopup="true"
-                                // onClick={e => handleNotebookMenuClick(e, tag._id)}
-                                // data-notebookid={notebook._id}
+                              <Tooltip
+                                title="Remove from Favorites"
+                                placement="right"
                               >
-                                <RemoveCircleRounded />
-                              </IconButton>
+                                <IconButton
+                                  edge="end"
+                                  aria-label="More"
+                                  aria-controls="long-menu"
+                                  aria-haspopup="false"
+                                  onClick={removeFavorite.bind(
+                                    this,
+                                    result._id,
+                                    resultType(result)
+                                  )}
+
+                                  // data-notebookid={notebook._id}
+                                >
+                                  <RemoveCircleRounded />
+                                </IconButton>
+                              </Tooltip>
                             </ListItemSecondaryAction>
                           )}
                         </>
                       )}
+                      {/* NOTES: */}
                       {result.title && (
                         <>
                           <ListItemIcon style={{ minWidth: "3rem" }}>
@@ -332,44 +396,48 @@ const FavoritesDrawer = props => {
                           </ListItemIcon>
                           <ListItemText
                             classes={{
-                              primary: classes.primaryTypography,
-                              secondary: classes.secondaryTypography
+                              primary: classes.listItemTextTypography,
+                              secondary: classes.listItemTextTypography
                             }}
                             primaryTypographyProps={
-                              hoveredItemID === result._id
+                              //if the note name is very long and doesn't contain spaces it is trancated
+                              (result.title.length > 25 &&
+                                result.title.indexOf(" ") > 30) ||
+                              result.title.indexOf(" ") === -1
                                 ? {
                                     noWrap: true,
                                     component: "p"
                                   }
                                 : {}
                             }
-                            // primaryTypographyProps={{
-                            //   noWrap: true,
-                            //   component: "p"
-                            // }}
                             secondaryTypographyProps={{
                               noWrap: true
                             }}
-                            // primary={
-                            //   hoveredItemID === result._id
-                            //     ? _truncate(result.title, { length: 30 })
-                            //     : result.title
-                            // }
                             primary={result.title}
                             secondary={previewText(result.body)}
                           />
                           {hoveredItemID === result._id && (
                             <ListItemSecondaryAction>
-                              <IconButton
-                                edge="end"
-                                aria-label="More"
-                                aria-controls="long-menu"
-                                aria-haspopup="true"
-                                // onClick={e => handleNotebookMenuClick(e, tag._id)}
-                                // data-notebookid={notebook._id}
+                              <Tooltip
+                                title="Remove from Favorites"
+                                placement="right"
                               >
-                                <RemoveCircleRounded />
-                              </IconButton>
+                                <IconButton
+                                  edge="end"
+                                  aria-label="More"
+                                  aria-controls="long-menu"
+                                  aria-haspopup="false"
+                                  onClick={removeFavorite.bind(
+                                    this,
+                                    result,
+                                    resultType(result)
+                                  )}
+
+                                  // data-notebookid={notebook._id}
+                                >
+                                  <RemoveCircleRounded />
+                                </IconButton>
+                              </Tooltip>
                             </ListItemSecondaryAction>
                           )}
                         </>

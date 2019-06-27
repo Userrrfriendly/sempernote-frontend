@@ -205,6 +205,17 @@ export default function TrashDrawer(props) {
                       <ListItemText
                         primary={trashNote.title}
                         // secondary={numberOfNotes.length + " notes"}
+                        primaryTypographyProps={
+                          //if the  name is very long and doesn't contain spaces it is trancated
+                          (trashNote.title.length > 25 &&
+                            trashNote.title.indexOf(" ") > 30) ||
+                          trashNote.title.indexOf(" ") === -1
+                            ? {
+                                noWrap: true,
+                                component: "p"
+                              }
+                            : {}
+                        }
                       />
 
                       <ListItemSecondaryAction>

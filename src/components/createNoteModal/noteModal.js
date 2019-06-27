@@ -50,14 +50,22 @@ const NoteModal = props => {
 
   useEffect(() => {
     console.log("useEffect from note modal (options || notebooks) changed");
-    options.length !== props.notebooks.length &&
-      setOptions(
-        props.notebooks.map(notebook => {
-          return { value: notebook._id, label: notebook.name };
-        })
-      );
+    //check if a notebook was renamed
+    // options.length !== props.notebooks.length &&
+    //   setOptions(
+    //     props.notebooks.map(notebook => {
+    //       return { value: notebook._id, label: notebook.name };
+    //     })
+    //   );
+    setOptions(
+      props.notebooks.map(notebook => {
+        return { value: notebook._id, label: notebook.name };
+      })
+    );
     setSelectedNotebook(options[0]);
-  }, [props.notebooks, options]);
+    // setSelectedNotebook(context.activeNotebook ? {value:context.activeNotebook._id,label:context.activeNotebook.name} :options[0]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.notebooks]);
 
   const handleSelectChange = selectedNotebook => {
     setSelectedNotebook(selectedNotebook);
@@ -65,7 +73,9 @@ const NoteModal = props => {
   };
 
   const onTitleChange = e => {
-    setTitle(e.target.value);
+    if (e.target.value.length < 100) {
+      setTitle(e.target.value);
+    }
   };
 
   const onSubmit = e => {

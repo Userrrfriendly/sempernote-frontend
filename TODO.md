@@ -25,6 +25,7 @@
 - SaveNote Button Animation when the note is beeing saved
 - Maybe a Toast notification when the note is moved/saved/tagged/starred
 - Nice2Have: create a tag on the fly, straight from the react-select in the appBar
+- list of notes should be decoupled from the appbar
 
 * BUG: When the drawer is opened(notebooks/tags/etc) and then a note is expanded the appBar title doesn't update to the note name
 
@@ -33,28 +34,27 @@
 # Search
 
 - Nice2have: Highlighted search result text (either in result name or the body text in case of note deep search)
-- DeepSearch should also look into notes names
 
 # Favorites:
-
-- each item in favorites should have a clickable star/unstar icon
+- Nice2Have: Remove from favorites should have some sort of animation
 
 # Notes:
-
+- Nice2Have: when create note modal is opened it should get the default selected notebook from activenotebook if it exists
 - UI should be better (more space for the notes, buttons on hover etc.)
-- Delete/Star/Info should be somehow triggered from the sidenav (thrue menu or buttons)
+- Delete/Star/Info should be somehow triggered from the sidenav ( menu or buttons)
 - (soft) delete note -> needs a confirmation dialog
+- rename note
 
 # Notebooks:
 
 - Rename Notebook
-- Star Notebook
 - Delete Notebook (puts all notes into trash and moves them to default notebook)
+- On the front end don't allow the creation of notebooks with extreme length (max 30-40 chars)
 
 # Tags:
-* BUG:overflow-x with long names
 - Star Tag
 - Delete Tag (Should also delete all references from all notes)
+- tag length no longer than 30chrs
 
 # Trash:
 
@@ -62,15 +62,32 @@
 - Restore
 - Hard Delete -> needs a confirmation dialog
 - Open Note in spectator Mode (locked Quill Editor)
+* BUG: Upon resize trash crashes (sidenav hidden causes it?)
 
 **_ Backend _**
 
 - Default NoteBook:
   - Upon user creation the Users's Note should be marked in User.defaultNote
   - Make it immutable (user cannot rename or delete it)
+- Auth. token -> password should move to nodemon.json
+- transformTag is mistyped... tranformTag or smth
+- Hard DeletNote && DeleteNotebook
+- Password Length and Validation.... maybe this should be handled at front end?
+- clean some of the resolvers(exccessive populates etc) & other dead code like events and bookings
+
+- Nice2have:
+  - Password verification with email
+  - Password Reset
+  - Security Question for restoring password
+  - Note Versioning
+  - data Encryption on the backend
+  - Set Reminders
+  - Text Encrytion on the front end
+  - *PWD
 
 # Random
 
+- implement defaultNotebook on the front end
 - ChangeNotebook (note goes from notebook A to notebook B) \*\*\* ASK JS13 ABOUT HOW IT CAN BE DONE BETTER
 - Research populate i think you need to delete it from your code (at least in note)
 - RenameNotebook/Note
@@ -97,6 +114,7 @@
 
 # Various things to think about:
 
+- Highlight NoteList that is expanded
 - check the app by spamming component did update in every component to check for rerenders
 - React Select inside a MaterialUI Dialog causes the dialog to overflow see:
 - \*https://github.com/mui-org/material-ui/issues/11824
@@ -141,3 +159,11 @@
 - godbless \_lodash https://lodash.com/docs/4.17.11#truncate
 - 25 chars on 400px wide drawer seems good
 - https://stackoverflow.com/questions/1199352/smart-way-to-shorten-long-strings-with-javascript
+
+
+## Sprint 
+- Fix all drawers consistency 
+  - overflowX
+  - truncation
+  - star Checkbox
+  - menu

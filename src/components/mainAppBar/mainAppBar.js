@@ -59,16 +59,6 @@ const useStyles = makeStyles({
   }
 });
 
-/** All these are modified by clicking on the sidenav
- * Notes
- * Notebooks
- * ActiveNotebook
- * Tags
- * Search
- * Favorites
-
-  */
-
 // required for react-router-dom < 6.0.0
 // see https://github.com/ReactTraining/react-router/issues/6056#issuecomment-435524678
 const AdapterLink = React.forwardRef((props, ref) => (

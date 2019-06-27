@@ -20,6 +20,7 @@ import {
   createNote,
   notebookFavoriteTrue,
   notebookFavoriteFalse,
+  notebookRename,
   createNotebook,
   updateNoteBody,
   trashNote,
@@ -478,6 +479,56 @@ class App extends Component {
       .catch(err => console.log(err));
   };
 
+  notebookRename = (notebookID, name) => {
+    const query = notebookRename;
+
+    const requestBody = {
+      query: query(notebookID, name)
+    };
+
+    fetch("http://localhost:8000/graphql", {
+      method: "POST",
+      body: JSON.stringify(requestBody),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + this.state.token
+      }
+    })
+      .then(res => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error("Failed!");
+        }
+        return res.json();
+      })
+      .then(r => {
+        const responseNotebook = r.data.notebookRename;
+        console.log(responseNotebook);
+        return { responseNotebook };
+      })
+      .then(data => {
+        this.setState(prevState => {
+          return {
+            activeNote:
+              prevState.activeNote &&
+              prevState.activeNote._id === data.responseNotebook._id
+                ? data.responseNote
+                : prevState.activeNote,
+            notes: prevState.notes.map(note =>
+              note.notebook._id === data.responseNotebook._id
+                ? { ...note, notebook: data.responseNotebook }
+                : note
+            ),
+            notebooks: prevState.notebooks.map(notebook =>
+              notebook._id === data.responseNotebook._id
+                ? data.responseNotebook
+                : notebook
+            )
+          };
+        });
+      })
+      .catch(err => console.log(err));
+  };
+
   fetchUserData = () => {
     let requestBody = {
       query: fetchUserData(this.state.userId)
@@ -497,6 +548,7 @@ class App extends Component {
         return res.json();
       })
       .then(resData => {
+        // console.log(resData);
         const notes = sortByDateNewestFirst(
           mergeNotes(resData.data.user.notebooks),
           "updatedAt"
@@ -729,7 +781,8 @@ class App extends Component {
             unAssignTag: this.unAssignTag,
             tagToggleFavorite: this.tagToggleFavorite,
             setFilteredNotes: this.setFilteredNotes,
-            setNoteFilter: this.setNoteFilter
+            setNoteFilter: this.setNoteFilter,
+            notebookRename: this.notebookRename
           }}
         >
           <Switch>

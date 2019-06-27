@@ -14,29 +14,25 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  // ListItemSecondaryAction,
   Typography,
   TextField,
   InputAdornment
 } from "@material-ui/core";
 
 import {
-  // StyleRounded,
   SearchRounded,
   Close,
   ChevronLeft,
-  // StarRounded,
   DescriptionRounded,
   LibraryBooksRounded,
   StyleRounded
-  // LibraryAddRounded
 } from "@material-ui/icons";
 import Context from "../../context/context";
 import { SEARCH, NOTEBOOK, NOTES, TAG } from "../../context/activeUItypes";
 
 import { deltaToPlainText } from "../../helpers/helpers";
 
-const drawerWidth = 340;
+const drawerWidth = 400;
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -130,7 +126,6 @@ const SearchDrawer = props => {
 
   const handleTagClick = (resultID, resultType) => {
     handleDrawerClose();
-    // Tag
     switch (resultType) {
       case TAG:
         context.setNoteFilter(TAG, resultID);
@@ -152,13 +147,17 @@ const SearchDrawer = props => {
 
   const deepSearch = e => {
     e.preventDefault();
-    console.log(`DeepSearching ${search} in notes`);
+    // console.log(`DeepSearching ${search} in notes`);
     const deepSearch = context.notes.filter(note => {
       const parsedDelta = new Delta(JSON.parse(note.body));
       const plainText = deltaToPlainText(parsedDelta);
+
       return plainText.toLowerCase().includes(search.toLowerCase());
     });
-    setResults(deepSearch);
+    const noteTitleSearch = context.notes.filter(note =>
+      note.title.toLowerCase().includes(search.toLowerCase())
+    );
+    setResults(noteTitleSearch.concat(deepSearch));
   };
 
   //determines if the result is a tag,notebook or note
@@ -173,18 +172,19 @@ const SearchDrawer = props => {
     if (!search) {
       setResults([]);
     } else {
-      const filteredTags = context.tags.filter(tag =>
-        tag.tagname.toLowerCase().includes(search.toLowerCase())
+      const filteredNotes = context.notes.filter(note =>
+        note.title.toLowerCase().includes(search.toLowerCase())
       );
       const filteredNotebooks = context.notebooks.filter(notebook =>
         notebook.name.toLowerCase().includes(search.toLowerCase())
       );
-      const filteredNotes = context.notes.filter(note =>
-        note.title.toLowerCase().includes(search.toLowerCase())
+      const filteredTags = context.tags.filter(tag =>
+        tag.tagname.toLowerCase().includes(search.toLowerCase())
       );
-      const filteredResults = filteredTags.concat(
+
+      const filteredResults = filteredNotes.concat(
         filteredNotebooks,
-        filteredNotes
+        filteredTags
       );
 
       setResults(filteredResults);
@@ -216,7 +216,6 @@ const SearchDrawer = props => {
 
       <Drawer
         className={classes.drawer}
-        // variant="persistent"
         anchor="left"
         open={open}
         onClose={handleDrawerClose}
@@ -294,6 +293,10 @@ const SearchDrawer = props => {
                               result.notes.filter(note => !note.trash).length +
                               " notes"
                             }
+                            primaryTypographyProps={{
+                              noWrap: true,
+                              component: "p"
+                            }}
                           />
                         </>
                       )}
@@ -308,6 +311,10 @@ const SearchDrawer = props => {
                               result.notes.filter(note => !note.trash).length +
                               " notes"
                             }
+                            primaryTypographyProps={{
+                              noWrap: true,
+                              component: "p"
+                            }}
                           />
                         </>
                       )}
@@ -319,6 +326,10 @@ const SearchDrawer = props => {
                           <ListItemText
                             primary={result.title}
                             secondary={previewText(result.body)}
+                            primaryTypographyProps={{
+                              noWrap: true,
+                              component: "p"
+                            }}
                           />
                         </>
                       )}

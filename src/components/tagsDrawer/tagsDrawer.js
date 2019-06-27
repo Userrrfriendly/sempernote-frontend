@@ -16,7 +16,8 @@ import {
   TextField,
   InputAdornment,
   Menu,
-  MenuItem
+  MenuItem,
+  Checkbox
 } from "@material-ui/core";
 
 import {
@@ -108,10 +109,14 @@ const TagDrawer = props => {
     setAnchorElID(null);
   }
 
-  const starTag = e => {
-    console.log(anchorElID);
-    closeMenu();
-    context.tagToggleFavorite(anchorElID);
+  const starTag = (tagID, e) => {
+    e.stopPropagation();
+    context.tagToggleFavorite(tagID);
+
+    //toggle tag menu
+    // console.log(anchorElID);
+    // closeMenu();
+    // context.tagToggleFavorite(anchorElID);
   };
 
   //end menu
@@ -231,7 +236,7 @@ const TagDrawer = props => {
           {tags
             ? tags.map(tag => {
                 const numberOfNotes = tag.notes.filter(note => !note.trash);
-                console.log(numberOfNotes);
+                // console.log(numberOfNotes);
                 return (
                   <Fragment key={tag._id}>
                     <ListItem
@@ -239,13 +244,34 @@ const TagDrawer = props => {
                       onClick={handleTagClick.bind(this, tag._id)}
                     >
                       <ListItemIcon style={{ minWidth: "3rem" }}>
-                        <StarRounded
-                          style={tag.favorite ? { color: "gold" } : {}}
+                        <Checkbox
+                          onClick={starTag.bind(this, tag._id)}
+                          disableRipple
+                          checked={tag.favorite}
+                          icon={<StarRounded />}
+                          checkedIcon={
+                            <StarRounded style={{ color: "gold" }} />
+                          }
+                          value={tag.favorite}
                         />
+                        {/* <StarRounded
+                          style={tag.favorite ? { color: "gold" } : {}}
+                        /> */}
                       </ListItemIcon>
                       <ListItemText
                         primary={tag.tagname}
                         secondary={numberOfNotes.length + " notes"}
+                        primaryTypographyProps={
+                          //if the  name is very long and doesn't contain spaces it is trancated
+                          (tag.tagname.length > 25 &&
+                            tag.tagname.indexOf(" ") > 30) ||
+                          tag.tagname.indexOf(" ") === -1
+                            ? {
+                                noWrap: true,
+                                component: "p"
+                              }
+                            : {}
+                        }
                       />
 
                       <ListItemSecondaryAction>
@@ -276,7 +302,7 @@ const TagDrawer = props => {
           >
             <MenuItem onClick={closeMenu}>Info</MenuItem>
             <MenuItem onClick={closeMenu}>Delete</MenuItem>
-            <MenuItem onClick={starTag}>Favourite</MenuItem>
+            {/* <MenuItem onClick={starTag}>Favourite</MenuItem> */}
           </Menu>
         </List>
       </Drawer>

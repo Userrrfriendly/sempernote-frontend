@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useContext, Fragment } from "react";
-// import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 
 import {
@@ -16,8 +15,8 @@ import {
   TextField,
   InputAdornment,
   Menu,
-  MenuItem
-  // Popover
+  MenuItem,
+  Checkbox
 } from "@material-ui/core";
 
 import {
@@ -26,12 +25,12 @@ import {
   ChevronLeft,
   MoreVert,
   StarRounded
-  // LibraryAddRounded
 } from "@material-ui/icons";
 import Context from "../../context/context";
 import { NOTEBOOK } from "../../context/activeUItypes";
+import RenameNotebook from "./renameNotebookDialog";
 
-const drawerWidth = 340;
+const drawerWidth = 400;
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -79,6 +78,34 @@ export default function NotebookDrawer(props) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [notebooks, setNotebooks] = useState(context.notebooks);
+  // const [renameOpen, setRenameOpen] = useState({open:false,notebook:null});
+
+  //Rename Notebook Dialog
+  const [renameOpen, setRenameOpen] = React.useState(false);
+  const [renameNotebook, setRenameBook] = React.useState(null);
+
+  function handleClickRename() {
+    handleNotebookMenuClose();
+    setRenameOpen(true);
+    const notebook = context.notebooks.filter(
+      book => book._id === anchorElID
+    )[0];
+    setRenameBook(notebook);
+  }
+
+  function handleRenameClose() {
+    setRenameOpen(false);
+  }
+
+  // const toggleDialog = () => {
+  //   handleNotebookMenuClose();
+
+  //   const notebook = context.notebooks.filter(
+  //     book => book._id === anchorElID
+  //   )[0];
+
+  //   setRenameOpen({ open: true, notebook });
+  // };
 
   //closes this drawer if another one is opened
   useEffect(() => {
@@ -94,15 +121,15 @@ export default function NotebookDrawer(props) {
 
   function handleNotebookMenuClick(event, id) {
     // console.log(event);
-    console.log(id);
+    // console.log(id);
     setAnchorElID(id);
     setAnchorEl(event.currentTarget);
   }
 
   function handleNotebookMenuClose(e) {
-    console.log(e);
+    // console.log(e);
     // console.log(anchorEl); //either extract the value through the data-notebookid
-    console.log(anchorElID); //or get the notebook._id that will be modified from state
+    // console.log(anchorElID); //or get the notebook._id that will be modified from state
     setAnchorEl(null);
     setAnchorElID(null);
   }
@@ -132,38 +159,43 @@ export default function NotebookDrawer(props) {
     setSearch("");
   };
 
-  const handleNotebookClick = notebookID => {
-    handleDrawerClose();
-    context.setActiveNotebook(notebookID);
-    context.setNoteFilter(NOTEBOOK, notebookID);
+  const handleNotebookClick = (notebookID, e) => {
+    if (e.target.type === "checkbox") {
+      //executes only if the star icon was clicked:
+      context.notebookToggleFavorite(notebookID);
+    } else {
+      //default behaviour (if the list item was clicked anywhere except the Star Checkbox or the Menu)
+      handleDrawerClose();
+      context.setActiveNotebook(notebookID);
+      context.setNoteFilter(NOTEBOOK, notebookID);
+    }
   };
 
   useEffect(() => {
     console.log("useEffect from Notebook drawer");
-    console.log(context.notebooks);
+    // console.log(context.notebooks);
     if (!search) {
       setNotebooks(context.notebooks);
     } else {
       const filteredNotebooks = context.notebooks.filter(notebook =>
         notebook.name.toLowerCase().includes(search.toLowerCase())
       );
-      console.log(`searching... for ${search} & found :`);
-      console.log(filteredNotebooks);
+      // console.log(`searching... for ${search} & found :`);
+      // console.log(filteredNotebooks);
       setNotebooks(filteredNotebooks);
     }
   }, [search, context.notebooks]);
 
-  const starNotebook = e => {
-    console.log(anchorElID);
-    handleNotebookMenuClose();
-    context.notebookToggleFavorite(anchorElID);
-  };
+  // const starNotebook = e => {
+  //   console.log(anchorElID);
+  //   handleNotebookMenuClose();
+  //   context.notebookToggleFavorite(anchorElID);
+  // };
 
   return (
     <div
       className={classes.root}
       // role="presentation"
-      // onClick={handleDrawerClose}
     >
       <Tooltip title="Notebooks" placement="right">
         <ListItem
@@ -181,7 +213,6 @@ export default function NotebookDrawer(props) {
 
       <Drawer
         className={classes.drawer}
-        // variant="persistent"
         anchor="left"
         open={open}
         onClose={handleDrawerClose}
@@ -241,13 +272,30 @@ export default function NotebookDrawer(props) {
                       onClick={handleNotebookClick.bind(this, notebook._id)}
                     >
                       <ListItemIcon style={{ minWidth: "3rem" }}>
-                        <StarRounded
-                          style={notebook.favorite ? { color: "gold" } : {}}
+                        <Checkbox
+                          disableRipple
+                          checked={notebook.favorite}
+                          icon={<StarRounded />}
+                          checkedIcon={
+                            <StarRounded style={{ color: "gold" }} />
+                          }
+                          value={notebook.favorite}
                         />
                       </ListItemIcon>
                       <ListItemText
                         primary={notebook.name}
                         secondary={numberOfNotes.length + " notes"}
+                        primaryTypographyProps={
+                          //if the notebook name is very long and doesn't contain spaces it is trancated
+                          (notebook.name.length > 25 &&
+                            notebook.name.indexOf(" ") > 30) ||
+                          notebook.name.indexOf(" ") === -1
+                            ? {
+                                noWrap: true,
+                                component: "p"
+                              }
+                            : {}
+                        }
                       />
 
                       <ListItemSecondaryAction>
@@ -269,7 +317,7 @@ export default function NotebookDrawer(props) {
                   </Fragment>
                 );
               })
-            : "Loading Notes..."}
+            : "Loading Notesbooks..."}
           <Menu
             elevation={1}
             id="simple-menu"
@@ -280,8 +328,14 @@ export default function NotebookDrawer(props) {
           >
             <MenuItem onClick={handleNotebookMenuClose}>Info</MenuItem>
             <MenuItem onClick={handleNotebookMenuClose}>Delete</MenuItem>
-            <MenuItem onClick={starNotebook}>Favourite</MenuItem>
+            <MenuItem onClick={handleClickRename}>Rename</MenuItem>
           </Menu>
+          <RenameNotebook
+            notebook={renameNotebook}
+            open={renameOpen}
+            close={handleRenameClose}
+            // handleNotebookMenuClose={handleNotebookMenuClose}
+          />
         </List>
       </Drawer>
     </div>

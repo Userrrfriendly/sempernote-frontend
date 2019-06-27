@@ -31,10 +31,12 @@ class NotebookModal extends Component {
   };
 
   onChange = e => {
-    this.setState({
-      value: e.target.value,
-      error: false
-    });
+    if (e.target.value.length < 50) {
+      this.setState({
+        value: e.target.value,
+        error: false
+      });
+    }
   };
 
   componentDidUpdate() {
@@ -126,7 +128,7 @@ class NotebookModal extends Component {
                 Cancel
               </Button>
               <Button type="submit" onClick={this.onSubmit} color="primary">
-                Create Note
+                Create Notebook
               </Button>
               {/*type="button" ensures that upon pressing the enter key the button isn't triggered and the form is not submitted, more:
                 https://stackoverflow.com/questions/42053775/getting-error-form-submission-canceled-because-the-form-is-not-connected */}
