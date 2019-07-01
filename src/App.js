@@ -26,12 +26,14 @@ import {
   trashNote,
   noteFavoriteTrue,
   noteFavoriteFalse,
+  renameNote,
   moveNote,
   createTag,
   assignTag,
   unAssignTag,
   tagFavoriteTrue,
-  tagFavoriteFalse
+  tagFavoriteFalse,
+  notebookDelete
 } from "./helpers/graphQLrequests";
 
 // import { find as _find } from "lodash";
@@ -50,7 +52,6 @@ class App extends Component {
     tags: null,
     activeNote: null,
     activeNotebook: null
-    // activeUI: "NOTES"
   };
 
   login = (token, userId, tokenExpiration) => {
@@ -199,11 +200,6 @@ class App extends Component {
 
         this.setState(prevState => {
           return {
-            // activeNote:
-            //   prevState.activeNote &&
-            //   prevState.activeNote._id === data.responseNote._id
-            //     ? data.responseNote
-            //     : null,
             activeNote: activeNote,
             notes: prevState.notes.map(note =>
               note._id === data.responseNote._id ? data.responseNote : note
@@ -259,6 +255,51 @@ class App extends Component {
             notes: prevState.notes.map(note =>
               note._id === data.responseNote._id
                 ? { ...note, favorite: data.responseNote.favorite }
+                : note
+            )
+          };
+        });
+      })
+      .catch(err => console.log(err));
+  };
+
+  renameNote = (noteID, newTitle) => {
+    const query = renameNote;
+
+    const requestBody = {
+      query: query(noteID, newTitle)
+    };
+
+    fetch("http://localhost:8000/graphql", {
+      method: "POST",
+      body: JSON.stringify(requestBody),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + this.state.token
+      }
+    })
+      .then(res => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error("Failed!");
+        }
+        return res.json();
+      })
+      .then(r => {
+        const responseNote = r.data.renameNote;
+        console.log(responseNote);
+        return { responseNote };
+      })
+      .then(data => {
+        this.setState(prevState => {
+          return {
+            activeNote:
+              prevState.activeNote &&
+              prevState.activeNote._id === data.responseNote._id
+                ? data.responseNote
+                : prevState.activeNote,
+            notes: prevState.notes.map(note =>
+              note._id === data.responseNote._id
+                ? { ...note, title: data.responseNote.title }
                 : note
             )
           };
@@ -338,7 +379,6 @@ class App extends Component {
 
   updateNoteBody = (id, body) => {
     const parsedBody = JSON.stringify(JSON.stringify(body));
-    // console.log(parsedBody);
     const requestBody = {
       query: updateNoteBody(id, parsedBody)
     };
@@ -358,7 +398,6 @@ class App extends Component {
         return res.json();
       })
       .then(r => {
-        console.log(r);
         const updatedNotes = this.state.notes.filter(
           note => note._id !== r.data.updateNoteBody._id
         );
@@ -371,10 +410,6 @@ class App extends Component {
               ? r.data.updateNoteBody
               : this.state.activeNote;
         }
-        // const activeNote =
-        //   this.state.activeNote._id === r.data.updateNoteBody._id
-        //     ? r.data.updateNoteBody
-        //     : this.state.activeNote;
         this.setState({
           notes: updatedNotes,
           activeNote: activeNote
@@ -529,6 +564,52 @@ class App extends Component {
       .catch(err => console.log(err));
   };
 
+  notebookDelete = ID => {
+    const query = notebookDelete;
+
+    const requestBody = {
+      query: query(ID)
+    };
+
+    fetch("http://localhost:8000/graphql", {
+      method: "POST",
+      body: JSON.stringify(requestBody),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + this.state.token
+      }
+    })
+      .then(res => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error("Failed!");
+        }
+        return res.json();
+      })
+      .then(r => {
+        const responseNotebook = r.data.notebookDelete;
+        // console.log(responseNotebook);
+        return { responseNotebook };
+      })
+      .then(data => {
+        this.setState(prevState => {
+          return {
+            activeNote:
+              prevState.activeNote &&
+              prevState.activeNote._id === data.responseNotebook._id
+                ? null
+                : prevState.activeNote,
+            notes: prevState.notes.filter(
+              note => note.notebook._id !== data.responseNotebook._id
+            ),
+            notebooks: prevState.notebooks.filter(
+              notebook => notebook._id !== data.responseNotebook._id
+            )
+          };
+        });
+      })
+      .catch(err => console.log(err));
+  };
+
   fetchUserData = () => {
     let requestBody = {
       query: fetchUserData(this.state.userId)
@@ -619,9 +700,7 @@ class App extends Component {
         return res.json();
       })
       .then(r => {
-        console.log(r);
         const assignedTag = r.data.assignTag;
-        //
         const modifiedNote = this.state.notes.filter(
           note => note._id === noteID
         );
@@ -740,11 +819,7 @@ class App extends Component {
               prevState.activeNote._id === data.responseNote._id
                 ? data.responseNote
                 : prevState.activeNote,
-            // notes: prevState.notes.map(note =>
-            //   note._id === data.responseNote._id
-            //     ? { ...note, favorite: data.responseNote.favorite }
-            //     : note
-            // )
+
             tags: prevState.tags.map(tag =>
               tag._id === data.responseTag._id
                 ? { ...tag, favorite: data.responseTag.favorite }
@@ -776,13 +851,15 @@ class App extends Component {
             softDeleteNote: this.softDeleteNote,
             noteToggleFavorite: this.noteToggleFavorite,
             moveNoteToNotebook: this.moveNoteToNotebook,
+            renameNote: this.renameNote,
             createTag: this.createTag,
             assignTag: this.assignTag,
             unAssignTag: this.unAssignTag,
             tagToggleFavorite: this.tagToggleFavorite,
             setFilteredNotes: this.setFilteredNotes,
             setNoteFilter: this.setNoteFilter,
-            notebookRename: this.notebookRename
+            notebookRename: this.notebookRename,
+            notebookDelete: this.notebookDelete
           }}
         >
           <Switch>

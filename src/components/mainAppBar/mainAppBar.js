@@ -19,14 +19,10 @@ import {
   IconButton,
   Tooltip
 } from "@material-ui/core/";
-import NoteListItem from "../main/NoteListItem";
+import NoteListItem from "../noteListItem/NoteListItem";
 import LinearProgress from "../loading/linearProgress";
 import {
   DeleteRounded,
-  // MoreVertRounded,
-  // MoreHorizRounded,
-  // LibraryBooksRounded,
-  // StyleRounded,
   StarRounded,
   Info,
   SaveRounded,

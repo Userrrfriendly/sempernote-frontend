@@ -28,7 +28,8 @@ import {
 } from "@material-ui/icons";
 import Context from "../../context/context";
 import { NOTEBOOK } from "../../context/activeUItypes";
-import RenameNotebook from "./renameNotebookDialog";
+import RenameNotebookDialog from "./renameNotebookDialog";
+import DeleteNotebookDialog from "./deleteNotebookDialog";
 
 const drawerWidth = 400;
 
@@ -82,7 +83,8 @@ export default function NotebookDrawer(props) {
 
   //Rename Notebook Dialog
   const [renameOpen, setRenameOpen] = React.useState(false);
-  const [renameNotebook, setRenameBook] = React.useState(null);
+  const [deleteOpen, setDeleteOpen] = React.useState(false);
+  const [dialogTargetNotebook, setDialogTargetNotebook] = React.useState(null);
 
   function handleClickRename() {
     handleNotebookMenuClose();
@@ -90,22 +92,25 @@ export default function NotebookDrawer(props) {
     const notebook = context.notebooks.filter(
       book => book._id === anchorElID
     )[0];
-    setRenameBook(notebook);
+    setDialogTargetNotebook(notebook);
   }
+
+  const handleClickDelete = () => {
+    handleNotebookMenuClose();
+    setDeleteOpen(true);
+    const notebook = context.notebooks.filter(
+      book => book._id === anchorElID
+    )[0];
+    setDialogTargetNotebook(notebook);
+  };
 
   function handleRenameClose() {
     setRenameOpen(false);
   }
 
-  // const toggleDialog = () => {
-  //   handleNotebookMenuClose();
-
-  //   const notebook = context.notebooks.filter(
-  //     book => book._id === anchorElID
-  //   )[0];
-
-  //   setRenameOpen({ open: true, notebook });
-  // };
+  function handleDeleteClose() {
+    setDeleteOpen(false);
+  }
 
   //closes this drawer if another one is opened
   useEffect(() => {
@@ -327,13 +332,20 @@ export default function NotebookDrawer(props) {
             onClose={handleNotebookMenuClose}
           >
             <MenuItem onClick={handleNotebookMenuClose}>Info</MenuItem>
-            <MenuItem onClick={handleNotebookMenuClose}>Delete</MenuItem>
+            <MenuItem onClick={handleClickDelete}>Delete</MenuItem>
             <MenuItem onClick={handleClickRename}>Rename</MenuItem>
           </Menu>
-          <RenameNotebook
-            notebook={renameNotebook}
+          <RenameNotebookDialog
+            notebook={dialogTargetNotebook}
             open={renameOpen}
             close={handleRenameClose}
+            // handleNotebookMenuClose={handleNotebookMenuClose}
+          />
+          <DeleteNotebookDialog
+            notebook={dialogTargetNotebook}
+            open={deleteOpen}
+            close={handleDeleteClose}
+            // closeMenu={handleNotebookMenuClose}
             // handleNotebookMenuClose={handleNotebookMenuClose}
           />
         </List>

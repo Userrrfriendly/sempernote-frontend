@@ -31,11 +31,12 @@ class TagModal extends Component {
   };
 
   onChange = e => {
-    console.log(e.target.value);
-    this.setState({
-      value: e.target.value,
-      error: false
-    });
+    if (e.target.value.length < 30) {
+      this.setState({
+        value: e.target.value,
+        error: false
+      });
+    }
   };
 
   componentDidUpdate() {

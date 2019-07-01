@@ -36,25 +36,26 @@
 - Nice2have: Highlighted search result text (either in result name or the body text in case of note deep search)
 
 # Favorites:
+
 - Nice2Have: Remove from favorites should have some sort of animation
 
 # Notes:
+
 - Nice2Have: when create note modal is opened it should get the default selected notebook from activenotebook if it exists
 - UI should be better (more space for the notes, buttons on hover etc.)
 - Delete/Star/Info should be somehow triggered from the sidenav ( menu or buttons)
 - (soft) delete note -> needs a confirmation dialog
 - rename note
+- when notelist is empty display some content to notify the user about it otherwise it looks empty
 
 # Notebooks:
 
-- Rename Notebook
-- Delete Notebook (puts all notes into trash and moves them to default notebook)
-- On the front end don't allow the creation of notebooks with extreme length (max 30-40 chars)
+- Delete Default Notebook -> should trigger a Toast telling the user that the default notebook can't be deleted
+- On the front show warning when the notebook exceeds max-length (max 30-40 chars)
 
 # Tags:
-- Star Tag
+
 - Delete Tag (Should also delete all references from all notes)
-- tag length no longer than 30chrs
 
 # Trash:
 
@@ -62,6 +63,7 @@
 - Restore
 - Hard Delete -> needs a confirmation dialog
 - Open Note in spectator Mode (locked Quill Editor)
+
 * BUG: Upon resize trash crashes (sidenav hidden causes it?)
 
 **_ Backend _**
@@ -73,7 +75,7 @@
 - transformTag is mistyped... tranformTag or smth
 - Hard DeletNote && DeleteNotebook
 - Password Length and Validation.... maybe this should be handled at front end?
-- clean some of the resolvers(exccessive populates etc) & other dead code like events and bookings
+- clean some of the resolvers & other dead code
 
 - Nice2have:
   - Password verification with email
@@ -83,7 +85,7 @@
   - data Encryption on the backend
   - Set Reminders
   - Text Encrytion on the front end
-  - *PWD
+  - \*PWD
 
 # Random
 
@@ -130,7 +132,7 @@
 
 - See https://material-ui.com/getting-started/faq#i-have-several-instances-of-styles-on-the-page for more info.
 
-## low Priority
+## Nice2Have:
 
 - Login page enable 'remember me' commented out checkbox, along with its functionality
 
@@ -142,7 +144,6 @@
 - add sempernote logo in sidenav that will redirect to home (and clean up active note)
 - add font roboto to the list of selected fonts in QUILL -->
   https://stackoverflow.com/questions/43728080/how-to-add-font-types-on-quill-js-with-toolbar-options
-- limit the number of characters that the notebook / note can have
 - Probably X^y should be removed (at least from the small screen) and replaced with link, image, indentation which are more usefull
 - mobile tollbar for quill https://stackoverflow.com/questions/51706247/quill-how-to-prevent-toolbar-from-scrolling-and-set-the-height
 
@@ -157,13 +158,10 @@
 - https://github.com/material-components/material-components-web/issues/1912
 - https://material-ui.com/api/typography/ -> nowrap
 - godbless \_lodash https://lodash.com/docs/4.17.11#truncate
-- 25 chars on 400px wide drawer seems good
 - https://stackoverflow.com/questions/1199352/smart-way-to-shorten-long-strings-with-javascript
 
+## Sprint
 
-## Sprint 
-- Fix all drawers consistency 
-  - overflowX
-  - truncation
-  - star Checkbox
-  - menu
+- Rename Note... should wait for a big refactor
+- Delete Notebook
+- -WHY DO I HAVE BODY ON CREATE NOTE?

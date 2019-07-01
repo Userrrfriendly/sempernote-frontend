@@ -23,10 +23,12 @@ export default React.createContext({
   createNotebook: () => {},
   notebookToggleFavorite: () => {},
   notebookRename: () => {},
+  notebookDelete: () => {},
   updateNotes: () => {},
   softDeleteNote: () => {},
   noteToggleFavorite: () => {},
   moveNote: () => {},
+  renameNote: () => {},
   setFilteredNotes: () => {}, //delete or change
   setNoteFilter: () => {},
   createTag: () => {},

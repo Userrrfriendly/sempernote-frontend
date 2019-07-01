@@ -112,6 +112,15 @@ export const notebookRename = (ID, name) =>
   }
 }`;
 
+export const notebookDelete = ID =>
+  `mutation {
+  notebookDelete(notebookID: "${ID}") {
+    _id
+    name
+  }
+}
+`;
+
 /** SUPER IMPORTANT: DO NOT WRAP the BODY with DOUBLE QUOTES "" */
 export const createNote = (title, body, notebook) =>
   `mutation {
