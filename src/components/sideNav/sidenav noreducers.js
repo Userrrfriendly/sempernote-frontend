@@ -9,10 +9,7 @@ import {
   LibraryAddRounded
 } from "@material-ui/icons";
 
-// import Context from "../../context/context";
-import DispatchContext from "../../context/DispatchContext";
-import StateContext from "../../context/StateContext";
-
+import Context from "../../context/context";
 import {
   NOTES,
   NOTEBOOK,
@@ -53,13 +50,13 @@ const SideNav = props => {
   const classes = useStyles();
   const [selectedIndex, setSelectedIndex] = React.useState(NOTES);
   const [openDrawer, setOpenDrawer] = React.useState("");
-  const appState = useContext(StateContext);
+  const context = useContext(Context);
 
   function handleListItemClick(event, index) {
-    // console.log(index);
+    console.log(index);
     closeDrawers(index);
     setSelectedIndex(index);
-    // index === NOTES && context.setNoteFilter(NOTES);
+    index === NOTES && context.setNoteFilter(NOTES);
   }
 
   const closeDrawers = openDrawer => {

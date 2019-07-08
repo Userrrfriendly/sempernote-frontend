@@ -1,21 +1,18 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Switch, Route, withRouter } from "react-router-dom";
 
-// import Context from "../../context/context";
-import DispatchContext from "../../context/DispatchContext";
-import StateContext from "../../context/StateContext";
+import Context from "../../context/context";
 
 import "./main.css";
-// import ExpandedNote from "../editor/expandedNote";
+import ExpandedNote from "../editor/expandedNote";
 import NotebookModal from "../createNotebookModal/notebookModal";
 import NoteModal from "../createNoteModal/noteModal";
 import TagModal from "../createTagModal/tagModal";
 import SideNav from "../sideNav/sidenav";
-// import Fab from "../fab/fab";
-
 import { Hidden } from "@material-ui/core";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { useTheme } from "@material-ui/core/styles";
+import Fab from "../fab/fab";
 import MainAppBar from "../mainAppBar/mainAppBar";
 import Paper from "../paper/paper";
 
@@ -26,8 +23,7 @@ const Main = props => {
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.down("md"));
 
-  // const context = useContext(Context);
-  const appState = useContext(StateContext);
+  const context = useContext(Context);
 
   /**NOTEBOOK Modal */
   const openCreateNotebookModal = () => {
@@ -60,26 +56,26 @@ const Main = props => {
     console.log(
       `note with ID ${noteId} and notebookID: ${notebookId} expanded`
     );
-    // context.setActiveNote(noteId);
+    context.setActiveNote(noteId);
     let path = `/main/editor`;
     props.history.push(path);
   };
 
   //Simulates componentDidUpdate lifecycle
-  // useEffect(() => {
-  //   console.log("useEffect triggered in <MAIN>");
-  //   //when the user presses the back button the activeNote is set to null thus hidding the editor
-  //   //probably will need more solid logic in the future but this will do for now
+  useEffect(() => {
+    console.log("useEffect triggered in <MAIN>");
+    //when the user presses the back button the activeNote is set to null thus hidding the editor
+    //probably will need more solid logic in the future but this will do for now
 
-  //   window.onpopstate = e => {
-  //     //onpopstate detects if the back/forward button was pressed
-  //     if (props.location.pathname === "/main/" && context.activeNote) {
-  //       context.setActiveNote(null);
-  //     }
-  //     console.log("back button was pressed");
-  //   };
-  //   //context was added as a second dependancy only because react was throwing a warning... can it cause problems later?
-  // }, [props.location.pathname, context]);
+    window.onpopstate = e => {
+      //onpopstate detects if the back/forward button was pressed
+      if (props.location.pathname === "/main/" && context.activeNote) {
+        context.setActiveNote(null);
+      }
+      console.log("back button was pressed");
+    };
+    //context was added as a second dependancy only because react was throwing a warning... can it cause problems later?
+  }, [props.location.pathname, context]);
 
   // console.log(matches);
   return (
@@ -105,12 +101,11 @@ const Main = props => {
           exact
           path="/main/"
           render={props => (
-            // <Fab
-            //   createNote={openCreateNoteModal}
-            //   createNoteBook={openCreateNotebookModal}
-            //   // createTag={context.createTag}
-            // />
-            <div>fab</div>
+            <Fab
+              createNote={openCreateNoteModal}
+              createNoteBook={openCreateNotebookModal}
+              createTag={context.createTag}
+            />
           )}
         />
         <div className="main-subcontainer">
@@ -120,42 +115,41 @@ const Main = props => {
               path="/main/editor/"
               render={props => (
                 <>
-                  {/* {context.activeNote && (
+                  {context.activeNote && (
                     <ExpandedNote
                       note={context.activeNote}
                       updateNoteBody={context.updateNoteBody}
                     />
-                  )} */}
+                  )}
                 </>
               )}
             />
           </Switch>
         </div>
         {/* whats the point of conditional rendering? ther will always be at least one notebook(hopefully) */}
-        {appState.notebooks && (
+        {context.notebooks && (
           <>
             <NotebookModal
-              notebooks={appState.notebooks}
-              // createNotebook={appState.createNotebook}
-              token={appState.token}
+              notebooks={context.notebooks}
+              createNotebook={context.createNotebook}
               openModal={openCreateNotebookModal}
               closeModal={closeCreateNotebookModal}
               isOpen={notebookModal}
             />
 
             <NoteModal
-              notes={appState.notes}
-              notebooks={appState.notebooks}
-              pushNoteToServer={appState.pushNoteToServer}
+              notes={context.notes}
+              notebooks={context.notebooks}
+              pushNoteToServer={context.pushNoteToServer}
               openModal={openCreateNoteModal}
               closeModal={closenoteModal}
               isOpen={noteModal}
-              pushNoteToState={appState.pushNoteToState}
-              setActiveNote={appState.setActiveNote}
+              pushNoteToState={context.pushNoteToState}
+              setActiveNote={context.setActiveNote}
             />
             <TagModal
-              tags={appState.tags}
-              createTag={appState.createTag}
+              tags={context.tags}
+              createTag={context.createTag}
               openModal={openCreateTagModal}
               closeModal={closeCreateTagModal}
               isOpen={tagModal}

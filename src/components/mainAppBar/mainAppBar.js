@@ -1,5 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
-import Context from "../../context/context";
+// import Context from "../../context/context";
+import DispatchContext from "../../context/DispatchContext";
+import StateContext from "../../context/StateContext";
+
 import {
   NOTES,
   NOTEBOOK,
@@ -9,8 +12,6 @@ import {
   SEARCH
 } from "../../context/activeUItypes";
 
-// import { makeStyles } from "@material-ui/core/styles";
-// import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import {
   AppBar,
@@ -67,27 +68,27 @@ const MainAppBar = props => {
   const [noteNumber, setNoteNumber] = useState(null);
 
   const classes = useStyles();
-  const context = useContext(Context);
+  const appState = useContext(StateContext);
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   let noteListStyle = {};
-  if (context.activeNote) noteListStyle.flexBasis = "250px";
-  if (smallScreen && context.activeNote) noteListStyle.display = "none";
+  if (appState.activeNote) noteListStyle.flexBasis = "250px";
+  if (smallScreen && appState.activeNote) noteListStyle.display = "none";
 
   useEffect(() => {
     console.log("Appbar did update");
-    console.log(context.noteFilter.name);
+    console.log(appState.noteFilter.name);
     let notesToRender;
-    switch (context.noteFilter.name) {
+    switch (appState.noteFilter.name) {
       case NOTES:
-        setTitle(context.activeNote ? context.activeNote.title : "ALL NOTES");
-        setNoteNumber(context.notes ? context.notes.length : 0);
+        setTitle(appState.activeNote ? appState.activeNote.title : "ALL NOTES");
+        setNoteNumber(appState.notes ? appState.notes.length : 0);
 
-        notesToRender = context.notes ? (
-          context.notes.map(note => {
+        notesToRender = appState.notes ? (
+          appState.notes.map(note => {
             return (
               <NoteListItem
-                activeNote={context.activeNote}
+                activeNote={appState.activeNote}
                 notebookName={note.notebook.name}
                 notebookId={note.notebook._id}
                 key={note._id}
@@ -114,18 +115,18 @@ const MainAppBar = props => {
       case NOTEBOOK:
         setTitle(
           'Notebook: "' +
-            context.notebooks.filter(
-              notebook => notebook._id === context.noteFilter.options
+            appState.notebooks.filter(
+              notebook => notebook._id === appState.noteFilter.options
             )[0].name +
             '"'
         );
-        notesToRender = context.notes ? (
-          context.notes
-            .filter(note => note.notebook._id === context.noteFilter.options)
+        notesToRender = appState.notes ? (
+          appState.notes
+            .filter(note => note.notebook._id === appState.noteFilter.options)
             .map(note => {
               return (
                 <NoteListItem
-                  activeNote={context.activeNote}
+                  activeNote={appState.activeNote}
                   notebookName={note.notebook.name}
                   notebookId={note.notebook._id}
                   key={note._id}
@@ -145,7 +146,7 @@ const MainAppBar = props => {
         ) : (
           <LinearProgress />
         );
-        console.log(context.noteFilter);
+        console.log(appState.noteFilter);
         console.log(notesToRender);
         setNoteNumber(notesToRender ? notesToRender.length : 0);
         setdisplayNotes(notesToRender);
@@ -159,20 +160,20 @@ const MainAppBar = props => {
       case TAG:
         setTitle(
           'Notes tagged with: "' +
-            context.tags.filter(
-              tag => tag._id === context.noteFilter.options
+            appState.tags.filter(
+              tag => tag._id === appState.noteFilter.options
             )[0].tagname +
             '"'
         );
-        notesToRender = context.notes ? (
-          context.notes
+        notesToRender = appState.notes ? (
+          appState.notes
             .filter(note =>
-              _find(note.tags, { _id: context.noteFilter.options })
+              _find(note.tags, { _id: appState.noteFilter.options })
             )
             .map(note => {
               return (
                 <NoteListItem
-                  activeNote={context.activeNote}
+                  activeNote={appState.activeNote}
                   notebookName={note.notebook.name}
                   notebookId={note.notebook._id}
                   key={note._id}
@@ -192,7 +193,7 @@ const MainAppBar = props => {
         ) : (
           <LinearProgress />
         );
-        console.log(context.noteFilter);
+        console.log(appState.noteFilter);
         // console.log(notesToRender);
         setNoteNumber(notesToRender ? notesToRender.length : 0);
         setdisplayNotes(notesToRender);
@@ -200,18 +201,18 @@ const MainAppBar = props => {
       case TRASH:
         setTitle(
           'Notebook: "' +
-            context.notebooks.filter(
-              notebook => notebook._id === context.noteFilter.options
+            appState.notebooks.filter(
+              notebook => notebook._id === appState.noteFilter.options
             )[0].name +
             '"'
         );
-        notesToRender = context.notes ? (
-          context.notes
-            .filter(note => note.notebook._id === context.noteFilter.options)
+        notesToRender = appState.notes ? (
+          appState.notes
+            .filter(note => note.notebook._id === appState.noteFilter.options)
             .map(note => {
               return (
                 <NoteListItem
-                  activeNote={context.activeNote}
+                  activeNote={appState.activeNote}
                   notebookName={note.notebook.name}
                   notebookId={note.notebook._id}
                   key={note._id}
@@ -231,7 +232,7 @@ const MainAppBar = props => {
         ) : (
           <LinearProgress />
         );
-        console.log(context.noteFilter);
+        console.log(appState.noteFilter);
         console.log(notesToRender);
         setNoteNumber(notesToRender ? notesToRender.length : 0);
         setdisplayNotes(notesToRender);
@@ -240,14 +241,14 @@ const MainAppBar = props => {
         throw new Error("Invalid argument in activeUI");
     }
   }, [
-    context.notes,
-    context.activeNote,
-    context.filteredNotes,
+    appState.notes,
+    appState.activeNote,
+    appState.filteredNotes,
     props.expandNote,
-    context.noteFilter,
-    context.filter,
-    context.notebooks,
-    context.tags
+    appState.noteFilter,
+    appState.filter,
+    appState.notebooks,
+    appState.tags
   ]);
 
   return (
@@ -260,24 +261,24 @@ const MainAppBar = props => {
               component="h1"
               color="inherit"
               // className={classes.title}
-              style={context.activeNote ? { flexGrow: 1 } : {}}
+              style={appState.activeNote ? { flexGrow: 1 } : {}}
             >
               {title}
             </Typography>
-            {context.notes && !context.activeNote && (
+            {appState.notes && !appState.activeNote && (
               <>
                 <NoteCounter noteNumber={noteNumber} />
 
                 <SortMenu
-                  notes={context.notes}
-                  filteredNotes={context.filteredNotes}
-                  updateNotes={context.updateNotes}
-                  setFilteredNotes={context.setFilteredNotes}
+                  notes={appState.notes}
+                  filteredNotes={appState.filteredNotes}
+                  updateNotes={appState.updateNotes}
+                  setFilteredNotes={appState.setFilteredNotes}
                 />
               </>
             )}
 
-            {context.activeNote && (
+            {appState.activeNote && (
               <>
                 <Tooltip title="Back">
                   <IconButton
@@ -287,7 +288,7 @@ const MainAppBar = props => {
                     color="inherit"
                     component={AdapterLink}
                     to="/main/"
-                    onClick={context.setActiveNote}
+                    onClick={appState.setActiveNote}
                   >
                     {/* <Link component={RouterLink} to="/main/"> */}
                     <ArrowBack />
@@ -306,32 +307,32 @@ const MainAppBar = props => {
                 </Tooltip>
 
                 <SelectNotebook
-                  activeNote={context.activeNote}
-                  notebooks={context.notebooks}
-                  moveNoteToNotebook={context.moveNoteToNotebook}
+                  activeNote={appState.activeNote}
+                  notebooks={appState.notebooks}
+                  moveNoteToNotebook={appState.moveNoteToNotebook}
                 />
 
                 <SelectTag
-                  activeNote={context.activeNote}
-                  notebooks={context.notebooks}
-                  tags={context.tags}
-                  assignTag={context.assignTag}
-                  unAssignTag={context.unAssignTag}
+                  activeNote={appState.activeNote}
+                  notebooks={appState.notebooks}
+                  tags={appState.tags}
+                  assignTag={appState.assignTag}
+                  unAssignTag={appState.unAssignTag}
                 />
 
                 <Tooltip title="Favorites">
                   <IconButton
                     // aria-owns={open ? 'menu-appbar' : undefined}
                     aria-haspopup="true"
-                    onClick={context.noteToggleFavorite.bind(
+                    onClick={appState.noteToggleFavorite.bind(
                       this,
-                      context.activeNote
+                      appState.activeNote
                     )}
                     color="inherit"
                   >
                     <StarRounded
                       style={
-                        context.activeNote.favorite ? { color: "gold" } : {}
+                        appState.activeNote.favorite ? { color: "gold" } : {}
                       }
                     />
                   </IconButton>
@@ -352,9 +353,9 @@ const MainAppBar = props => {
                     color="inherit"
                     component={AdapterLink}
                     to="/main/"
-                    onClick={context.softDeleteNote.bind(
+                    onClick={appState.softDeleteNote.bind(
                       this,
-                      context.activeNote
+                      appState.activeNote
                     )}
                   >
                     <DeleteRounded />

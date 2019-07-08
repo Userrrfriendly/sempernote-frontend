@@ -1,6 +1,9 @@
-import React, { Component } from "react";
+import React, { useState, useContext } from "react";
 import Modal from "react-modal";
 import { Typography, TextField, Button } from "@material-ui/core";
+import { CREATE_NOTEBOOK } from "../../context/rootReducer";
+import DispatchContext from "../../context/DispatchContext";
+import { createNotebookReq } from "../../requests/requests";
 
 const customStyles = {
   content: {
@@ -24,28 +27,22 @@ const customStyles = {
 //required for react-modal
 Modal.setAppElement("#root");
 
-class NotebookModal extends Component {
-  state = {
-    value: "",
-    error: false
-  };
+const NotebookModal = props => {
+  const [state, setState] = useState({ value: "", error: false });
+  const dispatch = useContext(DispatchContext);
 
-  onChange = e => {
+  const onChange = e => {
     if (e.target.value.length < 50) {
-      this.setState({
+      setState({
         value: e.target.value,
         error: false
       });
     }
   };
 
-  componentDidUpdate() {
-    console.log("noteBOOK modal updated");
-  }
-
-  onSubmit = e => {
+  const onSubmit = e => {
     e.preventDefault();
-    const existingNotebooks = this.props.notebooks.reduce(
+    const existingNotebooks = props.notebooks.reduce(
       (accumulator, currentValue) => {
         accumulator.push(currentValue.name.toLowerCase());
         return accumulator;
@@ -53,91 +50,86 @@ class NotebookModal extends Component {
       []
     );
     if (
-      existingNotebooks.includes(this.state.value.toLocaleLowerCase()) ||
-      this.state.value === ""
+      existingNotebooks.includes(state.value.toLocaleLowerCase()) ||
+      state.value === ""
     ) {
-      // console.log("A notebook with the same name already exists!");
-      this.setState({
-        error: true
-      });
+      setState({ ...state, error: true });
     } else {
-      // console.log(`creating notebook...${this.state.value}`);
       const updateDB = async () => {
-        this.props.createNotebook(this.state.value);
+        createNotebookReq(state.value, props.token).then(res => {
+          dispatch({
+            type: CREATE_NOTEBOOK,
+            notebook: res
+          });
+        });
       };
 
       updateDB()
         .then(
-          this.setState({
+          setState({
             value: "",
             error: false
           })
         )
-        .then(this.props.closeModal);
+        .then(props.closeModal);
     }
   };
 
-  render() {
-    return (
-      <div>
-        <Modal
-          isOpen={this.props.isOpen}
-          onAfterOpen={this.afterOpenModal}
-          onRequestClose={this.props.closeModal}
-          style={customStyles}
-          contentLabel="Create Notebook" //improves accessibility
-        >
-          <form onSubmit={this.onSubmit}>
-            <div className="modal-content1">
-              <Typography variant="h4" component="h1">
-                Create Notebook
-              </Typography>
-              <div>
-                <TextField
-                  autoFocus
-                  margin="dense"
-                  label="Note Title"
-                  type="text"
-                  fullWidth
-                  value={this.state.value}
-                  onChange={this.onChange}
-                  placeholder="Enter Notebook Name"
-                />
-              </div>
-              {this.state.error && this.state.value && (
-                <p style={{ color: "red" }}>
-                  Notebook "{this.state.value}" already exists!
-                </p>
-              )}
-              {this.state.error && !this.state.value && (
-                <p style={{ color: "red" }}>Please enter a notebook title</p>
-              )}
+  return (
+    <div>
+      <Modal
+        isOpen={props.isOpen}
+        // onAfterOpen={this.afterOpenModal}
+        onRequestClose={props.closeModal}
+        style={customStyles}
+        contentLabel="Create Notebook" //improves accessibility
+      >
+        <form onSubmit={onSubmit}>
+          <div className="modal-content1">
+            <Typography variant="h4" component="h1">
+              Create Notebook
+            </Typography>
+            <div>
+              <TextField
+                autoFocus
+                margin="dense"
+                label="Note Title"
+                type="text"
+                fullWidth
+                value={state.value}
+                onChange={onChange}
+                placeholder="Enter Notebook Name"
+              />
             </div>
-            <div
-              style={{
-                marginTop: "1.5rem",
-                display: "flex",
-                justifyContent: "flex-end"
-              }}
-            >
-              <Button
-                type="button"
-                onClick={this.props.closeModal}
-                color="primary"
-              >
-                Cancel
-              </Button>
-              <Button type="submit" onClick={this.onSubmit} color="primary">
-                Create Notebook
-              </Button>
-              {/*type="button" ensures that upon pressing the enter key the button isn't triggered and the form is not submitted, more:
+            {state.error && state.value && (
+              <p style={{ color: "red" }}>
+                Notebook "{state.value}" already exists!
+              </p>
+            )}
+            {state.error && !state.value && (
+              <p style={{ color: "red" }}>Please enter a notebook title</p>
+            )}
+          </div>
+          <div
+            style={{
+              marginTop: "1.5rem",
+              display: "flex",
+              justifyContent: "flex-end"
+            }}
+          >
+            <Button type="button" onClick={props.closeModal} color="primary">
+              Cancel
+            </Button>
+            <Button type="submit" onClick={onSubmit} color="primary">
+              Create Notebook
+            </Button>
+            {/*type="button" ensures that upon pressing the enter key the button isn't triggered and the form is not submitted, more:
                 https://stackoverflow.com/questions/42053775/getting-error-form-submission-canceled-because-the-form-is-not-connected */}
-            </div>
-          </form>
-        </Modal>
-      </div>
-    );
-  }
-}
+          </div>
+        </form>
+      </Modal>
+    </div>
+  );
+};
 
 export default NotebookModal;

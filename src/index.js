@@ -6,13 +6,17 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 
 // import "./index.css";
 import App from "./App";
+import Store from "./context/store";
+
 import * as serviceWorker from "./serviceWorker";
 
 ReactDOM.render(
-  <BrowserRouter>
-    <CssBaseline />
-    <App />
-  </BrowserRouter>,
+  <Store>
+    <BrowserRouter>
+      <CssBaseline />
+      <App />
+    </BrowserRouter>
+  </Store>,
   document.getElementById("root")
 );
 

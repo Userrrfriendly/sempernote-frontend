@@ -88,7 +88,7 @@
   - \*PWD
 
 # Random
-
+- FetchUserData doesn't need authentication?!?! srsly!?
 - implement defaultNotebook on the front end
 - ChangeNotebook (note goes from notebook A to notebook B) \*\*\* ASK JS13 ABOUT HOW IT CAN BE DONE BETTER
 - Research populate i think you need to delete it from your code (at least in note)
@@ -165,3 +165,6 @@
 - Rename Note... should wait for a big refactor
 - Delete Notebook
 - -WHY DO I HAVE BODY ON CREATE NOTE?
+
+- SPLIT FETCH REQUESTS FROM METHODS
+- use IMMER !?
