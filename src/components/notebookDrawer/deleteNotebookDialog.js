@@ -1,5 +1,8 @@
 import React, { useContext } from "react";
-import Context from "../../context/context";
+// import Context from "../../context/context";
+import StateContext from "../../context/StateContext";
+import DispatchContext from "../../context/DispatchContext";
+
 import {
   DialogTitle,
   DialogContentText,
@@ -9,13 +12,27 @@ import {
   Button
 } from "@material-ui/core";
 
-export default function DeleteNotebook(props) {
-  const context = useContext(Context);
+import { notebookDeleteReq } from "../../requests/requests";
+import { DELETE_NOTEBOOK } from "../../context/rootReducer";
 
+export default function DeleteNotebook(props) {
+  const appState = useContext(StateContext);
+  const dispatch = useContext(DispatchContext);
   const handleDelete = () => {
     // props.closeMenu();
     props.close();
-    context.notebookDelete(props.notebook._id);
+    notebookDeleteReq(props.notebook._id, appState.token).then(r => {
+      if (r && r.name === "Error") {
+        console.log("failed to Delete!");
+        console.log(r.message);
+      } else {
+        dispatch({
+          type: DELETE_NOTEBOOK,
+          _id: r._id
+        });
+      }
+      console.log(r);
+    });
   };
 
   return (

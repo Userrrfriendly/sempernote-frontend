@@ -25,7 +25,8 @@ import {
   MoreVert
   // StarRounded
 } from "@material-ui/icons";
-import Context from "../../context/context";
+// import Context from "../../context/context";
+import StateContext from "../../context/StateContext";
 import { TRASH } from "../../context/activeUItypes";
 
 const drawerWidth = 340;
@@ -72,9 +73,10 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function TrashDrawer(props) {
-  const context = useContext(Context);
+  // const context = useContext(Context);
+  const appState = useContext(StateContext);
   const [open, setOpen] = useState(false);
-  const [trash, setTrash] = useState(context.notebooks);
+  const [trash, setTrash] = useState(appState.notebooks);
 
   //closes this drawer if another one is opened
   useEffect(() => {
@@ -121,12 +123,12 @@ export default function TrashDrawer(props) {
 
   const handleTrashNoteClick = trashID => {
     handleDrawerClose();
-    context.setNoteFilter(TRASH, trashID);
+    appState.setNoteFilter(TRASH, trashID);
   };
 
   useEffect(() => {
     console.log("useEffect from Trash drawer");
-    setTrash(context.trash);
+    setTrash(appState.trash);
     // console.log(context.notebooks);
     // if (!search) {
     //   setTrash(context.trash);
@@ -138,7 +140,7 @@ export default function TrashDrawer(props) {
     //   console.log(filteredTrash);
     //   setTrash(filteredTrash);
     // }
-  }, [context.trash]);
+  }, [appState.trash]);
 
   return (
     <div

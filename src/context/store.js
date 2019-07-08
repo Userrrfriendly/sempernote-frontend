@@ -35,8 +35,8 @@ export default function Store(props) {
     //   });
     // },
     notebookToggleFavorite: () => {},
-    notebookRename: () => {},
-    notebookDelete: () => {},
+    // notebookRename: () => {},
+    // notebookDelete: () => {},
     updateNotes: () => {},
     softDeleteNote: () => {},
     noteToggleFavorite: () => {},

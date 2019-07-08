@@ -26,11 +26,13 @@ import {
   MoreVert,
   StarRounded
 } from "@material-ui/icons";
-import Context from "../../context/context";
 import { NOTEBOOK } from "../../context/activeUItypes";
 import RenameNotebookDialog from "./renameNotebookDialog";
 import DeleteNotebookDialog from "./deleteNotebookDialog";
-
+import StateContext from "../../context/StateContext";
+import DispatchContext from "../../context/DispatchContext";
+import { notebookToggleFavoriteReq } from "../../requests/requests";
+import { NOTEBOOK_TOGGLE_FAVORITE } from "../../context/rootReducer";
 const drawerWidth = 400;
 
 const useStyles = makeStyles(theme => ({
@@ -75,10 +77,11 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function NotebookDrawer(props) {
-  const context = useContext(Context);
+  const appState = useContext(StateContext);
+  const dispatch = useContext(DispatchContext);
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const [notebooks, setNotebooks] = useState(context.notebooks);
+  const [notebooks, setNotebooks] = useState(appState.notebooks);
   // const [renameOpen, setRenameOpen] = useState({open:false,notebook:null});
 
   //Rename Notebook Dialog
@@ -89,7 +92,7 @@ export default function NotebookDrawer(props) {
   function handleClickRename() {
     handleNotebookMenuClose();
     setRenameOpen(true);
-    const notebook = context.notebooks.filter(
+    const notebook = appState.notebooks.filter(
       book => book._id === anchorElID
     )[0];
     setDialogTargetNotebook(notebook);
@@ -98,7 +101,7 @@ export default function NotebookDrawer(props) {
   const handleClickDelete = () => {
     handleNotebookMenuClose();
     setDeleteOpen(true);
-    const notebook = context.notebooks.filter(
+    const notebook = appState.notebooks.filter(
       book => book._id === anchorElID
     )[0];
     setDialogTargetNotebook(notebook);
@@ -125,8 +128,6 @@ export default function NotebookDrawer(props) {
   const [anchorElID, setAnchorElID] = React.useState(null);
 
   function handleNotebookMenuClick(event, id) {
-    // console.log(event);
-    // console.log(id);
     setAnchorElID(id);
     setAnchorEl(event.currentTarget);
   }
@@ -167,29 +168,38 @@ export default function NotebookDrawer(props) {
   const handleNotebookClick = (notebookID, e) => {
     if (e.target.type === "checkbox") {
       //executes only if the star icon was clicked:
-      context.notebookToggleFavorite(notebookID);
+      const notebook = appState.notebooks.filter(
+        book => book._id === notebookID
+      )[0];
+
+      notebookToggleFavoriteReq(notebook, appState.token).then(res => {
+        console.log(res);
+      });
+      dispatch({
+        type: NOTEBOOK_TOGGLE_FAVORITE,
+        notebook: notebook
+      });
     } else {
       //default behaviour (if the list item was clicked anywhere except the Star Checkbox or the Menu)
       handleDrawerClose();
-      context.setActiveNotebook(notebookID);
-      context.setNoteFilter(NOTEBOOK, notebookID);
+      appState.setActiveNotebook(notebookID);
+      appState.setNoteFilter(NOTEBOOK, notebookID);
     }
   };
 
   useEffect(() => {
     console.log("useEffect from Notebook drawer");
-    // console.log(context.notebooks);
     if (!search) {
-      setNotebooks(context.notebooks);
+      setNotebooks(appState.notebooks);
     } else {
-      const filteredNotebooks = context.notebooks.filter(notebook =>
+      const filteredNotebooks = appState.notebooks.filter(notebook =>
         notebook.name.toLowerCase().includes(search.toLowerCase())
       );
       // console.log(`searching... for ${search} & found :`);
       // console.log(filteredNotebooks);
       setNotebooks(filteredNotebooks);
     }
-  }, [search, context.notebooks]);
+  }, [search, appState.notebooks]);
 
   // const starNotebook = e => {
   //   console.log(anchorElID);

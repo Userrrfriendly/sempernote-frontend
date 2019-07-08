@@ -15,7 +15,11 @@ import {
   createNotebook,
   createTag,
   tagFavoriteTrue,
-  tagFavoriteFalse
+  tagFavoriteFalse,
+  notebookDelete,
+  notebookRename,
+  notebookFavoriteTrue,
+  notebookFavoriteFalse
 } from "../helpers/graphQLrequests";
 // const dispatch = useContext(DispatchContext);
 
@@ -69,6 +73,7 @@ export function fetchUserDataReq(userId) {
     })
     .catch(err => {
       console.log(err);
+      return err;
     });
 }
 
@@ -118,6 +123,7 @@ export function signUpReq(username, email, password) {
     })
     .catch(err => {
       console.log(err);
+      return err;
     });
 }
 
@@ -148,6 +154,7 @@ export function createNotebookReq(name, token) {
     })
     .catch(err => {
       console.log(err);
+      return err;
     });
 }
 
@@ -172,7 +179,10 @@ export function createTagReq(tagname, token) {
     .then(r => {
       return r.data.createTag;
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+      console.log(err);
+      return err;
+    });
 }
 
 /** TAG TOGGLE FAVORITE**/
@@ -198,12 +208,132 @@ export function tagToggleFavoriteReq(tag, token) {
     })
     .then(r => {
       const responseTag = r.data[responseName];
-      // console.log(responseTag);
       return { responseTag };
     })
     .then(data => {
       console.log(data);
       //TOAST HERE TO SIGNAL SUCCESS OR FAILURE
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+      console.log(err);
+      return err;
+    });
+}
+
+/*** DELETE NOTEBOOK */
+export function notebookDeleteReq(id, token) {
+  const query = notebookDelete;
+
+  const requestBody = JSON.stringify({
+    query: query(id)
+  });
+  const auth = "Bearer " + token;
+
+  return fetch(url, {
+    ...options,
+    body: requestBody,
+    headers: { ...options.headers, Authorization: auth }
+  })
+    .then(res => {
+      if (res.status !== 200 && res.status !== 201) {
+        throw new Error("NotebookDelete Request Failed!");
+      }
+      return res.json();
+    })
+    .then(r => {
+      console.log(r);
+      if (r.data) {
+        return r.data.notebookDelete;
+      }
+    })
+    .catch(err => {
+      console.log(err);
+      return err;
+    });
+}
+
+/** RENAME NOTEBOOK */
+export function notebookRenameReq(notebookID, name, token) {
+  const query = notebookRename;
+  const auth = "Bearer " + token;
+
+  const requestBody = JSON.stringify({
+    query: query(notebookID, name)
+  });
+
+  return fetch(url, {
+    ...options,
+    body: requestBody,
+    headers: { ...options.headers, Authorization: auth }
+  })
+    .then(res => {
+      if (res.status !== 200 && res.status !== 201) {
+        throw new Error("RenameNotebook Request Failed!");
+      }
+      return res.json();
+    })
+    .then(resJSON => {
+      return resJSON.data.notebookRename;
+    })
+    .catch(err => {
+      console.log(err);
+      return err;
+    });
+}
+
+/** NOTEBOOK TOGGLE FAVORITE **/
+export function notebookToggleFavoriteReq(notebook, token) {
+  const query = !notebook.favorite
+    ? notebookFavoriteTrue
+    : notebookFavoriteFalse;
+  const responseName = !notebook.favorite
+    ? "notebookFavoriteTrue"
+    : "notebookFavoriteFalse";
+
+  const requestBody = JSON.stringify({
+    query: query(notebook._id)
+  });
+  const auth = "Bearer " + token;
+
+  return (
+    fetch(url, {
+      ...options,
+      body: requestBody,
+      headers: { ...options.headers, Authorization: auth }
+    })
+      .then(res => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error("Failed!");
+        }
+        return res.json();
+      })
+      .then(r => {
+        return r.data[responseName];
+      })
+      // .then(data => {
+      // this.setState(prevState => {
+      //   return {
+      //     activeNote:
+      //       prevState.activeNote &&
+      //       prevState.activeNote._id === data.responseNotebook._id
+      //         ? data.responseNote
+      //         : prevState.activeNote,
+      //     notes: prevState.notes.map(note =>
+      //       note.notebook._id === data.responseNotebook._id
+      //         ? { ...note, notebook: data.responseNotebook }
+      //         : note
+      //     ),
+      //     notebooks: prevState.notebooks.map(notebook =>
+      //       notebook._id === data.responseNotebook._id
+      //         ? data.responseNotebook
+      //         : notebook
+      //     )
+      //   };
+      // });
+      // })
+      .catch(err => {
+        console.log(err);
+        return err;
+      })
+  );
 }

@@ -170,3 +170,4 @@
 - use IMMER !?
 
 - SearchDrawer has no implementation for filters at the app bar (setNoteFilter)
+- renameNotebook should probably be reveresed (first rename then send request) also its a waste of bandwith since it returns the whole notebook but it could return just ID and the modified notebook.name

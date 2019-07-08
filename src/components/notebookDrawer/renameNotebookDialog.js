@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import Context from "../../context/context";
+// import Context from "../../context/context";
 import {
   DialogTitle,
   DialogContentText,
@@ -10,11 +10,16 @@ import {
   Button
   // Typography
 } from "@material-ui/core";
+import StateContext from "../../context/StateContext";
+import DispatchContext from "../../context/DispatchContext";
+import { notebookRenameReq } from "../../requests/requests";
+import { RENAME_NOTEBOOK } from "../../context/rootReducer";
 
 export default function RenameNotebook(props) {
   const [value, setValue] = useState("");
   const [error, setError] = useState(false);
-  const context = useContext(Context);
+  const appState = useContext(StateContext);
+  const dispatch = useContext(DispatchContext);
 
   useEffect(() => {
     setValue(props.notebook ? props.notebook.name : "");
@@ -34,7 +39,7 @@ export default function RenameNotebook(props) {
     if (value.length === 0) {
       setError("Notebook name must be at least one character long");
     } else {
-      const existingNotebooks = context.notebooks.reduce(
+      const existingNotebooks = appState.notebooks.reduce(
         (accumulator, currentValue) => {
           accumulator.push(currentValue.name.toLowerCase());
           return accumulator;
@@ -45,7 +50,16 @@ export default function RenameNotebook(props) {
         setError("A notebook with the same name already exists!");
       } else {
         props.close();
-        context.notebookRename(props.notebook._id, value);
+        // appState.notebookRename(props.notebook._id, value);
+        notebookRenameReq(props.notebook._id, value, appState.token).then(
+          res => {
+            console.log(res);
+            dispatch({
+              type: RENAME_NOTEBOOK,
+              notebook: res
+            });
+          }
+        );
         setError(false);
       }
     }
