@@ -155,7 +155,8 @@ const Main = props => {
             />
             <TagModal
               tags={appState.tags}
-              createTag={appState.createTag}
+              token={appState.token}
+              // createTag={appState.createTag}
               openModal={openCreateTagModal}
               closeModal={closeCreateTagModal}
               isOpen={tagModal}

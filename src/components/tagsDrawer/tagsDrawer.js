@@ -28,8 +28,12 @@ import {
   StarRounded
   // LibraryAddRounded
 } from "@material-ui/icons";
-import Context from "../../context/context";
+// import Context from "../../context/context";
+import StateContext from "../../context/StateContext";
+import DispatchContext from "../../context/DispatchContext";
 import { TAG } from "../../context/activeUItypes";
+import { tagToggleFavoriteReq } from "../../requests/requests";
+import { TAG_TOGGLE_FAVORITE } from "../../context/rootReducer";
 
 const drawerWidth = 340;
 
@@ -81,10 +85,13 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const TagDrawer = props => {
-  const context = useContext(Context);
+  // const context = useContext(Context);
+  const appState = useContext(StateContext);
+  const dispatch = useContext(DispatchContext);
+
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const [tags, setTags] = useState(context.tags);
+  const [tags, setTags] = useState(appState.tags);
 
   useEffect(() => {
     console.log("tags useEffect");
@@ -111,12 +118,15 @@ const TagDrawer = props => {
 
   const starTag = (tagID, e) => {
     e.stopPropagation();
-    context.tagToggleFavorite(tagID);
-
-    //toggle tag menu
-    // console.log(anchorElID);
-    // closeMenu();
-    // context.tagToggleFavorite(anchorElID);
+    const tag = appState.tags.filter(tag => tag._id === tagID)[0];
+    // appState.tagToggleFavorite(tag);
+    //send a request to change toggle the tag
+    tagToggleFavoriteReq(tag, appState.token);
+    //update appState
+    dispatch({
+      type: TAG_TOGGLE_FAVORITE,
+      tag
+    });
   };
 
   //end menu
@@ -145,23 +155,23 @@ const TagDrawer = props => {
 
   const handleTagClick = tagID => {
     handleDrawerClose();
-    context.setNoteFilter("TAG", tagID);
+    appState.setNoteFilter("TAG", tagID);
   };
 
   useEffect(() => {
     console.log("useEffect from Notebook drawer");
-    console.log(context.tags);
+    console.log(appState.tags);
     if (!search) {
-      setTags(context.tags);
+      setTags(appState.tags);
     } else {
-      const filteredTags = context.tags.filter(tag =>
+      const filteredTags = appState.tags.filter(tag =>
         tag.tagname.toLowerCase().includes(search.toLowerCase())
       );
       console.log(`searching... for ${search} & found :`);
       console.log(filteredTags);
       setTags(filteredTags);
     }
-  }, [search, context.tags]);
+  }, [search, appState.tags]);
 
   return (
     <div

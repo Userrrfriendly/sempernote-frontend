@@ -27,7 +27,10 @@ import {
   LibraryBooksRounded,
   StyleRounded
 } from "@material-ui/icons";
-import Context from "../../context/context";
+// import Context from "../../context/context";
+import DispatchContext from "../../context/DispatchContext";
+import StateContext from "../../context/StateContext";
+
 import { SEARCH, NOTEBOOK, NOTES, TAG } from "../../context/activeUItypes";
 
 import { deltaToPlainText } from "../../helpers/helpers";
@@ -84,7 +87,10 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const SearchDrawer = props => {
-  const context = useContext(Context);
+  // const context = useContext(Context);
+  const appState = useContext(StateContext);
+  const dispatch = useContext(DispatchContext);
+
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [results, setResults] = useState([]);
@@ -128,15 +134,15 @@ const SearchDrawer = props => {
     handleDrawerClose();
     switch (resultType) {
       case TAG:
-        context.setNoteFilter(TAG, resultID);
+        appState.setNoteFilter(TAG, resultID);
         break;
       case NOTEBOOK:
-        context.setActiveNotebook(resultID);
-        context.setNoteFilter(NOTEBOOK, resultID);
+        appState.setActiveNotebook(resultID);
+        appState.setNoteFilter(NOTEBOOK, resultID);
         break;
       case NOTES:
-        context.setNoteFilter(NOTES);
-        context.setActiveNote(resultID);
+        appState.setNoteFilter(NOTES);
+        appState.setActiveNote(resultID);
         let path = `/main/editor`;
         props.history.push(path);
         break;
@@ -148,13 +154,13 @@ const SearchDrawer = props => {
   const deepSearch = e => {
     e.preventDefault();
     // console.log(`DeepSearching ${search} in notes`);
-    const deepSearch = context.notes.filter(note => {
+    const deepSearch = appState.notes.filter(note => {
       const parsedDelta = new Delta(JSON.parse(note.body));
       const plainText = deltaToPlainText(parsedDelta);
 
       return plainText.toLowerCase().includes(search.toLowerCase());
     });
-    const noteTitleSearch = context.notes.filter(note =>
+    const noteTitleSearch = appState.notes.filter(note =>
       note.title.toLowerCase().includes(search.toLowerCase())
     );
     setResults(noteTitleSearch.concat(deepSearch));
@@ -172,13 +178,13 @@ const SearchDrawer = props => {
     if (!search) {
       setResults([]);
     } else {
-      const filteredNotes = context.notes.filter(note =>
+      const filteredNotes = appState.notes.filter(note =>
         note.title.toLowerCase().includes(search.toLowerCase())
       );
-      const filteredNotebooks = context.notebooks.filter(notebook =>
+      const filteredNotebooks = appState.notebooks.filter(notebook =>
         notebook.name.toLowerCase().includes(search.toLowerCase())
       );
-      const filteredTags = context.tags.filter(tag =>
+      const filteredTags = appState.tags.filter(tag =>
         tag.tagname.toLowerCase().includes(search.toLowerCase())
       );
 
@@ -189,7 +195,7 @@ const SearchDrawer = props => {
 
       setResults(filteredResults);
     }
-  }, [search, context.tags, context.notebooks, context.notes]);
+  }, [search, appState.tags, appState.notebooks, appState.notes]);
 
   const clearSearch = () => {
     setSearch("");

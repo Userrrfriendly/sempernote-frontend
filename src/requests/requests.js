@@ -12,7 +12,10 @@ import {
   fetchUserData,
   logIn,
   signUp,
-  createNotebook
+  createNotebook,
+  createTag,
+  tagFavoriteTrue,
+  tagFavoriteFalse
 } from "../helpers/graphQLrequests";
 // const dispatch = useContext(DispatchContext);
 
@@ -118,10 +121,9 @@ export function signUpReq(username, email, password) {
     });
 }
 
-//
+/**CREATE NOTEBOOK **/
 export function createNotebookReq(name, token) {
   console.log(`...createing Notebook ${name}`);
-  console.log(token);
 
   let requestBody = JSON.stringify({
     query: createNotebook(name)
@@ -147,4 +149,61 @@ export function createNotebookReq(name, token) {
     .catch(err => {
       console.log(err);
     });
+}
+
+/**CREATE TAG */
+export function createTagReq(tagname, token) {
+  const requestBody = JSON.stringify({
+    query: createTag(tagname)
+  });
+  const auth = "Bearer " + token;
+
+  return fetch(url, {
+    ...options,
+    body: requestBody,
+    headers: { ...options.headers, Authorization: auth }
+  })
+    .then(res => {
+      if (res.status !== 200 && res.status !== 201) {
+        throw new Error("createTag Request Failed!");
+      }
+      return res.json();
+    })
+    .then(r => {
+      return r.data.createTag;
+    })
+    .catch(err => console.log(err));
+}
+
+/** TAG TOGGLE FAVORITE**/
+export function tagToggleFavoriteReq(tag, token) {
+  const query = !tag.favorite ? tagFavoriteTrue : tagFavoriteFalse;
+  const responseName = !tag.favorite ? "tagFavoriteTrue" : "tagFavoriteFalse";
+
+  const requestBody = JSON.stringify({
+    query: query(tag._id)
+  });
+  const auth = "Bearer " + token;
+
+  return fetch(url, {
+    ...options,
+    body: requestBody,
+    headers: { ...options.headers, Authorization: auth }
+  })
+    .then(res => {
+      if (res.status !== 200 && res.status !== 201) {
+        throw new Error("tagToggleFavorite Request Failed!");
+      }
+      return res.json();
+    })
+    .then(r => {
+      const responseTag = r.data[responseName];
+      // console.log(responseTag);
+      return { responseTag };
+    })
+    .then(data => {
+      console.log(data);
+      //TOAST HERE TO SIGNAL SUCCESS OR FAILURE
+    })
+    .catch(err => console.log(err));
 }

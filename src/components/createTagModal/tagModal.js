@@ -1,6 +1,9 @@
-import React, { Component } from "react";
+import React, { useState, useContext } from "react";
 import Modal from "react-modal";
 import { Typography, TextField, Button } from "@material-ui/core";
+import { CREATE_TAG } from "../../context/rootReducer";
+import DispatchContext from "../../context/DispatchContext";
+import { createTagReq } from "../../requests/requests";
 
 const customStyles = {
   content: {
@@ -24,113 +27,113 @@ const customStyles = {
 //required for react-modal
 Modal.setAppElement("#root");
 
-class TagModal extends Component {
-  state = {
-    value: "",
-    error: false
-  };
+const TagModal = props => {
+  // state = {
+  //   value: "",
+  //   error: false
+  // };
+  const [state, setState] = useState({ value: "", error: false });
+  const dispatch = useContext(DispatchContext);
 
-  onChange = e => {
+  const onChange = e => {
     if (e.target.value.length < 30) {
-      this.setState({
+      setState({
         value: e.target.value,
         error: false
       });
     }
   };
 
-  componentDidUpdate() {
-    console.log("noteBOOK modal updated");
-  }
+  // componentDidUpdate() {
+  //   console.log("noteBOOK modal updated");
+  // }
 
-  onSubmit = e => {
+  const onSubmit = e => {
     e.preventDefault();
-    const existingTags = this.props.tags.reduce((accumulator, currentValue) => {
+    const existingTags = props.tags.reduce((accumulator, currentValue) => {
       accumulator.push(currentValue.tagname.toLowerCase());
       return accumulator;
     }, []);
     if (
-      existingTags.includes(this.state.value.toLocaleLowerCase()) ||
-      this.state.value === ""
+      existingTags.includes(state.value.toLocaleLowerCase()) ||
+      state.value === ""
     ) {
-      this.setState({
-        error: true
-      });
+      setState({ ...state, error: true });
     } else {
       const updateDB = async () => {
-        this.props.createTag(this.state.value);
+        // props.createTag(this.state.value);
+        createTagReq(state.value, props.token).then(tag => {
+          dispatch({
+            type: CREATE_TAG,
+            tag
+          });
+        });
       };
 
       updateDB()
         .then(
-          this.setState({
+          setState({
             value: "",
             error: false
           })
         )
-        .then(this.props.closeModal);
+        .then(props.closeModal);
     }
   };
 
-  render() {
-    return (
-      <div>
-        <Modal
-          isOpen={this.props.isOpen}
-          onAfterOpen={this.afterOpenModal}
-          onRequestClose={this.props.closeModal}
-          style={customStyles}
-          contentLabel="Create Tag" //improves accessibility
-        >
-          <form onSubmit={this.onSubmit}>
-            <div className="modal-content1">
-              <Typography variant="h4" component="h1">
-                Create Tag
-              </Typography>
-              <div>
-                <TextField
-                  autoFocus
-                  margin="dense"
-                  label="Tag name"
-                  type="text"
-                  fullWidth
-                  value={this.state.value}
-                  onChange={this.onChange}
-                  placeholder="Enter Tag Name"
-                />
-              </div>
-              {this.state.error && this.state.value && (
-                <p style={{ color: "red" }}>
-                  Tag "{this.state.value}" already exists!
-                </p>
-              )}
-              {this.state.error && !this.state.value && (
-                <p style={{ color: "red" }}>Please enter a tag name</p>
-              )}
+  return (
+    <div>
+      <Modal
+        isOpen={props.isOpen}
+        // onAfterOpen={this.afterOpenModal}
+        onRequestClose={props.closeModal}
+        style={customStyles}
+        contentLabel="Create Tag" //improves accessibility
+      >
+        <form onSubmit={onSubmit}>
+          <div className="modal-content1">
+            <Typography variant="h4" component="h1">
+              Create Tag
+            </Typography>
+            <div>
+              <TextField
+                autoFocus
+                margin="dense"
+                label="Tag name"
+                type="text"
+                fullWidth
+                value={state.value}
+                onChange={onChange}
+                placeholder="Enter Tag Name"
+              />
             </div>
-            <div
-              style={{
-                marginTop: "1.5rem",
-                display: "flex",
-                justifyContent: "flex-end"
-              }}
-            >
-              <Button
-                type="button"
-                onClick={this.props.closeModal}
-                color="primary"
-              >
-                Cancel
-              </Button>
-              <Button type="submit" onClick={this.onSubmit} color="primary">
-                Create Tag
-              </Button>
-            </div>
-          </form>
-        </Modal>
-      </div>
-    );
-  }
-}
+            {state.error && state.value && (
+              <p style={{ color: "red" }}>
+                Tag "{state.value}" already exists!
+              </p>
+            )}
+            {state.error && !state.value && (
+              <p style={{ color: "red" }}>Please enter a tag name</p>
+            )}
+          </div>
+          <div
+            style={{
+              marginTop: "1.5rem",
+              display: "flex",
+              justifyContent: "flex-end"
+            }}
+          >
+            <Button type="button" onClick={props.closeModal} color="primary">
+              Cancel
+            </Button>
+            <Button type="submit" onClick={onSubmit} color="primary">
+              Create Tag
+            </Button>
+          </div>
+        </form>
+      </Modal>
+    </div>
+  );
+};
 
 export default TagModal;

@@ -168,3 +168,5 @@
 
 - SPLIT FETCH REQUESTS FROM METHODS
 - use IMMER !?
+
+- SearchDrawer has no implementation for filters at the app bar (setNoteFilter)
