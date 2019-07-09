@@ -1,3 +1,5 @@
+import { sortByDateNewestFirst } from "../helpers/helpers";
+
 export const LOG_IN = "LOG_IN";
 export const FETCH_USER_DATA = "FETCH_USER_DATA";
 export const CREATE_NOTEBOOK = "CREATE_NOTEBOOK";
@@ -6,6 +8,8 @@ export const TAG_TOGGLE_FAVORITE = "TAG_TOGGLE_FAVORITE";
 export const DELETE_NOTEBOOK = "DELETE_NOTEBOOK";
 export const RENAME_NOTEBOOK = "RENAME_NOTEBOOK";
 export const NOTEBOOK_TOGGLE_FAVORITE = "NOTEBOOK_TOGGLE_FAVORITE";
+export const SET_ACTIVE_NOTE = "SET_ACTIVE_NOTE";
+export const UPDATE_NOTE_BODY = "UPDATE_NOTE_BODY";
 
 const logIn = (token, userId, state) => {
   return { ...state, token: token, userId: userId };
@@ -61,20 +65,6 @@ const renameNotebook = (action, state) => {
 };
 
 const notebookToggleFavorite = (action, state) => {
-  //     activeNote:
-  //       prevState.activeNote &&
-  //       prevState.activeNote._id === data.responseNotebook._id
-  //         ? data.responseNote
-  //         : prevState.activeNote,
-  //     notes: prevState.notes.map(note =>
-  //       note.notebook._id === data.responseNotebook._id
-  //         ? { ...note, notebook: data.responseNotebook }
-  //         : note
-  //     ),
-  //     notebooks: prevState.notebooks.map(notebook =>
-  //       notebook._id === data.responseNotebook._id
-  //         ? data.responseNotebook
-  //         : notebook
   const activeNote =
     state.activeNote && state.activeNote._id === action.notebook._id
       ? action.notebook
@@ -93,6 +83,24 @@ const notebookToggleFavorite = (action, state) => {
       : notebook
   );
   return { ...state, activeNote, notes, notebooks };
+};
+
+/** NOTES **/
+const setActiveNote = (action, state) => {
+  const activeNote = state.notes.find(note => note._id === action._id);
+  return { ...state, activeNote };
+};
+
+const updateNoteBody = (action, state) => {
+  const updatedNotes = state.notes.filter(note => note._id !== action.note._id);
+  updatedNotes.push(action.note);
+  sortByDateNewestFirst(updatedNotes, "updatedAt");
+  let activeNote;
+  if (state.activeNote) {
+    activeNote =
+      state.activeNote._id === action.note._id ? action.note : state.activeNote;
+  }
+  return { ...state, notes: updatedNotes, activeNote };
 };
 
 /** TAGS **/
@@ -137,6 +145,13 @@ export const rootReducer = (state, action) => {
     case NOTEBOOK_TOGGLE_FAVORITE:
       console.log(action);
       return notebookToggleFavorite(action, state);
+    case SET_ACTIVE_NOTE:
+      console.log(action);
+      return setActiveNote(action, state);
+    case UPDATE_NOTE_BODY:
+      console.log(action);
+      return updateNoteBody(action, state);
+
     default:
       return state;
   }

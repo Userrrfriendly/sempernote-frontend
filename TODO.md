@@ -171,3 +171,8 @@
 
 - SearchDrawer has no implementation for filters at the app bar (setNoteFilter)
 - renameNotebook should probably be reveresed (first rename then send request) also its a waste of bandwith since it returns the whole notebook but it could return just ID and the modified notebook.name
+- remove note from favorites in TAG DRAWER is missing...
+      //NEED TO COMPARE IDS IN CASE A NOTE MATCHES WITH TITLE AND BODY, TO AVOID DUPLICATES
+- SEARCH DRAWER TYPE 'A' ENTER -> TWO NOTES APPEAR 
+- SIDENAV: NOTES && CREATE NOTE are not implemented
+- back button does no longer work (main.js)

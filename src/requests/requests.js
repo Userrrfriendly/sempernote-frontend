@@ -19,7 +19,8 @@ import {
   notebookDelete,
   notebookRename,
   notebookFavoriteTrue,
-  notebookFavoriteFalse
+  notebookFavoriteFalse,
+  updateNoteBody
 } from "../helpers/graphQLrequests";
 // const dispatch = useContext(DispatchContext);
 
@@ -295,45 +296,53 @@ export function notebookToggleFavoriteReq(notebook, token) {
   });
   const auth = "Bearer " + token;
 
-  return (
-    fetch(url, {
-      ...options,
-      body: requestBody,
-      headers: { ...options.headers, Authorization: auth }
+  return fetch(url, {
+    ...options,
+    body: requestBody,
+    headers: { ...options.headers, Authorization: auth }
+  })
+    .then(res => {
+      if (res.status !== 200 && res.status !== 201) {
+        throw new Error("Failed!");
+      }
+      return res.json();
     })
-      .then(res => {
-        if (res.status !== 200 && res.status !== 201) {
-          throw new Error("Failed!");
-        }
-        return res.json();
-      })
-      .then(r => {
-        return r.data[responseName];
-      })
-      // .then(data => {
-      // this.setState(prevState => {
-      //   return {
-      //     activeNote:
-      //       prevState.activeNote &&
-      //       prevState.activeNote._id === data.responseNotebook._id
-      //         ? data.responseNote
-      //         : prevState.activeNote,
-      //     notes: prevState.notes.map(note =>
-      //       note.notebook._id === data.responseNotebook._id
-      //         ? { ...note, notebook: data.responseNotebook }
-      //         : note
-      //     ),
-      //     notebooks: prevState.notebooks.map(notebook =>
-      //       notebook._id === data.responseNotebook._id
-      //         ? data.responseNotebook
-      //         : notebook
-      //     )
-      //   };
-      // });
-      // })
-      .catch(err => {
-        console.log(err);
-        return err;
-      })
-  );
+    .then(r => {
+      return r.data[responseName];
+    })
+    .catch(err => {
+      console.log(err);
+      return err;
+    });
+}
+
+/** NOTES **/
+
+export function updateNoteBodyReq(id, body, token) {
+  const auth = "Bearer " + token;
+
+  const parsedBody = JSON.stringify(JSON.stringify(body));
+  const requestBody = JSON.stringify({
+    query: updateNoteBody(id, parsedBody)
+  });
+
+  return fetch(url, {
+    ...options,
+    body: requestBody,
+    headers: { ...options.headers, Authorization: auth }
+  })
+    .then(res => {
+      if (res.status !== 200 && res.status !== 201) {
+        throw new Error("updateNoteBody Request Failed!");
+      }
+      return res.json();
+    })
+    .then(resJSON => {
+      // console.log(resJSON.data.updateNoteBody);
+      return resJSON.data.updateNoteBody;
+    })
+    .catch(err => {
+      console.log(err);
+      return err;
+    });
 }

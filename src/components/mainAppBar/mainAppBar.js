@@ -66,9 +66,10 @@ const MainAppBar = props => {
   const [displayNotes, setdisplayNotes] = useState(null);
   const [title, setTitle] = useState(null);
   const [noteNumber, setNoteNumber] = useState(null);
+  const appState = useContext(StateContext);
+  const dispatch = useContext(DispatchContext);
 
   const classes = useStyles();
-  const appState = useContext(StateContext);
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   let noteListStyle = {};

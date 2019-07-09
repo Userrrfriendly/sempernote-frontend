@@ -27,7 +27,7 @@ export default function Store(props) {
     setActiveNotebook: () => {},
     pushNoteToServer: () => {},
     pushNoteToState: () => {},
-    updateNoteBody: () => {},
+    // updateNoteBody: () => {},
     // createNotebook: name => {
     //   createNotebookReq(name, state.token).then(r => {
     //     console.log(state);

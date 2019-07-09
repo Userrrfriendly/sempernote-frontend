@@ -4,9 +4,11 @@ import { Switch, Route, withRouter } from "react-router-dom";
 // import Context from "../../context/context";
 import DispatchContext from "../../context/DispatchContext";
 import StateContext from "../../context/StateContext";
+import { SET_ACTIVE_NOTE, UPDATE_NOTE_BODY } from "../../context/rootReducer";
+import { updateNoteBodyReq } from "../../requests/requests";
 
 import "./main.css";
-// import ExpandedNote from "../editor/expandedNote";
+import ExpandedNote from "../editor/expandedNote";
 import NotebookModal from "../createNotebookModal/notebookModal";
 import NoteModal from "../createNoteModal/noteModal";
 import TagModal from "../createTagModal/tagModal";
@@ -28,6 +30,7 @@ const Main = props => {
 
   // const context = useContext(Context);
   const appState = useContext(StateContext);
+  const dispatch = useContext(DispatchContext);
 
   /**NOTEBOOK Modal */
   const openCreateNotebookModal = () => {
@@ -61,25 +64,47 @@ const Main = props => {
       `note with ID ${noteId} and notebookID: ${notebookId} expanded`
     );
     // context.setActiveNote(noteId);
+    dispatch({
+      type: SET_ACTIVE_NOTE,
+      _id: noteId
+    });
+
     let path = `/main/editor`;
     props.history.push(path);
   };
 
-  //Simulates componentDidUpdate lifecycle
-  // useEffect(() => {
-  //   console.log("useEffect triggered in <MAIN>");
-  //   //when the user presses the back button the activeNote is set to null thus hidding the editor
-  //   //probably will need more solid logic in the future but this will do for now
+  //Update noteBody - defined here because and passed as props to <ExpandedNote/> is a classBased component
+  const updateNoteBody = (noteId, currentDelta) => {
+    updateNoteBodyReq(noteId, currentDelta, appState.token).then(res => {
+      dispatch({
+        type: UPDATE_NOTE_BODY,
+        note: res
+      });
+    });
+  };
 
-  //   window.onpopstate = e => {
-  //     //onpopstate detects if the back/forward button was pressed
-  //     if (props.location.pathname === "/main/" && context.activeNote) {
-  //       context.setActiveNote(null);
-  //     }
-  //     console.log("back button was pressed");
-  //   };
-  //   //context was added as a second dependancy only because react was throwing a warning... can it cause problems later?
-  // }, [props.location.pathname, context]);
+  //Simulates componentDidUpdate lifecycle
+  useEffect(() => {
+    console.log("useEffect triggered in <MAIN>");
+    //when the user presses the back button the activeNote is set to null thus hidding the editor
+    //probably will need more solid logic in the future but this will do for now
+
+    window.onpopstate = e => {
+      //onpopstate detects if the back/forward button was pressed
+      console.log(props.location.pathname);
+      console.log(e);
+      if (props.location.pathname === "/main/" && appState.activeNote) {
+        // appState.setActiveNote(null);
+        console.log("if triggered");
+        dispatch({
+          type: SET_ACTIVE_NOTE,
+          _id: null
+        });
+      }
+      console.log("back button was pressed");
+    };
+    //dispatch was added as a dependancy only because react was throwing a warning...
+  }, [props.location.pathname, appState.activeNote, dispatch]);
 
   // console.log(matches);
   return (
@@ -120,12 +145,13 @@ const Main = props => {
               path="/main/editor/"
               render={props => (
                 <>
-                  {/* {context.activeNote && (
+                  {appState.activeNote && (
                     <ExpandedNote
-                      note={context.activeNote}
-                      updateNoteBody={context.updateNoteBody}
+                      note={appState.activeNote}
+                      // updateNoteBody={appState.updateNoteBody}
+                      updateNoteBody={updateNoteBody}
                     />
-                  )} */}
+                  )}
                 </>
               )}
             />

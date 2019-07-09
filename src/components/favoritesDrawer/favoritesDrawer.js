@@ -1,12 +1,10 @@
 import React, { useEffect, useState, useContext, Fragment } from "react";
 import { withRouter } from "react-router-dom";
 
-import { makeStyles } from "@material-ui/core/styles";
-
 import Delta from "quill-delta";
 
 // import { truncate as _truncate } from "lodash";
-
+import { makeStyles } from "@material-ui/core/styles";
 import {
   IconButton,
   List,
@@ -31,8 +29,18 @@ import {
   StyleRounded,
   RemoveCircleRounded
 } from "@material-ui/icons";
-import Context from "../../context/context";
+// import Context from "../../context/context";
+import StateContext from "../../context/StateContext";
+import DispatchContext from "../../context/DispatchContext";
 import { NOTEBOOK, NOTES, TAG, FAVORITES } from "../../context/activeUItypes";
+import {
+  notebookToggleFavoriteReq,
+  tagToggleFavoriteReq
+} from "../../requests/requests";
+import {
+  NOTEBOOK_TOGGLE_FAVORITE,
+  TAG_TOGGLE_FAVORITE
+} from "../../context/rootReducer";
 
 import { deltaToPlainText } from "../../helpers/helpers";
 
@@ -94,17 +102,18 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const FavoritesDrawer = props => {
-  const context = useContext(Context);
+  const appState = useContext(StateContext);
+  const dispatch = useContext(DispatchContext);
 
   const initialState = () => {
-    const notes = context.notes
-      ? context.notes.filter(note => note.favorite === true)
+    const notes = appState.notes
+      ? appState.notes.filter(note => note.favorite === true)
       : [];
-    const notebooks = context.notebooks
-      ? context.notebooks.filter(book => book.favorite === true)
+    const notebooks = appState.notebooks
+      ? appState.notebooks.filter(book => book.favorite === true)
       : [];
-    const tags = context.tags
-      ? context.tags.filter(tag => tag.favorite === true)
+    const tags = appState.tags
+      ? appState.tags.filter(tag => tag.favorite === true)
       : [];
     return notes.concat(notebooks, tags);
   };
@@ -118,13 +127,30 @@ const FavoritesDrawer = props => {
     e.stopPropagation();
     switch (resultType) {
       case TAG:
-        context.tagToggleFavorite(result);
+        // appState.tagToggleFavorite(result);
+        const tag = appState.tags.filter(tag => tag._id === result)[0];
+        tagToggleFavoriteReq(tag, appState.token);
+        //update appState
+        dispatch({
+          type: TAG_TOGGLE_FAVORITE,
+          tag
+        });
         break;
       case NOTEBOOK:
-        context.notebookToggleFavorite(result);
+        const notebook = appState.notebooks.filter(
+          book => book._id === result
+        )[0];
+        notebookToggleFavoriteReq(notebook, appState.token).then(res => {
+          console.log(res);
+        });
+        dispatch({
+          type: NOTEBOOK_TOGGLE_FAVORITE,
+          notebook: notebook
+        });
+        // appState.notebookToggleFavorite(result);
         break;
       case NOTES:
-        context.noteToggleFavorite(result);
+        appState.noteToggleFavorite(result);
         break;
       default:
         break;
@@ -169,36 +195,25 @@ const FavoritesDrawer = props => {
   };
 
   const handleFavoriteClick = (resultID, resultType, e) => {
-    // console.log(e.target.type);
-    // if (
-    //   e.target.type === "button" ||
-    //   e.target.type === "path" ||
-    //   e.target.type === "svg"
-    // ) {
-    //   console.log("this is WROOOOOOOOOOOOOOOONG!!!!!!!!!!!!!!!!!!!!!");
-    //   //executes only if the star icon was clicked:
-    // } else {
     //default behaviour (if the list item was clicked anywhere except the remove buton)
     handleDrawerClose();
-    // Tag
     switch (resultType) {
       case TAG:
-        context.setNoteFilter(TAG, resultID);
+        appState.setNoteFilter(TAG, resultID);
         break;
       case NOTEBOOK:
-        context.setActiveNotebook(resultID);
-        context.setNoteFilter(NOTEBOOK, resultID);
+        appState.setActiveNotebook(resultID);
+        appState.setNoteFilter(NOTEBOOK, resultID);
         break;
       case NOTES:
-        context.setNoteFilter(NOTES);
-        context.setActiveNote(resultID);
+        appState.setNoteFilter(NOTES);
+        appState.setActiveNote(resultID);
         let path = `/main/editor`;
         props.history.push(path);
         break;
       default:
         break;
     }
-    // }
   };
 
   //determines if the result is a tag,notebook or note
@@ -210,23 +225,20 @@ const FavoritesDrawer = props => {
 
   useEffect(() => {
     console.log("useEffect from Favorites drawer");
-    const notes = context.notes
-      ? context.notes.filter(note => note.favorite === true)
+    const notes = appState.notes
+      ? appState.notes.filter(note => note.favorite === true)
       : [];
-    const notebooks = context.notebooks
-      ? context.notebooks.filter(book => book.favorite === true)
+    const notebooks = appState.notebooks
+      ? appState.notebooks.filter(book => book.favorite === true)
       : [];
-    const tags = context.tags
-      ? context.tags.filter(tag => tag.favorite === true)
+    const tags = appState.tags
+      ? appState.tags.filter(tag => tag.favorite === true)
       : [];
     setResults(notes.concat(notebooks, tags));
-  }, [context.tags, context.notebooks, context.notes]);
+  }, [appState.tags, appState.notebooks, appState.notes]);
 
   return (
-    <div
-      className={classes.root}
-      // role="presentation"
-    >
+    <div className={classes.root}>
       <Tooltip title="Favorites" placement="right">
         <ListItem
           className={classes.list_item}
@@ -325,8 +337,6 @@ const FavoritesDrawer = props => {
                                     result._id,
                                     resultType(result)
                                   )}
-
-                                  // data-notebookid={notebook._id}
                                 >
                                   <RemoveCircleRounded />
                                 </IconButton>
@@ -378,8 +388,6 @@ const FavoritesDrawer = props => {
                                     result._id,
                                     resultType(result)
                                   )}
-
-                                  // data-notebookid={notebook._id}
                                 >
                                   <RemoveCircleRounded />
                                 </IconButton>
@@ -432,8 +440,6 @@ const FavoritesDrawer = props => {
                                     result,
                                     resultType(result)
                                   )}
-
-                                  // data-notebookid={notebook._id}
                                 >
                                   <RemoveCircleRounded />
                                 </IconButton>

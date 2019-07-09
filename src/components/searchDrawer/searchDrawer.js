@@ -160,10 +160,12 @@ const SearchDrawer = props => {
 
       return plainText.toLowerCase().includes(search.toLowerCase());
     });
-    const noteTitleSearch = appState.notes.filter(note =>
-      note.title.toLowerCase().includes(search.toLowerCase())
+    const noteTitleSearch = appState.notes.filter(
+      note => note.title.toLowerCase().includes(search.toLowerCase())
+      //NEED TO COMPARE IDS IN CASE A NOTE MATCHES WITH TITLE AND BODY, TO AVOID DUPLICATES
     );
     setResults(noteTitleSearch.concat(deepSearch));
+    console.log(results);
   };
 
   //determines if the result is a tag,notebook or note

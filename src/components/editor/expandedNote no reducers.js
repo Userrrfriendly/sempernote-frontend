@@ -81,6 +81,7 @@ class ExpandedNote extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    console.log(this.editorRef.current.querySelector(".ql-picker"));
     //the condition will be true if the user opens a new note
     if (prevProps.note._id !== this.props.note._id) {
       //double check if the component is mounted
@@ -105,7 +106,6 @@ class ExpandedNote extends Component {
     if (!isEqual(currentDelta, prevDelta)) {
       // console.log("currentDelta and prevDelta are NOT equal, saving changes");
       this.props.updateNoteBody(noteId, currentDelta);
-      // this.props.updateNoteBody(noteId, currentDelta);
     }
   }, 3000);
 
