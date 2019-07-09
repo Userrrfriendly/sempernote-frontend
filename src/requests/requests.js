@@ -4,7 +4,7 @@
 import {
   simplifyNotebooks,
   mergeNotes,
-  // selectNotebook,
+  selectNotebook,
   sortByDateNewestFirst,
   filterTrash
 } from "../helpers/helpers";
@@ -20,7 +20,8 @@ import {
   notebookRename,
   notebookFavoriteTrue,
   notebookFavoriteFalse,
-  updateNoteBody
+  updateNoteBody,
+  createNote
 } from "../helpers/graphQLrequests";
 // const dispatch = useContext(DispatchContext);
 
@@ -317,7 +318,7 @@ export function notebookToggleFavoriteReq(notebook, token) {
 }
 
 /** NOTES **/
-
+/** UPDATE NOTE BODY */
 export function updateNoteBodyReq(id, body, token) {
   const auth = "Bearer " + token;
 
@@ -345,4 +346,71 @@ export function updateNoteBodyReq(id, body, token) {
       console.log(err);
       return err;
     });
+}
+
+/**PUSH NEW NOTE TO SERVER */
+// export function updateNoteBodyReq(id, body, token) {
+//   const auth = "Bearer " + token;
+
+//   const parsedBody = JSON.stringify(JSON.stringify(body));
+//   const requestBody = JSON.stringify({
+//     query: updateNoteBody(id, parsedBody)
+//   });
+
+//   return fetch(url, {
+//     ...options,
+//     body: requestBody,
+//     headers: { ...options.headers, Authorization: auth }
+//   })
+
+export function pushNoteToServerReq(note, token) {
+  console.log(`pushing note: ${note.title} to server`);
+  const auth = "Bearer " + token;
+
+  const title = note.title;
+  const body = JSON.stringify(note.body);
+  const notebook = note.notebook._id;
+  const requestBody = JSON.stringify({
+    query: createNote(title, body, notebook)
+  });
+
+  return fetch(url, {
+    ...options,
+    body: requestBody,
+    headers: { ...options.headers, Authorization: auth }
+  })
+    .then(res => {
+      if (res.status !== 200 && res.status !== 201) {
+        throw new Error("pushNoteToServer Request Failed!");
+      }
+      return res.json();
+    })
+    .then(r => {
+      console.log(r);
+      return r.data.createNote;
+      // const newNotebooks = this.state.notebooks.filter(
+      //   notebook => notebook._id !== r.data.createNote.notebook._id
+      // );
+      // let updatedNotebook = selectNotebook(
+      //   this.state.notebooks,
+      //   r.data.createNote.notebook._id
+      // );
+      // // updatedNotebook[0].notes.push(r.data.createNote);
+      // updatedNotebook[0].notes.push({
+      //   _id: r.data.createNote._id,
+      //   title: r.data.createNote.title
+      // });
+      // newNotebooks.push(updatedNotebook[0]);
+      // let updatedNotes = this.state.notes.filter(
+      //   note => !note.hasOwnProperty("temp")
+      // );
+      // updatedNotes.push(r.data.createNote);
+      // sortByDateNewestFirst(updatedNotes, "updatedAt");
+      // this.setState({
+      //   notebooks: newNotebooks,
+      //   notes: updatedNotes,
+      //   activeNote: r.data.createNote //this will trigger a re-render on editor and probably break things
+      // });
+    })
+    .catch(err => console.log(err));
 }

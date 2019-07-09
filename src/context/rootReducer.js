@@ -1,4 +1,4 @@
-import { sortByDateNewestFirst } from "../helpers/helpers";
+import { sortByDateNewestFirst, selectNotebook } from "../helpers/helpers";
 
 export const LOG_IN = "LOG_IN";
 export const FETCH_USER_DATA = "FETCH_USER_DATA";
@@ -10,6 +10,8 @@ export const RENAME_NOTEBOOK = "RENAME_NOTEBOOK";
 export const NOTEBOOK_TOGGLE_FAVORITE = "NOTEBOOK_TOGGLE_FAVORITE";
 export const SET_ACTIVE_NOTE = "SET_ACTIVE_NOTE";
 export const UPDATE_NOTE_BODY = "UPDATE_NOTE_BODY";
+export const CREATE_NOTE = "CREATE_NOTE";
+export const SYNC_NEW_NOTE = "SYNC_NEW_NOTE";
 
 const logIn = (token, userId, state) => {
   return { ...state, token: token, userId: userId };
@@ -103,6 +105,45 @@ const updateNoteBody = (action, state) => {
   return { ...state, notes: updatedNotes, activeNote };
 };
 
+const createNote = (action, state) => {
+  let newNotes = state.notes;
+  newNotes.push(action.note);
+  sortByDateNewestFirst(newNotes, "updatedAt");
+  return { ...state, notes: newNotes };
+};
+
+const syncNewNote = (action, state) => {
+  //runs after CREATE_NOTE to sync the temp _id of the new note in state with the the _id from server response
+
+  const newNotebooks = state.notebooks.filter(
+    notebook => notebook._id !== action.note.notebook._id
+  );
+  let updatedNotebook = selectNotebook(
+    state.notebooks,
+    action.note.notebook._id
+  );
+  updatedNotebook[0].notes.push({
+    _id: action.note._id,
+    title: action.note.title
+  });
+  newNotebooks.push(updatedNotebook[0]);
+  let updatedNotes = state.notes.filter(note => !note.hasOwnProperty("temp"));
+  updatedNotes.push(action.note);
+  sortByDateNewestFirst(updatedNotes, "updatedAt");
+
+  return {
+    ...state,
+    notebooks: newNotebooks,
+    notes: updatedNotes,
+    activeNote: action.note
+  };
+  // this.setState({
+  //   notebooks: newNotebooks,
+  //   notes: updatedNotes,
+  //   activeNote: r.data.createNote //this will trigger a re-render on editor and probably break things
+  // });
+};
+
 /** TAGS **/
 const createTag = (action, state) => {
   const tags = [...state.tags];
@@ -151,7 +192,13 @@ export const rootReducer = (state, action) => {
     case UPDATE_NOTE_BODY:
       console.log(action);
       return updateNoteBody(action, state);
-
+    case CREATE_NOTE:
+      console.log(action);
+      return createNote(action, state);
+    case SYNC_NEW_NOTE:
+      //runs after CREATE_NOTE to sync the temp _id of the new note in state with the the _id from server response
+      console.log(action);
+      return syncNewNote(action, state);
     default:
       return state;
   }

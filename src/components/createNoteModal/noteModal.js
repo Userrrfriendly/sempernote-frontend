@@ -1,10 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import Modal from "react-modal";
 import Select, { components } from "react-select";
 import { withRouter } from "react-router-dom";
 import { selectNotebook } from "../../helpers/helpers";
 import { LibraryBooksRounded } from "@material-ui/icons";
 import { Typography, TextField, Tooltip, Button } from "@material-ui/core";
+import DispatchContext from "../../context/DispatchContext";
+import {
+  CREATE_NOTE,
+  SET_ACTIVE_NOTE,
+  SYNC_NEW_NOTE
+} from "../../context/rootReducer";
+import { pushNoteToServerReq } from "../../requests/requests";
 
 const customStyles = {
   content: {
@@ -40,6 +47,7 @@ const DropdownIndicator = props => {
 Modal.setAppElement("#root");
 
 const NoteModal = props => {
+  const dispatch = useContext(DispatchContext);
   const [title, setTitle] = useState("");
   const [selectedNotebook, setSelectedNotebook] = useState(null);
   const [options, setOptions] = useState(
@@ -69,7 +77,6 @@ const NoteModal = props => {
 
   const handleSelectChange = selectedNotebook => {
     setSelectedNotebook(selectedNotebook);
-    // console.log(`Option selected:`, selectedNotebook);
   };
 
   const onTitleChange = e => {
@@ -118,13 +125,35 @@ const NoteModal = props => {
      * SetActiveNote(tempNote created on the client)->opens editor
      * SetActiveNote(actual note as response from server)->opens editor again/rerender
      */
+    // const updateState = async () => {
+    //   props.pushNoteToState(newNote);
+    // };
+
     const updateState = async () => {
-      props.pushNoteToState(newNote);
+      dispatch({
+        type: CREATE_NOTE,
+        note: newNote
+      });
     };
+
     updateState()
-      .then(props.setActiveNote(validatedTitle))
+      // .then(props.setActiveNote(validatedTitle))
+      .then(
+        dispatch({
+          type: SET_ACTIVE_NOTE,
+          _id: validatedTitle
+        })
+      )
       .then(props.history.push(path))
-      .then(props.pushNoteToServer(newNote))
+      // .then(props.pushNoteToServer(newNote))
+      .then(
+        pushNoteToServerReq(newNote, props.token).then(res => {
+          dispatch({
+            type: SYNC_NEW_NOTE,
+            note: res
+          });
+        })
+      )
       .then(setTitle(""))
       .then(props.closeModal())
       .catch(error => console.log(error));

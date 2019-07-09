@@ -176,8 +176,9 @@ const Main = props => {
               openModal={openCreateNoteModal}
               closeModal={closenoteModal}
               isOpen={noteModal}
-              pushNoteToState={appState.pushNoteToState}
-              setActiveNote={appState.setActiveNote}
+              // pushNoteToState={appState.pushNoteToState}
+              // setActiveNote={appState.setActiveNote}
+              token={appState.token}
             />
             <TagModal
               tags={appState.tags}
