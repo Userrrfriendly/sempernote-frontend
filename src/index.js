@@ -11,12 +11,12 @@ import Store from "./context/store";
 import * as serviceWorker from "./serviceWorker";
 
 ReactDOM.render(
-  <Store>
-    <BrowserRouter>
+  <BrowserRouter>
+    <Store>
       <CssBaseline />
       <App />
-    </BrowserRouter>
-  </Store>,
+    </Store>
+  </BrowserRouter>,
   document.getElementById("root")
 );
 

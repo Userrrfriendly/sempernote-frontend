@@ -30,6 +30,7 @@ import {
 // import Context from "../../context/context";
 import DispatchContext from "../../context/DispatchContext";
 import StateContext from "../../context/StateContext";
+import { SET_NOTE_FILTER, SET_ACTIVE_NOTE } from "../../context/rootReducer";
 
 import { SEARCH, NOTEBOOK, NOTES, TAG } from "../../context/activeUItypes";
 
@@ -134,15 +135,34 @@ const SearchDrawer = props => {
     handleDrawerClose();
     switch (resultType) {
       case TAG:
-        appState.setNoteFilter(TAG, resultID);
+        // appState.setNoteFilter(TAG, resultID);
+        dispatch({
+          type: SET_NOTE_FILTER,
+          name: TAG,
+          options: resultID
+        });
         break;
       case NOTEBOOK:
         appState.setActiveNotebook(resultID);
-        appState.setNoteFilter(NOTEBOOK, resultID);
+        dispatch({
+          type: SET_NOTE_FILTER,
+          name: NOTEBOOK,
+          options: resultID
+        });
+        // appState.setNoteFilter(NOTEBOOK, resultID);
         break;
       case NOTES:
-        appState.setNoteFilter(NOTES);
-        appState.setActiveNote(resultID);
+        // appState.setNoteFilter(NOTES);
+        dispatch({
+          type: SET_NOTE_FILTER,
+          name: NOTES
+        });
+        dispatch({
+          type: SET_ACTIVE_NOTE,
+          name: NOTES,
+          _id: resultID
+        });
+        // appState.setActiveNote(resultID);
         let path = `/main/editor`;
         props.history.push(path);
         break;
@@ -204,10 +224,7 @@ const SearchDrawer = props => {
   };
 
   return (
-    <div
-      className={classes.root}
-      // role="presentation"
-    >
+    <div className={classes.root}>
       <Tooltip title="Search" placement="right">
         <ListItem
           className={classes.list_item}

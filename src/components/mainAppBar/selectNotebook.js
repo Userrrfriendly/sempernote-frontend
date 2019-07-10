@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Select, { components } from "react-select";
 import "./selec.css";
 import { LibraryBooksRounded } from "@material-ui/icons";
 import { Tooltip } from "@material-ui/core/";
 import { sortByTitleAsc } from "../../helpers/helpers";
+import StateContext from "../../context/StateContext";
+import DispatchContext from "../../context/DispatchContext";
+import { moveNoteToNotebookReq } from "../../requests/requests";
 
 /**Change Icon on React-Select dropdown
  * https://github.com/JedWatson/react-select/issues/3493
@@ -19,37 +22,48 @@ const DropdownIndicator = props => {
 };
 
 const SelectNotebook = props => {
+  const appState = useContext(StateContext);
+  const dispatch = useContext(DispatchContext);
   const [selectedOption, setSelectedOption] = useState(null);
   const [options, setOptions] = useState(
-    sortByTitleAsc(props.notebooks, "name").map(book => {
+    sortByTitleAsc(appState.notebooks, "name").map(book => {
       return { value: book._id, label: book.name };
     })
   );
 
   useEffect(() => {
     setOptions(
-      sortByTitleAsc(props.notebooks, "name").map(book => {
+      sortByTitleAsc(appState.notebooks, "name").map(book => {
         return { value: book._id, label: book.name };
       })
     );
-  }, [props.notebooks]);
+  }, [appState.notebooks]);
 
   useEffect(() => {
     const selectedIndex = options.findIndex(
-      option => option.value === props.activeNote.notebook._id
+      option => option.value === appState.activeNote.notebook._id
     );
     console.log(selectedIndex);
     setSelectedOption(options[selectedIndex]);
-  }, [props.activeNote, options]);
+  }, [appState.activeNote, options]);
 
   const handleChange = selectedOption => {
     setSelectedOption(selectedOption);
     console.log(`Notebook selected:`, selectedOption);
-    props.moveNoteToNotebook(
-      props.activeNote._id,
+
+    moveNoteToNotebookReq(
+      appState.activeNote._id,
       selectedOption.value,
-      props.activeNote.notebook._id
-    );
+      appState.token
+    ).then(r => console.log(r));
+
+    //noteID, notebookID, oldNotebookID
+    dispatch({
+      type: "MOVE_NOTE_TO_NOTEBOOK",
+      noteID: appState.activeNote._id,
+      newNotebookID: selectedOption.value,
+      previousNotebookID: appState.activeNote.notebook._id
+    });
   };
 
   return (

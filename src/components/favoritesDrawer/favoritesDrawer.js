@@ -29,7 +29,6 @@ import {
   StyleRounded,
   RemoveCircleRounded
 } from "@material-ui/icons";
-// import Context from "../../context/context";
 import StateContext from "../../context/StateContext";
 import DispatchContext from "../../context/DispatchContext";
 import { NOTEBOOK, NOTES, TAG, FAVORITES } from "../../context/activeUItypes";
@@ -39,7 +38,8 @@ import {
 } from "../../requests/requests";
 import {
   NOTEBOOK_TOGGLE_FAVORITE,
-  TAG_TOGGLE_FAVORITE
+  TAG_TOGGLE_FAVORITE,
+  SET_NOTE_FILTER
 } from "../../context/rootReducer";
 
 import { deltaToPlainText } from "../../helpers/helpers";
@@ -127,7 +127,6 @@ const FavoritesDrawer = props => {
     e.stopPropagation();
     switch (resultType) {
       case TAG:
-        // appState.tagToggleFavorite(result);
         const tag = appState.tags.filter(tag => tag._id === result)[0];
         tagToggleFavoriteReq(tag, appState.token);
         //update appState
@@ -147,7 +146,6 @@ const FavoritesDrawer = props => {
           type: NOTEBOOK_TOGGLE_FAVORITE,
           notebook: notebook
         });
-        // appState.notebookToggleFavorite(result);
         break;
       case NOTES:
         appState.noteToggleFavorite(result);
@@ -199,14 +197,25 @@ const FavoritesDrawer = props => {
     handleDrawerClose();
     switch (resultType) {
       case TAG:
-        appState.setNoteFilter(TAG, resultID);
+        dispatch({
+          type: SET_NOTE_FILTER,
+          name: TAG,
+          options: resultID
+        });
         break;
       case NOTEBOOK:
+        dispatch({
+          type: SET_NOTE_FILTER,
+          name: NOTEBOOK,
+          options: resultID
+        });
         appState.setActiveNotebook(resultID);
-        appState.setNoteFilter(NOTEBOOK, resultID);
         break;
       case NOTES:
-        appState.setNoteFilter(NOTES);
+        dispatch({
+          type: SET_NOTE_FILTER,
+          name: NOTES
+        });
         appState.setActiveNote(resultID);
         let path = `/main/editor`;
         props.history.push(path);

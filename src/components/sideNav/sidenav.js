@@ -2,16 +2,12 @@ import React, { useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { List, ListItem, ListItemIcon, Tooltip } from "@material-ui/core";
 import {
-  // SearchRounded,
-  // StarRounded,
   NoteAddRounded,
   DescriptionRounded,
   LibraryAddRounded
 } from "@material-ui/icons";
-
-// import Context from "../../context/context";
+import { SET_NOTE_FILTER } from "../../context/rootReducer";
 import DispatchContext from "../../context/DispatchContext";
-import StateContext from "../../context/StateContext";
 
 import {
   NOTES,
@@ -53,12 +49,16 @@ const SideNav = props => {
   const classes = useStyles();
   const [selectedIndex, setSelectedIndex] = React.useState(NOTES);
   const [openDrawer, setOpenDrawer] = React.useState("");
-  const appState = useContext(StateContext);
+  const dispatch = useContext(DispatchContext);
 
   function handleListItemClick(event, index) {
-    // console.log(index);
     closeDrawers(index);
     setSelectedIndex(index);
+    index === NOTES &&
+      dispatch({
+        type: SET_NOTE_FILTER,
+        name: NOTES
+      });
     // index === NOTES && context.setNoteFilter(NOTES);
   }
 

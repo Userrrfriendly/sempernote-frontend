@@ -32,7 +32,10 @@ import DeleteNotebookDialog from "./deleteNotebookDialog";
 import StateContext from "../../context/StateContext";
 import DispatchContext from "../../context/DispatchContext";
 import { notebookToggleFavoriteReq } from "../../requests/requests";
-import { NOTEBOOK_TOGGLE_FAVORITE } from "../../context/rootReducer";
+import {
+  NOTEBOOK_TOGGLE_FAVORITE,
+  SET_NOTE_FILTER
+} from "../../context/rootReducer";
 const drawerWidth = 400;
 
 const useStyles = makeStyles(theme => ({
@@ -133,7 +136,6 @@ export default function NotebookDrawer(props) {
   }
 
   function handleNotebookMenuClose(e) {
-    // console.log(e);
     // console.log(anchorEl); //either extract the value through the data-notebookid
     // console.log(anchorElID); //or get the notebook._id that will be modified from state
     setAnchorEl(null);
@@ -141,7 +143,6 @@ export default function NotebookDrawer(props) {
   }
   //end menu
   const classes = useStyles();
-  // const theme = useTheme();
 
   function handleDrawerOpen() {
     setOpen(true);
@@ -183,7 +184,12 @@ export default function NotebookDrawer(props) {
       //default behaviour (if the list item was clicked anywhere except the Star Checkbox or the Menu)
       handleDrawerClose();
       appState.setActiveNotebook(notebookID);
-      appState.setNoteFilter(NOTEBOOK, notebookID);
+      // appState.setNoteFilter(NOTEBOOK, notebookID);
+      dispatch({
+        type: SET_NOTE_FILTER,
+        name: NOTEBOOK,
+        options: notebookID
+      });
     }
   };
 
@@ -201,17 +207,8 @@ export default function NotebookDrawer(props) {
     }
   }, [search, appState.notebooks]);
 
-  // const starNotebook = e => {
-  //   console.log(anchorElID);
-  //   handleNotebookMenuClose();
-  //   context.notebookToggleFavorite(anchorElID);
-  // };
-
   return (
-    <div
-      className={classes.root}
-      // role="presentation"
-    >
+    <div className={classes.root}>
       <Tooltip title="Notebooks" placement="right">
         <ListItem
           className={classes.list_item}
@@ -322,7 +319,6 @@ export default function NotebookDrawer(props) {
                           onClick={e =>
                             handleNotebookMenuClick(e, notebook._id)
                           }
-                          // data-notebookid={notebook._id}
                         >
                           <MoreVert />
                         </IconButton>

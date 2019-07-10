@@ -1,21 +1,12 @@
-import React, {
-  useState
-  // useContext
-} from "react";
+import React, { useState, useContext } from "react";
 // import { makeStyles } from "@material-ui/core/styles";
 import { IconButton, Tooltip } from "@material-ui/core";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
-
+import DispatchContext from "../../context/DispatchContext";
+import { SORT_NOTES } from "../../context/rootReducer";
 import { SortByAlpha } from "@material-ui/icons";
 
-// import Context from "../../context/context";
-import {
-  sortByDateNewestFirst,
-  sortByDateOldestFirst,
-  sortByTitleAsc,
-  sortByTitleDes
-} from "../../helpers/helpers";
 // const useStyles = makeStyles(theme => ({
 //   root: {
 //     width: "100%",
@@ -35,46 +26,66 @@ const options = [
 
 const SortMenu = props => {
   // const classes = useStyles();
+  // const appState = useContext(StateContext);
+  const dispatch = useContext(DispatchContext);
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedIndex, setSelectedIndex] = useState(2);
-  // const context = useContext(Context);
   function handleClickListItem(event) {
     setAnchorEl(event.currentTarget);
-    // console.log("handleClickListItem");
   }
 
   function handleMenuItemClick(event, index) {
     setSelectedIndex(index);
-    const shortedNotes = props.filteredNotes
-      ? [...props.filteredNotes]
-      : [...props.notes];
+    // const shortedNotes = appState.filteredNotes
+    //   ? [...appState.filteredNotes]
+    //   : [...appState.notes];
     switch (index) {
       case 0:
-        // props.setFilteredNotes(
-        //   sortByDateNewestFirst(shortedNotes, "createdAt")
-        // );
-        props.updateNotes(sortByDateNewestFirst(shortedNotes, "createdAt"));
-        // console.log(options[index]);
+        // props.updateNotes(sortByDateNewestFirst(shortedNotes, "createdAt"));
+        dispatch({
+          type: SORT_NOTES,
+          method: "sortByDateNewestFirst",
+          sortField: "createdAt"
+        });
         break;
       case 1:
-        props.updateNotes(sortByDateOldestFirst(shortedNotes, "createdAt"));
-        // console.log(options[index]);
+        // props.updateNotes(sortByDateOldestFirst(shortedNotes, "createdAt"));
+        dispatch({
+          type: SORT_NOTES,
+          method: "sortByDateOldestFirst",
+          sortField: "createdAt"
+        });
         break;
       case 2:
-        props.updateNotes(sortByDateNewestFirst(shortedNotes, "updatedAt"));
-        // console.log(options[index]);
+        dispatch({
+          type: SORT_NOTES,
+          method: "sortByDateNewestFirst",
+          sortField: "updatedAt"
+        });
+        // props.updateNotes(sortByDateNewestFirst(shortedNotes, "updatedAt"));
         break;
       case 3:
-        props.updateNotes(sortByDateOldestFirst(shortedNotes, "updatedAt"));
-        // console.log(options[index]);
+        dispatch({
+          type: SORT_NOTES,
+          method: "sortByDateOldestFirst",
+          sortField: "updatedAt"
+        });
+        // props.updateNotes(sortByDateOldestFirst(shortedNotes, "updatedAt"));
         break;
       case 4:
-        // props.setFilteredNotes(sortByTitleAsc(shortedNotes));
-        props.updateNotes(sortByTitleAsc(shortedNotes));
-        // console.log(options[index]);
+        // props.updateNotes(sortByTitleAsc(shortedNotes));
+        dispatch({
+          type: SORT_NOTES,
+          method: "sortByTitleAsc"
+        });
         break;
       case 5:
-        props.updateNotes(sortByTitleDes(shortedNotes));
+        // props.updateNotes(sortByTitleDes(shortedNotes));
+        dispatch({
+          type: SORT_NOTES,
+          method: "sortByTitleDes"
+        });
         // console.log(options[index]);
         break;
       default:
@@ -91,7 +102,6 @@ const SortMenu = props => {
     <>
       <Tooltip title="sort">
         <IconButton
-          // button
           aria-haspopup="true"
           aria-controls="lock-menu"
           aria-label="When device is locked"
@@ -111,7 +121,6 @@ const SortMenu = props => {
         {options.map((option, index) => (
           <MenuItem
             key={option}
-            // disabled={index === 0}
             selected={index === selectedIndex}
             onClick={event => handleMenuItemClick(event, index)}
           >

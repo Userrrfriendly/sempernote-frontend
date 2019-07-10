@@ -1,4 +1,10 @@
-import { sortByDateNewestFirst, selectNotebook } from "../helpers/helpers";
+import {
+  sortByDateNewestFirst,
+  selectNotebook,
+  sortByDateOldestFirst,
+  sortByTitleAsc,
+  sortByTitleDes
+} from "../helpers/helpers";
 
 export const LOG_IN = "LOG_IN";
 export const FETCH_USER_DATA = "FETCH_USER_DATA";
@@ -12,6 +18,9 @@ export const SET_ACTIVE_NOTE = "SET_ACTIVE_NOTE";
 export const UPDATE_NOTE_BODY = "UPDATE_NOTE_BODY";
 export const CREATE_NOTE = "CREATE_NOTE";
 export const SYNC_NEW_NOTE = "SYNC_NEW_NOTE";
+export const SET_NOTE_FILTER = "SET_NOTE_FILTER";
+export const SORT_NOTES = "SORT_NOTES";
+export const MOVE_NOTE_TO_NOTEBOOK = "MOVE_NOTE_TO_NOTEBOOK";
 
 const logIn = (token, userId, state) => {
   return { ...state, token: token, userId: userId };
@@ -114,7 +123,6 @@ const createNote = (action, state) => {
 
 const syncNewNote = (action, state) => {
   //runs after CREATE_NOTE to sync the temp _id of the new note in state with the the _id from server response
-
   const newNotebooks = state.notebooks.filter(
     notebook => notebook._id !== action.note.notebook._id
   );
@@ -137,11 +145,67 @@ const syncNewNote = (action, state) => {
     notes: updatedNotes,
     activeNote: action.note
   };
-  // this.setState({
-  //   notebooks: newNotebooks,
-  //   notes: updatedNotes,
-  //   activeNote: r.data.createNote //this will trigger a re-render on editor and probably break things
-  // });
+};
+
+const setNoteFilter = (action, state) => {
+  //affects appbar
+  return {
+    ...state,
+    noteFilter: { name: action.name, options: action.options }
+  };
+};
+
+const sortNotes = (action, state) => {
+  // props.updateNotes(sortByTitleDes(shortedNotes));
+  let sortedNotes;
+  // sortByDateNewestFirst(shortedNotes, "updatedAt")
+  switch (action.method) {
+    case "sortByDateNewestFirst":
+      sortedNotes = sortByDateNewestFirst(state.notes, action.sortField);
+      // sortedNotes = sortByTitleDes(state.notes);
+      return { ...state, notes: sortedNotes };
+    case "sortByDateOldestFirst":
+      sortedNotes = sortByDateOldestFirst(state.notes, action.sortField);
+      // sortedNotes = sortByTitleDes(state.notes);
+      return { ...state, notes: sortedNotes };
+    case "sortByTitleDes":
+      sortedNotes = sortByTitleDes(state.notes);
+      return { ...state, notes: sortedNotes };
+    case "sortByTitleAsc":
+      sortedNotes = sortByTitleAsc(state.notes);
+      return { ...state, notes: sortedNotes };
+    default:
+      return { ...state };
+  }
+};
+
+const moveNotetoNotebook = (action, state) => {
+  const newNotebooks = state.notebooks.filter(
+    notebook =>
+      notebook._id !== action.previousNotebookID &&
+      notebook._id !== action.newNotebookID
+  );
+
+  const updatedNote = state.notes.filter(note => note._id === action.noteID)[0];
+  updatedNote.notebook._id = action.newNotebookID;
+
+  const updatedNotes = state.notes.map(note =>
+    note._id === action.noteID ? updatedNote : note
+  );
+  // //add the note to the newnotebook
+  let updatedNotebook = selectNotebook(state.notebooks, action.newNotebookID);
+  updatedNotebook[0].notes.push(updatedNote);
+  // //delete the note from the oldnotebook
+  let oldNotebook = selectNotebook(state.notebooks, action.previousNotebookID);
+  oldNotebook[0].notes = oldNotebook[0].notes.filter(
+    note => note._id !== action.noteID
+  );
+  // merge the updated previous & newNotebooks with all the notebooks
+  newNotebooks.push(updatedNotebook[0], oldNotebook[0]);
+  const activeNote =
+    state.activeNote._id === action.noteID ? updatedNote : state.activeNote;
+
+  return { ...state, activeNote, notes: updatedNotes, notebooks: newNotebooks };
 };
 
 /** TAGS **/
@@ -199,6 +263,16 @@ export const rootReducer = (state, action) => {
       //runs after CREATE_NOTE to sync the temp _id of the new note in state with the the _id from server response
       console.log(action);
       return syncNewNote(action, state);
+    case SET_NOTE_FILTER:
+      console.log(action);
+      return setNoteFilter(action, state);
+    case SORT_NOTES:
+      console.log(action);
+      return sortNotes(action, state);
+    case MOVE_NOTE_TO_NOTEBOOK:
+      console.log(action);
+      return moveNotetoNotebook(action, state);
+
     default:
       return state;
   }

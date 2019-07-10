@@ -42,7 +42,7 @@ export default function Store(props) {
     noteToggleFavorite: () => {},
     moveNote: () => {},
     renameNote: () => {},
-    setFilteredNotes: () => {}, //delete or change
+    // setFilteredNotes: () => {}, //delete or change
     setNoteFilter: () => {},
     createTag: () => {},
     tagToggleFavorite: () => {} //rename this

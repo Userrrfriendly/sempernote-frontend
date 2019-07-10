@@ -271,10 +271,10 @@ const MainAppBar = props => {
                 <NoteCounter noteNumber={noteNumber} />
 
                 <SortMenu
-                  notes={appState.notes}
-                  filteredNotes={appState.filteredNotes}
-                  updateNotes={appState.updateNotes}
-                  setFilteredNotes={appState.setFilteredNotes}
+                // notes={appState.notes}
+                // filteredNotes={appState.filteredNotes}
+                // updateNotes={appState.updateNotes}
+                // setFilteredNotes={appState.setFilteredNotes}
                 />
               </>
             )}
@@ -307,11 +307,7 @@ const MainAppBar = props => {
                   </IconButton>
                 </Tooltip>
 
-                <SelectNotebook
-                  activeNote={appState.activeNote}
-                  notebooks={appState.notebooks}
-                  moveNoteToNotebook={appState.moveNoteToNotebook}
-                />
+                <SelectNotebook />
 
                 <SelectTag
                   activeNote={appState.activeNote}

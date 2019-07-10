@@ -1,10 +1,7 @@
-// import React, { useContext } from "react";
-// import DispatchContext from "../context/DispatchContext";
-// import { LOG_IN, FETCH_USER_DATA } from "../context/rootReducer";
 import {
   simplifyNotebooks,
   mergeNotes,
-  selectNotebook,
+  // selectNotebook,
   sortByDateNewestFirst,
   filterTrash
 } from "../helpers/helpers";
@@ -21,9 +18,9 @@ import {
   notebookFavoriteTrue,
   notebookFavoriteFalse,
   updateNoteBody,
-  createNote
+  createNote,
+  moveNote
 } from "../helpers/graphQLrequests";
-// const dispatch = useContext(DispatchContext);
 
 const url = "http://localhost:8000/graphql";
 const options = {
@@ -138,7 +135,6 @@ export function createNotebookReq(name, token) {
   });
   const auth = "Bearer " + token;
   console.log(auth);
-  // var ops = {...options, headers:{...options.headers, Authorization:'test'}}
   return fetch(url, {
     ...options,
     body: requestBody,
@@ -151,7 +147,6 @@ export function createNotebookReq(name, token) {
       return res.json();
     })
     .then(resJSON => {
-      // console.log(resJSON.data.createNotebook);
       return resJSON.data.createNotebook;
     })
     .catch(err => {
@@ -339,7 +334,6 @@ export function updateNoteBodyReq(id, body, token) {
       return res.json();
     })
     .then(resJSON => {
-      // console.log(resJSON.data.updateNoteBody);
       return resJSON.data.updateNoteBody;
     })
     .catch(err => {
@@ -349,20 +343,6 @@ export function updateNoteBodyReq(id, body, token) {
 }
 
 /**PUSH NEW NOTE TO SERVER */
-// export function updateNoteBodyReq(id, body, token) {
-//   const auth = "Bearer " + token;
-
-//   const parsedBody = JSON.stringify(JSON.stringify(body));
-//   const requestBody = JSON.stringify({
-//     query: updateNoteBody(id, parsedBody)
-//   });
-
-//   return fetch(url, {
-//     ...options,
-//     body: requestBody,
-//     headers: { ...options.headers, Authorization: auth }
-//   })
-
 export function pushNoteToServerReq(note, token) {
   console.log(`pushing note: ${note.title} to server`);
   const auth = "Bearer " + token;
@@ -388,29 +368,34 @@ export function pushNoteToServerReq(note, token) {
     .then(r => {
       console.log(r);
       return r.data.createNote;
-      // const newNotebooks = this.state.notebooks.filter(
-      //   notebook => notebook._id !== r.data.createNote.notebook._id
-      // );
-      // let updatedNotebook = selectNotebook(
-      //   this.state.notebooks,
-      //   r.data.createNote.notebook._id
-      // );
-      // // updatedNotebook[0].notes.push(r.data.createNote);
-      // updatedNotebook[0].notes.push({
-      //   _id: r.data.createNote._id,
-      //   title: r.data.createNote.title
-      // });
-      // newNotebooks.push(updatedNotebook[0]);
-      // let updatedNotes = this.state.notes.filter(
-      //   note => !note.hasOwnProperty("temp")
-      // );
-      // updatedNotes.push(r.data.createNote);
-      // sortByDateNewestFirst(updatedNotes, "updatedAt");
-      // this.setState({
-      //   notebooks: newNotebooks,
-      //   notes: updatedNotes,
-      //   activeNote: r.data.createNote //this will trigger a re-render on editor and probably break things
-      // });
     })
     .catch(err => console.log(err));
+}
+
+/** MOVE NOTE TO A NOTEBOOK **/
+export function moveNoteToNotebookReq(noteID, notebookID, token) {
+  const requestBody = JSON.stringify({
+    query: moveNote(noteID, notebookID)
+  });
+  const auth = "Bearer " + token;
+
+  return fetch(url, {
+    ...options,
+    body: requestBody,
+    headers: { ...options.headers, Authorization: auth }
+  })
+    .then(res => {
+      if (res.status !== 200 && res.status !== 201) {
+        throw new Error("moveNoteToNotebook Request Failed!");
+      }
+      return res.json();
+    })
+    .then(r => {
+      return r.data.moveNote;
+    })
+
+    .catch(err => {
+      console.log(err);
+      return err;
+    });
 }

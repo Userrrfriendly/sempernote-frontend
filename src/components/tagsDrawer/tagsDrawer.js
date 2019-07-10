@@ -33,7 +33,10 @@ import StateContext from "../../context/StateContext";
 import DispatchContext from "../../context/DispatchContext";
 import { TAG } from "../../context/activeUItypes";
 import { tagToggleFavoriteReq } from "../../requests/requests";
-import { TAG_TOGGLE_FAVORITE } from "../../context/rootReducer";
+import {
+  TAG_TOGGLE_FAVORITE,
+  SET_NOTE_FILTER
+} from "../../context/rootReducer";
 
 const drawerWidth = 340;
 
@@ -155,7 +158,12 @@ const TagDrawer = props => {
 
   const handleTagClick = tagID => {
     handleDrawerClose();
-    appState.setNoteFilter("TAG", tagID);
+    // appState.setNoteFilter("TAG", tagID);
+    dispatch({
+      type: SET_NOTE_FILTER,
+      name: TAG,
+      options: tagID
+    });
   };
 
   useEffect(() => {
