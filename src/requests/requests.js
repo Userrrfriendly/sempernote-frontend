@@ -21,7 +21,10 @@ import {
   createNote,
   moveNote,
   assignTag,
-  unAssignTag
+  unAssignTag,
+  noteFavoriteTrue,
+  noteFavoriteFalse,
+  trashNote
 } from "../helpers/graphQLrequests";
 
 const url = "http://localhost:8000/graphql";
@@ -465,9 +468,171 @@ export function moveNoteToNotebookReq(noteID, notebookID, token) {
     .then(r => {
       return r.data.moveNote;
     })
-
     .catch(err => {
       console.log(err);
       return err;
     });
+}
+
+/**MOVE NOTE TO TRASH */
+// export function moveNoteToNotebookReq(noteID, notebookID, token) {
+
+export function trashNoteReq(noteToTrash, token) {
+  const auth = "Bearer " + token;
+
+  const requestBody = JSON.stringify({
+    query: trashNote(noteToTrash._id)
+  });
+
+  return fetch(url, {
+    ...options,
+    body: requestBody,
+    headers: { ...options.headers, Authorization: auth }
+  })
+    .then(res => {
+      if (res.status !== 200 && res.status !== 201) {
+        throw new Error("Failed!");
+      }
+      return res.json();
+    })
+    .then(r => {
+      const responseNote = r.data.softDeleteNote;
+
+      return { responseNote };
+    })
+    .catch(err => {
+      console.log(err);
+      return err;
+    });
+  // .then(data => {
+  //   const tags = this.state.tags.map(tag => {
+  //     return {
+  //       ...tag,
+  //       notes: tag.notes.map(note =>
+  //         note._id === data.responseNote._id
+  //           ? {
+  //               _id: data.responseNote._id,
+  //               title: data.responseNote.title,
+  //               trash: data.responseNote.trash
+  //             }
+  //           : note
+  //       )
+  //     };
+  //   });
+  //   console.log(tags);
+  //   this.setState(prevState => {
+  //     return {
+  //       activeNote:
+  //         prevState.activeNote &&
+  //         prevState.activeNote._id === data.responseNote._id
+  //           ? null
+  //           : prevState.activeNote,
+  //       notes: prevState.notes.filter(
+  //         note => note._id !== data.responseNote._id
+  //       ),
+  //       trash: prevState.trash.concat(data.responseNote),
+  //       tags: tags
+  //       // ,notebooks: data.newNotebooks
+  //     };
+  //   });
+  // });
+}
+
+/** NOTE TOGGLE FAVORITE TRUE **/
+export function noteFavoriteTrueReq(note, token) {
+  const query = noteFavoriteTrue;
+  const auth = "Bearer " + token;
+
+  const requestBody = JSON.stringify({
+    query: query(note._id)
+  });
+
+  return (
+    fetch(url, {
+      ...options,
+      body: requestBody,
+      headers: { ...options.headers, Authorization: auth }
+    })
+      .then(res => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error("noteFavoriteTrue Request Failed!");
+        }
+        return res.json();
+      })
+      .then(r => {
+        const responseNote = r.data.noteFavoriteTrue;
+        console.log(responseNote);
+        return { responseNote };
+      })
+      // .then(data => {
+      // this.setState(prevState => {
+      //   return {
+      //     activeNote:
+      //       prevState.activeNote &&
+      //       prevState.activeNote._id === data.responseNote._id
+      //         ? data.responseNote
+      //         : prevState.activeNote,
+      //     notes: prevState.notes.map(note =>
+      //       note._id === data.responseNote._id
+      //         ? { ...note, favorite: data.responseNote.favorite }
+      //         : note
+      //     )
+      //   };
+      // });
+      // })
+      .catch(err => {
+        console.log(err);
+        return err;
+      })
+  );
+}
+
+/** NOTE TOGGLE FAVORITE TRUE **/
+
+export function noteFavoriteFalseReq(note, token) {
+  const query = noteFavoriteFalse;
+  const auth = "Bearer " + token;
+
+  const requestBody = JSON.stringify({
+    query: query(note._id)
+  });
+
+  return (
+    fetch(url, {
+      ...options,
+      body: requestBody,
+      headers: { ...options.headers, Authorization: auth }
+    })
+      .then(res => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error("noteFavoriteFalse Request Failed!");
+        }
+        return res.json();
+      })
+      .then(r => {
+        const responseNote = r.data.noteFavoriteFalse;
+        console.log(responseNote);
+        return { responseNote };
+      })
+      // .then(data => {
+      // this.setState(prevState => {
+      //   return {
+      //     activeNote:
+      //       prevState.activeNote &&
+      //       prevState.activeNote._id === data.responseNote._id
+      //         ? data.responseNote
+      //         : prevState.activeNote,
+      //     notes: prevState.notes.map(note =>
+      //       note._id === data.responseNote._id
+      //         ? { ...note, favorite: data.responseNote.favorite }
+      //         : note
+      //     )
+      //   };
+      // });
+      // })
+      .catch(err => {
+        console.log(err);
+        return err;
+      })
+  );
 }

@@ -91,11 +91,8 @@ const Main = props => {
 
     window.onpopstate = e => {
       //onpopstate detects if the back/forward button was pressed
-      console.log(props.location.pathname);
-      console.log(e);
-      if (props.location.pathname === "/main/" && appState.activeNote) {
-        // appState.setActiveNote(null);
-        console.log("if triggered");
+      // console.log(props.location.pathname);
+      if (props.history.location.pathname === "/main/" && appState.activeNote) {
         dispatch({
           type: SET_ACTIVE_NOTE,
           _id: null
@@ -103,8 +100,7 @@ const Main = props => {
       }
       console.log("back button was pressed");
     };
-    //dispatch was added as a dependancy only because react was throwing a warning...
-  }, [props.location.pathname, appState.activeNote, dispatch]);
+  }, [props.history.location.pathname, appState.activeNote, dispatch]);
 
   // console.log(matches);
   return (

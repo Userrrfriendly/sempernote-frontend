@@ -23,6 +23,9 @@ export const SORT_NOTES = "SORT_NOTES";
 export const MOVE_NOTE_TO_NOTEBOOK = "MOVE_NOTE_TO_NOTEBOOK";
 export const ASSIGN_TAG = "ASSIGN_TAG";
 export const UNASSIGN_TAG = "UNASSIGN_TAG";
+export const NOTE_REMOVE_FAVORITE = "NOTE_REMOVE_FAVORITE";
+export const NOTE_ADD_FAVORITE = "NOTE_ADD_FAVORITE";
+export const TRASH_NOTE = "TRASH_NOTE";
 
 const logIn = (token, userId, state) => {
   return { ...state, token: token, userId: userId };
@@ -210,6 +213,74 @@ const moveNotetoNotebook = (action, state) => {
   return { ...state, activeNote, notes: updatedNotes, notebooks: newNotebooks };
 };
 
+const noteRemoveFavorite = (action, state) => {
+  const updatedNotes = state.notes.map(note =>
+    note._id === action.note._id ? { ...note, favorite: false } : note
+  );
+
+  const activeNote =
+    state.activeNote && state.activeNote._id === action.note._id
+      ? { ...state.activeNote, favorite: false }
+      : state.activeNote;
+
+  return { ...state, activeNote, notes: updatedNotes };
+};
+
+const noteAddFavorite = (action, state) => {
+  const updatedNotes = state.notes.map(note =>
+    note._id === action.note._id ? { ...note, favorite: true } : note
+  );
+
+  const activeNote =
+    state.activeNote && state.activeNote._id === action.note._id
+      ? { ...state.activeNote, favorite: true }
+      : state.activeNote;
+  return { ...state, activeNote, notes: updatedNotes };
+};
+
+const trashNote = (action, state) => {
+  // .then(data => {
+  const tags = state.tags.map(tag => {
+    return {
+      ...tag,
+      notes: tag.notes.map(note =>
+        note._id === action.note._id
+          ? {
+              _id: action.note._id,
+              title: action.note.title,
+              trash: action.note.trash
+            }
+          : note
+      )
+    };
+  });
+  const activeNote =
+    state.activeNote && state.activeNote._id === action.note._id
+      ? null
+      : state.activeNote;
+  const notes = state.notes.filter(note => note._id !== action.note._id);
+  const trash = state.trash.concat({ ...action.note, trash: true });
+  return { ...state, tags, activeNote, notes, trash };
+
+  //   console.log(tags);
+  //   this.setState(prevState => {
+  //     return {
+  //       activeNote:
+  //         prevState.activeNote &&
+  //         prevState.activeNote._id === data.responseNote._id
+  //           ? null
+  //           : prevState.activeNote,
+  //       notes: prevState.notes.filter(
+  //         note => note._id !== data.responseNote._id
+  //       ),
+  //       trash: prevState.trash.concat(data.responseNote),
+  //       tags: tags
+  //       // ,notebooks: data.newNotebooks
+  //     };
+  //   });
+  // });
+};
+
 /** TAGS **/
 const createTag = (action, state) => {
   const tags = [...state.tags];
@@ -318,6 +389,15 @@ export const rootReducer = (state, action) => {
     case UNASSIGN_TAG:
       console.log(action);
       return unAssignTag(action, state);
+    case NOTE_REMOVE_FAVORITE:
+      console.log(action);
+      return noteRemoveFavorite(action, state);
+    case NOTE_ADD_FAVORITE:
+      console.log(action);
+      return noteAddFavorite(action, state);
+    case TRASH_NOTE:
+      console.log(action);
+      return trashNote(action, state);
     default:
       return state;
   }

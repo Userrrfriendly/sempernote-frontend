@@ -34,12 +34,14 @@ import DispatchContext from "../../context/DispatchContext";
 import { NOTEBOOK, NOTES, TAG, FAVORITES } from "../../context/activeUItypes";
 import {
   notebookToggleFavoriteReq,
-  tagToggleFavoriteReq
+  tagToggleFavoriteReq,
+  noteFavoriteFalseReq
 } from "../../requests/requests";
 import {
   NOTEBOOK_TOGGLE_FAVORITE,
   TAG_TOGGLE_FAVORITE,
-  SET_NOTE_FILTER
+  SET_NOTE_FILTER,
+  NOTE_REMOVE_FAVORITE
 } from "../../context/rootReducer";
 
 import { deltaToPlainText } from "../../helpers/helpers";
@@ -129,7 +131,6 @@ const FavoritesDrawer = props => {
       case TAG:
         const tag = appState.tags.filter(tag => tag._id === result)[0];
         tagToggleFavoriteReq(tag, appState.token);
-        //update appState
         dispatch({
           type: TAG_TOGGLE_FAVORITE,
           tag
@@ -148,7 +149,11 @@ const FavoritesDrawer = props => {
         });
         break;
       case NOTES:
-        appState.noteToggleFavorite(result);
+        noteFavoriteFalseReq(result, appState.token);
+        dispatch({
+          type: NOTE_REMOVE_FAVORITE,
+          note: result
+        });
         break;
       default:
         break;

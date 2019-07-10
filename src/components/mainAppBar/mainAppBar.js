@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-// import Context from "../../context/context";
-// import DispatchContext from "../../context/DispatchContext";
+import DispatchContext from "../../context/DispatchContext";
 import StateContext from "../../context/StateContext";
 
 import {
@@ -39,6 +38,18 @@ import SelectNotebook from "./selectNotebook";
 import SelectTag from "./selectTag";
 import { find as _find } from "lodash";
 
+import {
+  noteFavoriteFalseReq,
+  noteFavoriteTrueReq,
+  trashNoteReq
+} from "../../requests/requests";
+import {
+  NOTE_ADD_FAVORITE,
+  NOTE_REMOVE_FAVORITE,
+  TRASH_NOTE,
+  SET_ACTIVE_NOTE
+} from "../../context/rootReducer";
+
 const useStyles = makeStyles({
   root: {
     flexGrow: 1,
@@ -67,7 +78,7 @@ const MainAppBar = props => {
   const [title, setTitle] = useState(null);
   const [noteNumber, setNoteNumber] = useState(null);
   const appState = useContext(StateContext);
-  // const dispatch = useContext(DispatchContext);
+  const dispatch = useContext(DispatchContext);
 
   const classes = useStyles();
   const theme = useTheme();
@@ -75,6 +86,30 @@ const MainAppBar = props => {
   let noteListStyle = {};
   if (appState.activeNote) noteListStyle.flexBasis = "250px";
   if (smallScreen && appState.activeNote) noteListStyle.display = "none";
+
+  const noteToggleFavorite = () => {
+    if (appState.activeNote.favorite) {
+      noteFavoriteFalseReq(appState.activeNote, appState.token);
+      dispatch({
+        type: NOTE_REMOVE_FAVORITE,
+        note: appState.activeNote
+      });
+    } else {
+      noteFavoriteTrueReq(appState.activeNote, appState.token);
+      dispatch({
+        type: NOTE_ADD_FAVORITE,
+        note: appState.activeNote
+      });
+    }
+  };
+
+  const moveToTrash = () => {
+    trashNoteReq(appState.activeNote, appState.token);
+    dispatch({
+      type: TRASH_NOTE,
+      note: appState.activeNote
+    });
+  };
 
   useEffect(() => {
     console.log("Appbar did update");
@@ -270,12 +305,7 @@ const MainAppBar = props => {
               <>
                 <NoteCounter noteNumber={noteNumber} />
 
-                <SortMenu
-                // notes={appState.notes}
-                // filteredNotes={appState.filteredNotes}
-                // updateNotes={appState.updateNotes}
-                // setFilteredNotes={appState.setFilteredNotes}
-                />
+                <SortMenu />
               </>
             )}
 
@@ -283,23 +313,25 @@ const MainAppBar = props => {
               <>
                 <Tooltip title="Back">
                   <IconButton
-                    // aria-owns={open ? 'menu-appbar' : undefined}
                     aria-haspopup="true"
                     // onClick={handleMenu}
                     color="inherit"
                     component={AdapterLink}
                     to="/main/"
-                    onClick={appState.setActiveNote}
+                    onClick={() =>
+                      dispatch({
+                        type: SET_ACTIVE_NOTE,
+                        note: null
+                      })
+                    }
                   >
-                    {/* <Link component={RouterLink} to="/main/"> */}
                     <ArrowBack />
-                    {/* </Link> */}
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Save changes">
                   <IconButton
                     // aria-owns={open ? 'menu-appbar' : undefined}
-                    aria-haspopup="true"
+                    // aria-haspopup="true"
                     // onClick={handleMenu}
                     color="inherit"
                   >
@@ -309,22 +341,12 @@ const MainAppBar = props => {
 
                 <SelectNotebook />
 
-                <SelectTag
-                // activeNote={appState.activeNote}
-                // notebooks={appState.notebooks}
-                // tags={appState.tags}
-                // assignTag={appState.assignTag}
-                // unAssignTag={appState.unAssignTag}
-                />
+                <SelectTag />
 
                 <Tooltip title="Favorites">
                   <IconButton
-                    // aria-owns={open ? 'menu-appbar' : undefined}
-                    aria-haspopup="true"
-                    onClick={appState.noteToggleFavorite.bind(
-                      this,
-                      appState.activeNote
-                    )}
+                    // aria-haspopup="true"
+                    onClick={noteToggleFavorite}
                     color="inherit"
                   >
                     <StarRounded
@@ -335,25 +357,17 @@ const MainAppBar = props => {
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Note info">
-                  <IconButton
-                    // aria-owns={open ? 'menu-appbar' : undefined}
-                    aria-haspopup="true"
-                    color="inherit"
-                  >
+                  <IconButton aria-haspopup="true" color="inherit">
                     <Info />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Delete Note">
                   <IconButton
-                    // aria-owns={open ? 'menu-appbar' : undefined}
                     aria-haspopup="true"
                     color="inherit"
                     component={AdapterLink}
                     to="/main/"
-                    onClick={appState.softDeleteNote.bind(
-                      this,
-                      appState.activeNote
-                    )}
+                    onClick={moveToTrash}
                   >
                     <DeleteRounded />
                   </IconButton>
