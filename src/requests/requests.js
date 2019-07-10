@@ -19,7 +19,9 @@ import {
   notebookFavoriteFalse,
   updateNoteBody,
   createNote,
-  moveNote
+  moveNote,
+  assignTag,
+  unAssignTag
 } from "../helpers/graphQLrequests";
 
 const url = "http://localhost:8000/graphql";
@@ -210,6 +212,76 @@ export function tagToggleFavoriteReq(tag, token) {
     .then(data => {
       console.log(data);
       //TOAST HERE TO SIGNAL SUCCESS OR FAILURE
+    })
+    .catch(err => {
+      console.log(err);
+      return err;
+    });
+}
+/***ASSIGNTAG TO NOTE ***/
+// export function tagToggleFavoriteReq(tag, token) {
+//   const query = !tag.favorite ? tagFavoriteTrue : tagFavoriteFalse;
+//   const responseName = !tag.favorite ? "tagFavoriteTrue" : "tagFavoriteFalse";
+
+//   const requestBody = JSON.stringify({
+//     query: query(tag._id)
+//   });
+//   const auth = "Bearer " + token;
+
+// return fetch(url, {
+//   ...options,
+//   body: requestBody,
+//   headers: { ...options.headers, Authorization: auth }
+// })
+
+export function assignTagReq(tagID, noteID, token) {
+  const requestBody = JSON.stringify({
+    query: assignTag(tagID, noteID)
+  });
+  const auth = "Bearer " + token;
+
+  return fetch(url, {
+    ...options,
+    body: requestBody,
+    headers: { ...options.headers, Authorization: auth }
+  })
+    .then(res => {
+      if (res.status !== 200 && res.status !== 201) {
+        throw new Error("Failed!");
+      }
+      return res.json();
+    })
+    .then(r => {
+      const assignedTag = r.data.assignTag;
+      return assignedTag;
+    })
+    .catch(err => {
+      console.log(err);
+      return err;
+    });
+}
+
+/***UNASSIGNTAG TO NOTE ***/
+
+export function unAssignTagReq(tagID, noteID, token) {
+  const requestBody = JSON.stringify({
+    query: unAssignTag(tagID, noteID)
+  });
+  const auth = "Bearer " + token;
+
+  return fetch(url, {
+    ...options,
+    body: requestBody,
+    headers: { ...options.headers, Authorization: auth }
+  })
+    .then(res => {
+      if (res.status !== 200 && res.status !== 201) {
+        throw new Error("unAssignTag Request Failed!");
+      }
+      return res.json();
+    })
+    .then(r => {
+      return r.data.unAssignTag;
     })
     .catch(err => {
       console.log(err);

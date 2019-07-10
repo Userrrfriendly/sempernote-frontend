@@ -21,6 +21,8 @@ export const SYNC_NEW_NOTE = "SYNC_NEW_NOTE";
 export const SET_NOTE_FILTER = "SET_NOTE_FILTER";
 export const SORT_NOTES = "SORT_NOTES";
 export const MOVE_NOTE_TO_NOTEBOOK = "MOVE_NOTE_TO_NOTEBOOK";
+export const ASSIGN_TAG = "ASSIGN_TAG";
+export const UNASSIGN_TAG = "UNASSIGN_TAG";
 
 const logIn = (token, userId, state) => {
   return { ...state, token: token, userId: userId };
@@ -224,6 +226,44 @@ const tagToggleFavorite = (action, state) => {
   return { ...state, tags };
 };
 
+const assignTag = (action, state) => {
+  const modifiedNote = state.notes.filter(
+    note => note._id === action.noteID
+  )[0];
+  const modifiedTag = state.tags.filter(tag => tag._id === action.tagID)[0];
+
+  modifiedNote.tags = modifiedNote.tags.concat({
+    _id: modifiedTag._id,
+    tagname: modifiedTag.tagname
+  });
+  modifiedTag.notes.push(modifiedNote);
+  const updatedNotes = state.notes.map(note =>
+    note._id === action.noteID ? modifiedNote : note
+  );
+  const updatedTags = state.tags.map(tag =>
+    tag._id === action.tagID ? modifiedTag : tag
+  );
+
+  return { ...state, tags: updatedTags, notes: updatedNotes };
+};
+
+const unAssignTag = (action, state) => {
+  const updatedTag = state.tags.filter(tag => tag._id === action.tagID)[0];
+  const updatedNote = state.notes.filter(note => note._id === action.noteID)[0];
+  updatedTag.notes = updatedTag.notes.filter(
+    note => note._id !== action.noteID
+  );
+  updatedNote.tags = updatedNote.tags.filter(tag => tag._id !== action.tagID);
+  const updatedTags = state.tags.map(tag =>
+    tag._id === action.tagID ? updatedTag : tag
+  );
+  const updatedNotes = state.notes.map(note =>
+    note._id === action.noteID ? updatedNote : note
+  );
+
+  return { ...state, tags: updatedTags, notes: updatedNotes };
+};
+
 export const rootReducer = (state, action) => {
   switch (action.type) {
     case LOG_IN:
@@ -272,7 +312,12 @@ export const rootReducer = (state, action) => {
     case MOVE_NOTE_TO_NOTEBOOK:
       console.log(action);
       return moveNotetoNotebook(action, state);
-
+    case ASSIGN_TAG:
+      console.log(action);
+      return assignTag(action, state);
+    case UNASSIGN_TAG:
+      console.log(action);
+      return unAssignTag(action, state);
     default:
       return state;
   }

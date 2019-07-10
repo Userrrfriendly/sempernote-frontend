@@ -1,9 +1,6 @@
 import React from "react";
 import { makeStyles, createStyles } from "@material-ui/core/styles";
 import { Avatar, Typography } from "@material-ui/core/";
-// import deepOrange from '@material-ui/core/colors/deepOrange';
-// import deepPurple from '@material-ui/core/colors/deepPurple';
-// import Grid from '@material-ui/core/Grid';
 
 const useStyles = makeStyles(
   createStyles({
@@ -21,7 +18,6 @@ const useStyles = makeStyles(
 
 const NoteCounter = ({ noteNumber }) => {
   const classes = useStyles();
-  // const ...props
   return (
     <>
       <Avatar className={classes.avatar}>{noteNumber}</Avatar>
@@ -32,9 +28,6 @@ const NoteCounter = ({ noteNumber }) => {
         color="inherit"
         className={classes.notecount}
       >
-        {/* {noteNumber && (noteNumber > 1 || noteNumber === 0)           ? " notes"
-          : " note" */}
-
         {noteNumber && noteNumber === 1 ? " note" : " notes"}
       </Typography>
     </>

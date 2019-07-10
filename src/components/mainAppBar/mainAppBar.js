@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 // import Context from "../../context/context";
-import DispatchContext from "../../context/DispatchContext";
+// import DispatchContext from "../../context/DispatchContext";
 import StateContext from "../../context/StateContext";
 
 import {
@@ -67,7 +67,7 @@ const MainAppBar = props => {
   const [title, setTitle] = useState(null);
   const [noteNumber, setNoteNumber] = useState(null);
   const appState = useContext(StateContext);
-  const dispatch = useContext(DispatchContext);
+  // const dispatch = useContext(DispatchContext);
 
   const classes = useStyles();
   const theme = useTheme();
@@ -310,11 +310,11 @@ const MainAppBar = props => {
                 <SelectNotebook />
 
                 <SelectTag
-                  activeNote={appState.activeNote}
-                  notebooks={appState.notebooks}
-                  tags={appState.tags}
-                  assignTag={appState.assignTag}
-                  unAssignTag={appState.unAssignTag}
+                // activeNote={appState.activeNote}
+                // notebooks={appState.notebooks}
+                // tags={appState.tags}
+                // assignTag={appState.assignTag}
+                // unAssignTag={appState.unAssignTag}
                 />
 
                 <Tooltip title="Favorites">
