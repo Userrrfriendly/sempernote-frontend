@@ -6,16 +6,17 @@ import { withStyles } from "@material-ui/core/styles";
 import SpeedDial from "@material-ui/lab/SpeedDial";
 import SpeedDialIcon from "@material-ui/lab/SpeedDialIcon";
 import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
-import DeleteIcon from "@material-ui/icons/Delete";
+// import DeleteIcon from "@material-ui/icons/Delete";
 import {
+  LibraryAddRounded,
   NoteAddRounded,
-  // LibraryAddRounded,
-  // SearchRounded,
   StarRounded,
   // DescriptionRounded,
   LibraryBooksRounded,
   StyleRounded
 } from "@material-ui/icons";
+import CreateTagIcon from "../svgCreateTag/svgCreateTag";
+
 const styles = theme => ({
   // root: {
   //   height: 380
@@ -27,19 +28,32 @@ const styles = theme => ({
   }
 });
 
-const actions = [
-  { icon: <NoteAddRounded />, name: "Create Note" },
-  { icon: <LibraryBooksRounded />, name: "Notebooks" },
-  { icon: <StarRounded />, name: "Favorites" },
-  { icon: <StyleRounded />, name: "Tags" },
-  { icon: <DeleteIcon />, name: "Delete" }
-];
-
 class SpeedDialTooltipOpen extends React.Component {
   state = {
     open: false,
     hidden: false
   };
+
+  actions = [
+    {
+      icon: <NoteAddRounded />,
+      name: "Create Note",
+      callback: this.props.createNote
+    },
+    {
+      icon: <LibraryAddRounded />,
+      name: "Create Notebook",
+      callback: this.props.createNotebook
+    },
+    {
+      icon: <CreateTagIcon />,
+      name: "Create Tag",
+      callback: this.props.createTag
+    },
+    { icon: <StarRounded />, name: "Favorites" },
+    { icon: <LibraryBooksRounded />, name: "Notebooks" },
+    { icon: <StyleRounded />, name: "Tags" }
+  ];
 
   static contextType = Context;
 
@@ -54,7 +68,7 @@ class SpeedDialTooltipOpen extends React.Component {
     await this.setState(state => ({
       open: !state.open
     }));
-    cb();
+    // cb();
   };
 
   handleOpen = () => {
@@ -91,16 +105,17 @@ class SpeedDialTooltipOpen extends React.Component {
           onMouseLeave={this.handleClose}
           open={open}
         >
-          {actions.map(action => (
+          {this.actions.map(action => (
             <SpeedDialAction
               key={action.name}
               icon={action.icon}
               tooltipTitle={action.name}
+              onClick={action.callback}
               // tooltipOpen
-              onClick={this.handleClick.bind(
-                this,
-                this.props.createTag.bind(this, action.name)
-              )}
+              // onClick={this.handleClick.bind(
+              //   this,
+              //   this.props.createTag.bind(this, action.name)
+              // )}
             />
           ))}
         </SpeedDial>

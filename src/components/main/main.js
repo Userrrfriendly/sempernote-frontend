@@ -13,7 +13,7 @@ import NotebookModal from "../createNotebookModal/notebookModal";
 import NoteModal from "../createNoteModal/noteModal";
 import TagModal from "../createTagModal/tagModal";
 import SideNav from "../sideNav/sidenav";
-// import Fab from "../fab/fab";
+import Fab from "../fab/fab";
 
 import { Hidden } from "@material-ui/core";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
@@ -126,12 +126,11 @@ const Main = props => {
           exact
           path="/main/"
           render={props => (
-            // <Fab
-            //   createNote={openCreateNoteModal}
-            //   createNoteBook={openCreateNotebookModal}
-            //   // createTag={context.createTag}
-            // />
-            <div>fab</div>
+            <Fab
+              createNote={openCreateNoteModal}
+              createNotebook={openCreateNotebookModal}
+              createTag={openCreateTagModal}
+            />
           )}
         />
         <div className="main-subcontainer">

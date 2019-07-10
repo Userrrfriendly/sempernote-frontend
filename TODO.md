@@ -10,9 +10,6 @@
 **_ FAB _**
 
 - make FAB expanded when clicked
-- CreateNote
-- Create NoteBook
-- Create Tag
 - Open Favorites
 - Open NoteBooks
 - Open Tags
@@ -37,7 +34,6 @@
 
 # Favorites:
 
-- Nice2Have: Remove from favorites should have some sort of animation
 
 # Notes:
 
@@ -92,14 +88,14 @@
 - implement defaultNotebook on the front end
 - ChangeNotebook (note goes from notebook A to notebook B) \*\*\* ASK JS13 ABOUT HOW IT CAN BE DONE BETTER
 - Research populate i think you need to delete it from your code (at least in note)
-- RenameNotebook/Note
+- Note
 - BACKEND DeleteNote should target only notes in TrashNotebook
 - HardDelete
 - - - Reset Password/Send Email Validation/Security Questions
 
 **_ BUGS _**
 
-- when a tag is added or removed from the SelectTag component it triggers a re-render, making the tag to disappear and reappear (when the response from the server hits back) which looks like a glitch
+- create a new note/notebook/tag edit note add the new tag -> can trigger bug where the tag is not shown in select 
 - when moving a note to a different notebook upDatedAt is modified but the sorting doesnt change in AppBar
 -
 - - edit a note and quickpress trash --> this will trigger two posts:
@@ -122,15 +118,11 @@
 - \*https://github.com/mui-org/material-ui/issues/11824
 - (_modals_) Could not ditch Reac-modal since MAterialUI (Modal/Dialog) overflows
 
-* activeNotebook is an unused property of the state, either delete it or it could be used to select the notebook by default in createNote modal (when createing a notebook or filter notes by notebook should set activenotebook,) <-- Nice2have
+
 * -rename activeUITypes (CONSTANT)
-* probably need reducers to take care of multiple things updating something
 * !@! REFACTOR NOTELISTS! needs to have star/delete/info button either static or appear on hover
 * The way you close previously openned modals if another one is clicked is not great... better think of smth better
-* when editing note,notebooks it would be better not to push/pull but destructure & replace so the order of the items stays consistent
-* It looks like there are several instances of `@material-ui/styles` initialized in this application. This may cause theme propagation issues, broken class names and makes your application bigger without a good reason.
 
-- See https://material-ui.com/getting-started/faq#i-have-several-instances-of-styles-on-the-page for more info.
 
 ## Nice2Have:
 
@@ -149,7 +141,6 @@
 
 ## MEdium Priority
 
-- MOVE State from the app to a wrapper component
 - Select Tag can overflow-y very very badly.... need to find a way to target the coresponding div and set its max-height to ~60px
 
 ## High Priority
@@ -166,7 +157,6 @@
 - Delete Notebook
 - -WHY DO I HAVE BODY ON CREATE NOTE?
 
-- SPLIT FETCH REQUESTS FROM METHODS
 - use IMMER !?
 
 - SearchDrawer has no implementation for filters at the app bar (setNoteFilter)
@@ -174,3 +164,4 @@
       //NEED TO COMPARE IDS IN CASE A NOTE MATCHES WITH TITLE AND BODY, TO AVOID DUPLICATES
 - SEARCH DRAWER TYPE 'A' ENTER -> TWO NOTES APPEAR 
 - edit a note and before the autosave deleteit -> returns 2 nots one in trash one alive 
+- resize the window and the app crashes

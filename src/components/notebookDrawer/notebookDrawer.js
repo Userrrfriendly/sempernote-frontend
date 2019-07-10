@@ -183,7 +183,7 @@ export default function NotebookDrawer(props) {
     } else {
       //default behaviour (if the list item was clicked anywhere except the Star Checkbox or the Menu)
       handleDrawerClose();
-      appState.setActiveNotebook(notebookID);
+      // appState.setActiveNotebook(notebookID);
       // appState.setNoteFilter(NOTEBOOK, notebookID);
       dispatch({
         type: SET_NOTE_FILTER,

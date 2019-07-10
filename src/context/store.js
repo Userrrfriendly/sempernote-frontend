@@ -1,12 +1,8 @@
 import React, { useReducer } from "react";
 
-// import { useImmerReducer } from "use-immer";
-
 import rootReducer from "./rootReducer";
 import StateContext from "./StateContext";
 import DispatchContext from "./DispatchContext";
-
-// import { createNotebookReq } from "../requests/requests";
 
 export default function Store(props) {
   const initialState = {
@@ -14,19 +10,19 @@ export default function Store(props) {
     userId: null,
     userName: null,
     notes: null,
-    // filteredNotes: null, //delete
     noteFilter: { name: "ALL_NOTES" },
     trash: null,
     activeNote: null,
     activeNotebook: null,
-    tags: null,
+    tags: null
+    // filteredNotes: null, //delete
     // login: (token, userId, tokenExpiration) => {},
     // logout: () => {},
     // fetchUserData: () => {},
-    setActiveNote: () => {},
-    setActiveNotebook: () => {},
-    pushNoteToServer: () => {},
-    pushNoteToState: () => {},
+    // setActiveNote: () => {},
+    // setActiveNotebook: () => {},
+    // pushNoteToServer: () => {},
+    // pushNoteToState: () => {},
     // updateNoteBody: () => {},
     // createNotebook: name => {
     //   createNotebookReq(name, state.token).then(r => {
@@ -34,18 +30,18 @@ export default function Store(props) {
     //     console.log(r);
     //   });
     // },
-    notebookToggleFavorite: () => {},
+    // notebookToggleFavorite: () => {},
     // notebookRename: () => {},
     // notebookDelete: () => {},
-    updateNotes: () => {},
-    softDeleteNote: () => {},
-    noteToggleFavorite: () => {},
-    moveNote: () => {},
-    renameNote: () => {},
+    // updateNotes: () => {},
+    // softDeleteNote: () => {},
+    // noteToggleFavorite: () => {},
+    // moveNote: () => {},
+    // renameNote: () => {},
     // setFilteredNotes: () => {}, //delete or change
-    setNoteFilter: () => {},
-    createTag: () => {},
-    tagToggleFavorite: () => {} //rename this
+    // setNoteFilter: () => {},
+    // createTag: () => {},
+    // tagToggleFavorite: () => {} //rename this
   };
 
   const [state, dispatch] = useReducer(rootReducer, initialState);

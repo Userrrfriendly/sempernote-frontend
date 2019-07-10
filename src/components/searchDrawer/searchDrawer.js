@@ -4,6 +4,7 @@ import { withRouter } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 
 import Delta from "quill-delta";
+import { includes as _includes } from "lodash";
 
 import {
   IconButton,
@@ -143,7 +144,7 @@ const SearchDrawer = props => {
         });
         break;
       case NOTEBOOK:
-        appState.setActiveNotebook(resultID);
+        // appState.setActiveNotebook(resultID);
         dispatch({
           type: SET_NOTE_FILTER,
           name: NOTEBOOK,
@@ -173,6 +174,7 @@ const SearchDrawer = props => {
 
   const deepSearch = e => {
     e.preventDefault();
+    window._includes = _includes;
     // console.log(`DeepSearching ${search} in notes`);
     const deepSearch = appState.notes.filter(note => {
       const parsedDelta = new Delta(JSON.parse(note.body));
@@ -180,12 +182,14 @@ const SearchDrawer = props => {
 
       return plainText.toLowerCase().includes(search.toLowerCase());
     });
+
     const noteTitleSearch = appState.notes.filter(
-      note => note.title.toLowerCase().includes(search.toLowerCase())
-      //NEED TO COMPARE IDS IN CASE A NOTE MATCHES WITH TITLE AND BODY, TO AVOID DUPLICATES
+      note =>
+        note.title.toLowerCase().includes(search.toLowerCase()) &&
+        !_includes(deepSearch, note)
+      //compares results with deepsearch to avoid duplicates
     );
     setResults(noteTitleSearch.concat(deepSearch));
-    console.log(results);
   };
 
   //determines if the result is a tag,notebook or note
