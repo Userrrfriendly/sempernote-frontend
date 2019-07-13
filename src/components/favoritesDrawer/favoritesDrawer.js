@@ -16,9 +16,6 @@ import {
   ListItemText,
   Typography,
   ListItemSecondaryAction
-  // useMediaQuery
-  // TextField,
-  // InputAdornment
 } from "@material-ui/core";
 
 import {

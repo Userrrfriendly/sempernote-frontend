@@ -15,33 +15,6 @@ export default function Store(props) {
     activeNote: null,
     activeNotebook: null,
     tags: null
-    // filteredNotes: null, //delete
-    // login: (token, userId, tokenExpiration) => {},
-    // logout: () => {},
-    // fetchUserData: () => {},
-    // setActiveNote: () => {},
-    // setActiveNotebook: () => {},
-    // pushNoteToServer: () => {},
-    // pushNoteToState: () => {},
-    // updateNoteBody: () => {},
-    // createNotebook: name => {
-    //   createNotebookReq(name, state.token).then(r => {
-    //     console.log(state);
-    //     console.log(r);
-    //   });
-    // },
-    // notebookToggleFavorite: () => {},
-    // notebookRename: () => {},
-    // notebookDelete: () => {},
-    // updateNotes: () => {},
-    // softDeleteNote: () => {},
-    // noteToggleFavorite: () => {},
-    // moveNote: () => {},
-    // renameNote: () => {},
-    // setFilteredNotes: () => {}, //delete or change
-    // setNoteFilter: () => {},
-    // createTag: () => {},
-    // tagToggleFavorite: () => {} //rename this
   };
 
   const [state, dispatch] = useReducer(rootReducer, initialState);

@@ -1,12 +1,10 @@
 import React from "react";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
-// import Typography from '@material-ui/core/Typography';
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    // padding: theme.spacing(3, 2)
     padding: "4px 8px 8px",
     display: "flex",
     flexWrap: "wrap",

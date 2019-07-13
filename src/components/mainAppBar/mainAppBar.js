@@ -55,7 +55,6 @@ const useStyles = makeStyles({
     flexGrow: 1,
     marginBottom: "1rem",
     width: "100%"
-    // overflow: "hidden"
   },
   notecontainer: {
     overflowY: "scroll",
@@ -113,7 +112,7 @@ const MainAppBar = props => {
 
   useEffect(() => {
     console.log("Appbar did update");
-    console.log(appState.noteFilter.name);
+    // console.log(appState.noteFilter.name);
     let notesToRender;
     switch (appState.noteFilter.name) {
       case NOTES:
@@ -145,7 +144,6 @@ const MainAppBar = props => {
           <LinearProgress />
         );
 
-        // console.log(notesToRender);
         setdisplayNotes(notesToRender);
         break;
       case NOTEBOOK:
@@ -182,8 +180,7 @@ const MainAppBar = props => {
         ) : (
           <LinearProgress />
         );
-        console.log(appState.noteFilter);
-        console.log(notesToRender);
+        // console.log(appState.noteFilter);
         setNoteNumber(notesToRender ? notesToRender.length : 0);
         setdisplayNotes(notesToRender);
         break;
@@ -229,8 +226,7 @@ const MainAppBar = props => {
         ) : (
           <LinearProgress />
         );
-        console.log(appState.noteFilter);
-        // console.log(notesToRender);
+        // console.log(appState.noteFilter);
         setNoteNumber(notesToRender ? notesToRender.length : 0);
         setdisplayNotes(notesToRender);
         break;
@@ -268,8 +264,7 @@ const MainAppBar = props => {
         ) : (
           <LinearProgress />
         );
-        console.log(appState.noteFilter);
-        console.log(notesToRender);
+        // console.log(appState.noteFilter);
         setNoteNumber(notesToRender ? notesToRender.length : 0);
         setdisplayNotes(notesToRender);
         break;
@@ -296,7 +291,6 @@ const MainAppBar = props => {
               variant="h6"
               component="h1"
               color="inherit"
-              // className={classes.title}
               style={appState.activeNote ? { flexGrow: 1 } : {}}
             >
               {title}
@@ -314,7 +308,6 @@ const MainAppBar = props => {
                 <Tooltip title="Back">
                   <IconButton
                     aria-haspopup="true"
-                    // onClick={handleMenu}
                     color="inherit"
                     component={AdapterLink}
                     to="/main/"
@@ -329,12 +322,7 @@ const MainAppBar = props => {
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Save changes">
-                  <IconButton
-                    // aria-owns={open ? 'menu-appbar' : undefined}
-                    // aria-haspopup="true"
-                    // onClick={handleMenu}
-                    color="inherit"
-                  >
+                  <IconButton color="inherit">
                     <SaveRounded />
                   </IconButton>
                 </Tooltip>
@@ -344,11 +332,7 @@ const MainAppBar = props => {
                 <SelectTag />
 
                 <Tooltip title="Favorites">
-                  <IconButton
-                    // aria-haspopup="true"
-                    onClick={noteToggleFavorite}
-                    color="inherit"
-                  >
+                  <IconButton onClick={noteToggleFavorite} color="inherit">
                     <StarRounded
                       style={
                         appState.activeNote.favorite ? { color: "gold" } : {}

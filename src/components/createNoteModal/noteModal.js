@@ -2,10 +2,10 @@ import React, { useEffect, useState, useContext } from "react";
 import Modal from "react-modal";
 import Select, { components } from "react-select";
 import { withRouter } from "react-router-dom";
-import { selectNotebook } from "../../helpers/helpers";
 import { LibraryBooksRounded } from "@material-ui/icons";
 import { Typography, TextField, Tooltip, Button } from "@material-ui/core";
 import DispatchContext from "../../context/DispatchContext";
+import { selectNotebook } from "../../helpers/helpers";
 import {
   CREATE_NOTE,
   SET_ACTIVE_NOTE,
@@ -71,7 +71,6 @@ const NoteModal = props => {
       })
     );
     setSelectedNotebook(options[0]);
-    // setSelectedNotebook(context.activeNotebook ? {value:context.activeNotebook._id,label:context.activeNotebook.name} :options[0]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.notebooks]);
 
@@ -95,7 +94,10 @@ const NoteModal = props => {
       return accumulator;
     }, []);
 
-    // IF NOTE WITH THE SAME NAME EXISTS ADD A SUFFIX to the new note(myNote->myNote1, myNote1->myNote2, myNote2->myNote3)
+    /** IF NOTE WITH THE SAME NAME EXISTS ADD A SUFFIX to the new note
+     *(myNote->myNote1, myNote1->myNote2, myNote2->myNote3)
+     */
+
     const initialTitle = title ? title : "Untitled Note";
     let index = 1;
     let validatedTitle = initialTitle;
@@ -125,9 +127,6 @@ const NoteModal = props => {
      * SetActiveNote(tempNote created on the client)->opens editor
      * SetActiveNote(actual note as response from server)->opens editor again/rerender
      */
-    // const updateState = async () => {
-    //   props.pushNoteToState(newNote);
-    // };
 
     const updateState = async () => {
       dispatch({
@@ -137,7 +136,6 @@ const NoteModal = props => {
     };
 
     updateState()
-      // .then(props.setActiveNote(validatedTitle))
       .then(
         dispatch({
           type: SET_ACTIVE_NOTE,
@@ -145,7 +143,6 @@ const NoteModal = props => {
         })
       )
       .then(props.history.push(path))
-      // .then(props.pushNoteToServer(newNote))
       .then(
         pushNoteToServerReq(newNote, props.token).then(res => {
           dispatch({
@@ -163,7 +160,6 @@ const NoteModal = props => {
     <div>
       <Modal
         isOpen={props.isOpen}
-        // onAfterOpen={afterOpenModal}
         onRequestClose={props.closeModal}
         style={customStyles}
         contentLabel="Create Note" //improves accessibility

@@ -85,7 +85,6 @@ export default function NotebookDrawer(props) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [notebooks, setNotebooks] = useState(appState.notebooks);
-  // const [renameOpen, setRenameOpen] = useState({open:false,notebook:null});
 
   //Rename Notebook Dialog
   const [renameOpen, setRenameOpen] = React.useState(false);
@@ -136,7 +135,7 @@ export default function NotebookDrawer(props) {
   }
 
   function handleNotebookMenuClose(e) {
-    // console.log(anchorEl); //either extract the value through the data-notebookid
+    // console.log(anchorEl); //either extract the value through the data-notebookid html custom attribute
     // console.log(anchorElID); //or get the notebook._id that will be modified from state
     setAnchorEl(null);
     setAnchorElID(null);
@@ -153,7 +152,6 @@ export default function NotebookDrawer(props) {
   }
 
   const handleListClick = e => {
-    //props.listClick handles listItem selection
     props.listClick();
     handleDrawerOpen();
   };
@@ -168,7 +166,7 @@ export default function NotebookDrawer(props) {
 
   const handleNotebookClick = (notebookID, e) => {
     if (e.target.type === "checkbox") {
-      //executes only if the star icon was clicked:
+      //executes only if the star icon was clicked (Add/Remove from favorites):
       const notebook = appState.notebooks.filter(
         book => book._id === notebookID
       )[0];
@@ -181,10 +179,8 @@ export default function NotebookDrawer(props) {
         notebook: notebook
       });
     } else {
-      //default behaviour (if the list item was clicked anywhere except the Star Checkbox or the Menu)
+      //default behaviour (if the list item was clicked anywhere except the Star Checkbox or the Menu, expands the results)
       handleDrawerClose();
-      // appState.setActiveNotebook(notebookID);
-      // appState.setNoteFilter(NOTEBOOK, notebookID);
       dispatch({
         type: SET_NOTE_FILTER,
         name: NOTEBOOK,
@@ -201,8 +197,6 @@ export default function NotebookDrawer(props) {
       const filteredNotebooks = appState.notebooks.filter(notebook =>
         notebook.name.toLowerCase().includes(search.toLowerCase())
       );
-      // console.log(`searching... for ${search} & found :`);
-      // console.log(filteredNotebooks);
       setNotebooks(filteredNotebooks);
     }
   }, [search, appState.notebooks]);
@@ -345,14 +339,11 @@ export default function NotebookDrawer(props) {
             notebook={dialogTargetNotebook}
             open={renameOpen}
             close={handleRenameClose}
-            // handleNotebookMenuClose={handleNotebookMenuClose}
           />
           <DeleteNotebookDialog
             notebook={dialogTargetNotebook}
             open={deleteOpen}
             close={handleDeleteClose}
-            // closeMenu={handleNotebookMenuClose}
-            // handleNotebookMenuClose={handleNotebookMenuClose}
           />
         </List>
       </Drawer>

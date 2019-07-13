@@ -79,7 +79,6 @@ const NotebookModal = props => {
     <div>
       <Modal
         isOpen={props.isOpen}
-        // onAfterOpen={this.afterOpenModal}
         onRequestClose={props.closeModal}
         style={customStyles}
         contentLabel="Create Notebook" //improves accessibility
@@ -123,8 +122,6 @@ const NotebookModal = props => {
             <Button type="submit" onClick={onSubmit} color="primary">
               Create Notebook
             </Button>
-            {/*type="button" ensures that upon pressing the enter key the button isn't triggered and the form is not submitted, more:
-                https://stackoverflow.com/questions/42053775/getting-error-form-submission-canceled-because-the-form-is-not-connected */}
           </div>
         </form>
       </Modal>

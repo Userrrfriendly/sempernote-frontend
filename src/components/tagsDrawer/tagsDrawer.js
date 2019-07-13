@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useContext, Fragment } from "react";
-// import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 
 import {
@@ -26,9 +25,7 @@ import {
   ChevronLeft,
   MoreVert,
   StarRounded
-  // LibraryAddRounded
 } from "@material-ui/icons";
-// import Context from "../../context/context";
 import StateContext from "../../context/StateContext";
 import DispatchContext from "../../context/DispatchContext";
 import { TAG } from "../../context/activeUItypes";
@@ -88,7 +85,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const TagDrawer = props => {
-  // const context = useContext(Context);
   const appState = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
 
@@ -96,6 +92,7 @@ const TagDrawer = props => {
   const [search, setSearch] = useState("");
   const [tags, setTags] = useState(appState.tags);
 
+  //cleses TAGS DRAWER if another drawer is opened
   useEffect(() => {
     console.log("tags useEffect");
     if (props.closed !== TAG) {
@@ -113,7 +110,7 @@ const TagDrawer = props => {
   }
 
   function closeMenu(e) {
-    console.log(e);
+    // console.log(e);
     console.log(anchorElID); //or get the notebook._id that will be modified from state
     setAnchorEl(null);
     setAnchorElID(null);
@@ -122,7 +119,6 @@ const TagDrawer = props => {
   const starTag = (tagID, e) => {
     e.stopPropagation();
     const tag = appState.tags.filter(tag => tag._id === tagID)[0];
-    // appState.tagToggleFavorite(tag);
     //send a request to change toggle the tag
     tagToggleFavoriteReq(tag, appState.token);
     //update appState
@@ -158,7 +154,6 @@ const TagDrawer = props => {
 
   const handleTagClick = tagID => {
     handleDrawerClose();
-    // appState.setNoteFilter("TAG", tagID);
     dispatch({
       type: SET_NOTE_FILTER,
       name: TAG,
@@ -168,24 +163,19 @@ const TagDrawer = props => {
 
   useEffect(() => {
     console.log("useEffect from Notebook drawer");
-    console.log(appState.tags);
+    // console.log(appState.tags);
     if (!search) {
       setTags(appState.tags);
     } else {
       const filteredTags = appState.tags.filter(tag =>
         tag.tagname.toLowerCase().includes(search.toLowerCase())
       );
-      console.log(`searching... for ${search} & found :`);
-      console.log(filteredTags);
       setTags(filteredTags);
     }
   }, [search, appState.tags]);
 
   return (
-    <div
-      className={classes.root}
-      // role="presentation"
-    >
+    <div className={classes.root}>
       <Tooltip title="Tags" placement="right">
         <ListItem
           className={classes.list_item}
@@ -202,7 +192,6 @@ const TagDrawer = props => {
 
       <Drawer
         className={classes.drawer}
-        // variant="persistent"
         anchor="left"
         open={open}
         onClose={handleDrawerClose}
@@ -254,7 +243,6 @@ const TagDrawer = props => {
           {tags
             ? tags.map(tag => {
                 const numberOfNotes = tag.notes.filter(note => !note.trash);
-                // console.log(numberOfNotes);
                 return (
                   <Fragment key={tag._id}>
                     <ListItem
@@ -272,9 +260,6 @@ const TagDrawer = props => {
                           }
                           value={tag.favorite}
                         />
-                        {/* <StarRounded
-                          style={tag.favorite ? { color: "gold" } : {}}
-                        /> */}
                       </ListItemIcon>
                       <ListItemText
                         primary={tag.tagname}

@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from "react";
-// import Context from "../../context/context";
 import {
   DialogTitle,
   DialogContentText,
@@ -8,7 +7,6 @@ import {
   Dialog,
   TextField,
   Button
-  // Typography
 } from "@material-ui/core";
 import StateContext from "../../context/StateContext";
 import DispatchContext from "../../context/DispatchContext";
@@ -50,7 +48,6 @@ export default function RenameNotebook(props) {
         setError("A notebook with the same name already exists!");
       } else {
         props.close();
-        // appState.notebookRename(props.notebook._id, value);
         notebookRenameReq(props.notebook._id, value, appState.token).then(
           res => {
             console.log(res);

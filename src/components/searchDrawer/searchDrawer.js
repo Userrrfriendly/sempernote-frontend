@@ -28,13 +28,10 @@ import {
   LibraryBooksRounded,
   StyleRounded
 } from "@material-ui/icons";
-// import Context from "../../context/context";
 import DispatchContext from "../../context/DispatchContext";
 import StateContext from "../../context/StateContext";
 import { SET_NOTE_FILTER, SET_ACTIVE_NOTE } from "../../context/rootReducer";
-
 import { SEARCH, NOTEBOOK, NOTES, TAG } from "../../context/activeUItypes";
-
 import { deltaToPlainText } from "../../helpers/helpers";
 
 const drawerWidth = 400;
@@ -89,7 +86,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const SearchDrawer = props => {
-  // const context = useContext(Context);
   const appState = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
 
@@ -97,6 +93,7 @@ const SearchDrawer = props => {
   const [search, setSearch] = useState("");
   const [results, setResults] = useState([]);
 
+  //Closes the Drawer if another one is opened
   useEffect(() => {
     console.log("tags useEffect");
     if (props.closed !== SEARCH) {
@@ -136,7 +133,6 @@ const SearchDrawer = props => {
     handleDrawerClose();
     switch (resultType) {
       case TAG:
-        // appState.setNoteFilter(TAG, resultID);
         dispatch({
           type: SET_NOTE_FILTER,
           name: TAG,
@@ -144,16 +140,13 @@ const SearchDrawer = props => {
         });
         break;
       case NOTEBOOK:
-        // appState.setActiveNotebook(resultID);
         dispatch({
           type: SET_NOTE_FILTER,
           name: NOTEBOOK,
           options: resultID
         });
-        // appState.setNoteFilter(NOTEBOOK, resultID);
         break;
       case NOTES:
-        // appState.setNoteFilter(NOTES);
         dispatch({
           type: SET_NOTE_FILTER,
           name: NOTES
@@ -163,7 +156,6 @@ const SearchDrawer = props => {
           name: NOTES,
           _id: resultID
         });
-        // appState.setActiveNote(resultID);
         let path = `/main/editor`;
         props.history.push(path);
         break;

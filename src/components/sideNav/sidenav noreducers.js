@@ -2,8 +2,6 @@ import React, { useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { List, ListItem, ListItemIcon, Tooltip } from "@material-ui/core";
 import {
-  // SearchRounded,
-  // StarRounded,
   NoteAddRounded,
   DescriptionRounded,
   LibraryAddRounded
@@ -53,7 +51,7 @@ const SideNav = props => {
   const context = useContext(Context);
 
   function handleListItemClick(event, index) {
-    console.log(index);
+    // console.log(index);
     closeDrawers(index);
     setSelectedIndex(index);
     index === NOTES && context.setNoteFilter(NOTES);

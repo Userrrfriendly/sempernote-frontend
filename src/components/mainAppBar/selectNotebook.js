@@ -1,12 +1,23 @@
 import React, { useState, useEffect, useContext } from "react";
 import Select, { components } from "react-select";
-import "./selec.css";
+// import "./selec.css";
 import { LibraryBooksRounded } from "@material-ui/icons";
 import { Tooltip } from "@material-ui/core/";
 import { sortByTitleAsc } from "../../helpers/helpers";
 import StateContext from "../../context/StateContext";
 import DispatchContext from "../../context/DispatchContext";
 import { moveNoteToNotebookReq } from "../../requests/requests";
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles(theme => ({
+  select_notebook: {
+    minWidth: "8rem",
+    flexGrow: "1",
+    maxWidth: "12rem",
+    /* override Quill's toolbar z-index:1 */
+    zIndex: "2"
+  }
+}));
 
 /**Change Icon on React-Select dropdown
  * https://github.com/JedWatson/react-select/issues/3493
@@ -24,6 +35,7 @@ const DropdownIndicator = props => {
 const SelectNotebook = props => {
   const appState = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
+  const classes = useStyles();
   const [selectedOption, setSelectedOption] = useState(null);
   const [options, setOptions] = useState(
     sortByTitleAsc(appState.notebooks, "name").map(book => {
@@ -43,13 +55,11 @@ const SelectNotebook = props => {
     const selectedIndex = options.findIndex(
       option => option.value === appState.activeNote.notebook._id
     );
-    console.log(selectedIndex);
     setSelectedOption(options[selectedIndex]);
   }, [appState.activeNote, options]);
 
   const handleChange = selectedOption => {
     setSelectedOption(selectedOption);
-    console.log(`Notebook selected:`, selectedOption);
 
     moveNoteToNotebookReq(
       appState.activeNote._id,
@@ -57,7 +67,6 @@ const SelectNotebook = props => {
       appState.token
     ).then(r => console.log(r));
 
-    //noteID, notebookID, oldNotebookID
     dispatch({
       type: "MOVE_NOTE_TO_NOTEBOOK",
       noteID: appState.activeNote._id,
@@ -68,7 +77,8 @@ const SelectNotebook = props => {
 
   return (
     <Select
-      className="select-notebook"
+      // className="select-notebook"
+      className={classes.select_notebook}
       value={selectedOption}
       onChange={handleChange}
       options={options}

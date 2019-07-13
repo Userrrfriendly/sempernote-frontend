@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import Select, { components } from "react-select";
-import "./selec.css";
+// import "./selec.css";
 import { StyleRounded } from "@material-ui/icons";
 import { Tooltip } from "@material-ui/core/";
 import { find as _find } from "lodash";
@@ -9,6 +9,21 @@ import StateContext from "../../context/StateContext";
 import { assignTagReq, unAssignTagReq } from "../../requests/requests";
 import { ASSIGN_TAG, UNASSIGN_TAG } from "../../context/rootReducer";
 // import makeAnimated from "react-select/animated";
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles(theme => ({
+  select_tag: {
+    minWidth: "12rem",
+    flexGrow: "1",
+    maxWidth: "30rem",
+    marginLeft: "1rem",
+    /* override Quill's toolbar z-index:1 */
+    zIndex: "2"
+    /* if i change the height it will drift upwards */
+    /* height: 3rem; */
+    /* max-height: 64px; */
+  }
+}));
 
 /**Change Icon on React-Select dropdown
  * https://github.com/JedWatson/react-select/issues/3493
@@ -25,7 +40,7 @@ const DropdownIndicator = props => {
 
 /*
 * animatedComponets cause inconsistencies with height (it's smaller than the select notebook...)
-* will retry to implement it once I figure out how to properly target styles in react select
+* worth retrying to implement it once I figure out how to properly target styles in react select
 
 //the component that will be animated
 const MultiValueContainer = props => {
@@ -38,7 +53,7 @@ const animatedComponents = makeAnimated(DropdownIndicator, MultiValueContainer);
 const SelectTag = props => {
   const appState = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
-
+  const classes = useStyles();
   const [selectedOption, setSelectedOption] = useState(null);
   const [options, setOptions] = useState(
     appState.tags.map(tag => {
@@ -46,10 +61,9 @@ const SelectTag = props => {
     })
   );
 
-  // useEffect as componentDidMount
+  //update Options if a tag was created/deleted
   useEffect(() => {
-    //this is probably useless if you create a new Tag the second useEffect will PROBABLY still have the old value :(
-    console.log("SelectTag useEffect (updated props.tags)");
+    console.log("SelectTag useEffect (updated appState.tags)");
     const initialOptions = appState.tags.map(tag => {
       return { value: tag._id, label: tag.tagname };
     });
@@ -65,15 +79,13 @@ const SelectTag = props => {
   }, [appState.activeNote, options]);
 
   const handleChange = (newSelectedOption, args) => {
-    console.log(args);
+    // console.log(args);
     setSelectedOption(newSelectedOption);
-    // console.log(`Option selected:`, selectedOption);
-    // console.log(newSelectedOption);
 
     if (args.action === "select-option") {
-      console.log(
-        `tagID=${args.option.value} noteID=${appState.activeNote._id}`
-      );
+      // console.log(
+      //   `tagID=${args.option.value} noteID=${appState.activeNote._id}`
+      // );
       assignTagReq(
         args.option.value,
         appState.activeNote._id,
@@ -84,9 +96,8 @@ const SelectTag = props => {
         tagID: args.option.value,
         noteID: appState.activeNote._id
       });
-      // props.assignTag(args.option.value, appState.activeNote._id);
     } else if (args.action === "remove-value") {
-      console.log("removing tag from note...");
+      // console.log("removing tag from note...");
       unAssignTagReq(
         args.removedValue.value,
         appState.activeNote._id,
@@ -97,13 +108,13 @@ const SelectTag = props => {
         tagID: args.removedValue.value,
         noteID: appState.activeNote._id
       });
-      // props.unAssignTag(args.removedValue.value, appState.activeNote._id);
     }
   };
 
   return (
     <Select
-      className="select-tag"
+      // className="select-tag"
+      className={classes.select_tag}
       value={selectedOption}
       onChange={handleChange}
       options={options}

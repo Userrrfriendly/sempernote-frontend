@@ -12,20 +12,11 @@ import {
   ListItemText,
   ListItemSecondaryAction,
   Typography,
-  // TextField,
-  // InputAdornment,
   Menu,
   MenuItem
 } from "@material-ui/core";
 
-import {
-  DeleteSweepRounded,
-  // Close,
-  ChevronLeft,
-  MoreVert
-  // StarRounded
-} from "@material-ui/icons";
-// import Context from "../../context/context";
+import { DeleteSweepRounded, ChevronLeft, MoreVert } from "@material-ui/icons";
 import StateContext from "../../context/StateContext";
 import { TRASH } from "../../context/activeUItypes";
 
@@ -73,7 +64,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function TrashDrawer(props) {
-  // const context = useContext(Context);
   const appState = useContext(StateContext);
   const [open, setOpen] = useState(false);
   const [trash, setTrash] = useState(appState.notebooks);
@@ -116,7 +106,6 @@ export default function TrashDrawer(props) {
   }
 
   const handleListClick = e => {
-    //props.listClick handles listItem selection
     props.listClick();
     handleDrawerOpen();
   };
@@ -145,7 +134,6 @@ export default function TrashDrawer(props) {
   return (
     <div
       className={classes.root}
-      // role="presentation"
       // onClick={handleDrawerClose}
     >
       <Tooltip title="Trash" placement="right">
@@ -164,7 +152,6 @@ export default function TrashDrawer(props) {
 
       <Drawer
         className={classes.drawer}
-        // variant="persistent"
         anchor="left"
         open={open}
         onClose={handleDrawerClose}
@@ -199,11 +186,6 @@ export default function TrashDrawer(props) {
                       button
                       onClick={handleTrashNoteClick.bind(this, trashNote._id)}
                     >
-                      {/* <ListItemIcon style={{ minWidth: "3rem" }}>
-                        <StarRounded
-                          style={trashNote.favorite ? { color: "gold" } : {}}
-                        />
-                      </ListItemIcon> */}
                       <ListItemText
                         primary={trashNote.title}
                         // secondary={numberOfNotes.length + " notes"}

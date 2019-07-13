@@ -1,5 +1,4 @@
 import React, { useContext } from "react";
-// import Context from "../../context/context";
 import StateContext from "../../context/StateContext";
 import DispatchContext from "../../context/DispatchContext";
 
@@ -19,7 +18,6 @@ export default function DeleteNotebook(props) {
   const appState = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
   const handleDelete = () => {
-    // props.closeMenu();
     props.close();
     notebookDeleteReq(props.notebook._id, appState.token).then(r => {
       if (r && r.name === "Error") {

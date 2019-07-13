@@ -60,8 +60,12 @@ const deleteNotebook = (action, state) => {
   const notebooks = state.notebooks.filter(
     notebook => notebook._id !== action._id
   );
-
-  return { ...state, activeNote, notes, notebooks };
+  const trashedNotes = state.notes.filter(
+    note => note.notebook._id === action._id
+  );
+  const trash =
+    trashedNotes.length > 0 ? state.trash.concat(trashedNotes) : state.trash;
+  return { ...state, activeNote, notes, notebooks, trash };
 };
 
 const renameNotebook = (action, state) => {
@@ -161,17 +165,13 @@ const setNoteFilter = (action, state) => {
 };
 
 const sortNotes = (action, state) => {
-  // props.updateNotes(sortByTitleDes(shortedNotes));
   let sortedNotes;
-  // sortByDateNewestFirst(shortedNotes, "updatedAt")
   switch (action.method) {
     case "sortByDateNewestFirst":
       sortedNotes = sortByDateNewestFirst(state.notes, action.sortField);
-      // sortedNotes = sortByTitleDes(state.notes);
       return { ...state, notes: sortedNotes };
     case "sortByDateOldestFirst":
       sortedNotes = sortByDateOldestFirst(state.notes, action.sortField);
-      // sortedNotes = sortByTitleDes(state.notes);
       return { ...state, notes: sortedNotes };
     case "sortByTitleDes":
       sortedNotes = sortByTitleDes(state.notes);
@@ -239,7 +239,6 @@ const noteAddFavorite = (action, state) => {
 };
 
 const trashNote = (action, state) => {
-  // .then(data => {
   const tags = state.tags.map(tag => {
     return {
       ...tag,
@@ -261,24 +260,6 @@ const trashNote = (action, state) => {
   const notes = state.notes.filter(note => note._id !== action.note._id);
   const trash = state.trash.concat({ ...action.note, trash: true });
   return { ...state, tags, activeNote, notes, trash };
-
-  //   console.log(tags);
-  //   this.setState(prevState => {
-  //     return {
-  //       activeNote:
-  //         prevState.activeNote &&
-  //         prevState.activeNote._id === data.responseNote._id
-  //           ? null
-  //           : prevState.activeNote,
-  //       notes: prevState.notes.filter(
-  //         note => note._id !== data.responseNote._id
-  //       ),
-  //       trash: prevState.trash.concat(data.responseNote),
-  //       tags: tags
-  //       // ,notebooks: data.newNotebooks
-  //     };
-  //   });
-  // });
 };
 
 /** TAGS **/

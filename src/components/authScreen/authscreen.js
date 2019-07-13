@@ -1,5 +1,4 @@
 import React, { useContext, useState, useEffect } from "react";
-// import Context from "../../context/context";
 import {
   Link,
   Grid,
@@ -15,7 +14,6 @@ import {
 } from "@material-ui/core";
 import FavoriteRounded from "@material-ui/icons/FavoriteRounded";
 import { makeStyles } from "@material-ui/core/styles";
-
 import red from "@material-ui/core/colors/red";
 import { Visibility, VisibilityOff } from "@material-ui/icons/";
 
@@ -75,7 +73,6 @@ const AuthScreen = () => {
     showPassword: false
   });
 
-  // const context = useContext(Context);
   const dispatch = useContext(DispatchContext);
   const appState = useContext(StateContext);
 
@@ -152,7 +149,6 @@ const AuthScreen = () => {
   };
 
   useEffect(() => {
-    console.log("useEffect");
     console.log(appState);
   }, [appState]);
   const classes = useStyles();

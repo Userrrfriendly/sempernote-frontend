@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import moment from "moment";
 import Delta from "quill-delta";
-// import { makeStyles } from "@material-ui/core/styles";
 import {
   Card,
   IconButton,
@@ -14,8 +13,6 @@ import {
 // import useMediaQuery from "@material-ui/core/useMediaQuery";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { deltaToPlainText } from "../../helpers/helpers";
-// import { withStyles, Theme, createStyles } from "@material-ui/core/styles";
-// import { useTheme } from "@material-ui/core/styles";
 
 const useStyles = makeStyles({
   card: {
@@ -38,28 +35,10 @@ const useStyles = makeStyles({
   }
 });
 
-// const styleOverrides = theme => ({
-//   card: {
-//     maxWidth: 345,
-//     marginBottom: "0.5rem",
-//     margin: "0 0.5rem 0.5rem",
-//     boxShadow:
-//       "0px 1px 8px 0px rgba(0,0,0,0.2), 0px 3px 4px 0px rgba(0,0,0,0.14), 0px 3px 3px -2px rgba(0,0,0,0.12)"
-//   },
-//   media: {
-//     height: 140
-//   },
-//   title: {
-//     fontSize: "3rem"
-//   }
-// });
-
 const MediaCard = props => {
   const classes = useStyles();
   const [raised, setRaised] = useState(false);
-  // const theme = useTheme();
   // const smallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-  // const { classes } = props;
   // const matches = useMediaQuery("(min-width:350px)");
 
   const toggleRaised = () => {
@@ -82,14 +61,8 @@ const MediaCard = props => {
       onMouseOver={toggleRaised}
       onMouseOut={toggleRaised}
       raised={raised}
-      // classes={{
-      //   root: classes.root,
-      //   media: classes.media,
-      //   title: classes.title
-      // }}
       className={classes.card}
       // style={matches ? { maxWidth: "100%" } : {}}
-
       // style={smallScreen && props.activeNote ? { display: "none" } : {}}
       // style={props.activeNote && { flexBasis: "250px" }}
     >
@@ -125,5 +98,4 @@ const MediaCard = props => {
   );
 };
 
-// export default withStyles(styleOverrides)(MediaCard);
 export default MediaCard;

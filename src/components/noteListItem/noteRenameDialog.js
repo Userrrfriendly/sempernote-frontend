@@ -8,7 +8,6 @@ import {
   Dialog,
   TextField,
   Button
-  // Typography
 } from "@material-ui/core";
 
 export default function RenameNoteDialog(props) {

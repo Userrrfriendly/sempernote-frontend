@@ -221,22 +221,8 @@ export function tagToggleFavoriteReq(tag, token) {
       return err;
     });
 }
+
 /***ASSIGNTAG TO NOTE ***/
-// export function tagToggleFavoriteReq(tag, token) {
-//   const query = !tag.favorite ? tagFavoriteTrue : tagFavoriteFalse;
-//   const responseName = !tag.favorite ? "tagFavoriteTrue" : "tagFavoriteFalse";
-
-//   const requestBody = JSON.stringify({
-//     query: query(tag._id)
-//   });
-//   const auth = "Bearer " + token;
-
-// return fetch(url, {
-//   ...options,
-//   body: requestBody,
-//   headers: { ...options.headers, Authorization: auth }
-// })
-
 export function assignTagReq(tagID, noteID, token) {
   const requestBody = JSON.stringify({
     query: assignTag(tagID, noteID)
@@ -265,7 +251,6 @@ export function assignTagReq(tagID, noteID, token) {
 }
 
 /***UNASSIGNTAG TO NOTE ***/
-
 export function unAssignTagReq(tagID, noteID, token) {
   const requestBody = JSON.stringify({
     query: unAssignTag(tagID, noteID)
@@ -475,8 +460,6 @@ export function moveNoteToNotebookReq(noteID, notebookID, token) {
 }
 
 /**MOVE NOTE TO TRASH */
-// export function moveNoteToNotebookReq(noteID, notebookID, token) {
-
 export function trashNoteReq(noteToTrash, token) {
   const auth = "Bearer " + token;
 
@@ -504,38 +487,6 @@ export function trashNoteReq(noteToTrash, token) {
       console.log(err);
       return err;
     });
-  // .then(data => {
-  //   const tags = this.state.tags.map(tag => {
-  //     return {
-  //       ...tag,
-  //       notes: tag.notes.map(note =>
-  //         note._id === data.responseNote._id
-  //           ? {
-  //               _id: data.responseNote._id,
-  //               title: data.responseNote.title,
-  //               trash: data.responseNote.trash
-  //             }
-  //           : note
-  //       )
-  //     };
-  //   });
-  //   console.log(tags);
-  //   this.setState(prevState => {
-  //     return {
-  //       activeNote:
-  //         prevState.activeNote &&
-  //         prevState.activeNote._id === data.responseNote._id
-  //           ? null
-  //           : prevState.activeNote,
-  //       notes: prevState.notes.filter(
-  //         note => note._id !== data.responseNote._id
-  //       ),
-  //       trash: prevState.trash.concat(data.responseNote),
-  //       tags: tags
-  //       // ,notebooks: data.newNotebooks
-  //     };
-  //   });
-  // });
 }
 
 /** NOTE TOGGLE FAVORITE TRUE **/
@@ -547,48 +498,29 @@ export function noteFavoriteTrueReq(note, token) {
     query: query(note._id)
   });
 
-  return (
-    fetch(url, {
-      ...options,
-      body: requestBody,
-      headers: { ...options.headers, Authorization: auth }
+  return fetch(url, {
+    ...options,
+    body: requestBody,
+    headers: { ...options.headers, Authorization: auth }
+  })
+    .then(res => {
+      if (res.status !== 200 && res.status !== 201) {
+        throw new Error("noteFavoriteTrue Request Failed!");
+      }
+      return res.json();
     })
-      .then(res => {
-        if (res.status !== 200 && res.status !== 201) {
-          throw new Error("noteFavoriteTrue Request Failed!");
-        }
-        return res.json();
-      })
-      .then(r => {
-        const responseNote = r.data.noteFavoriteTrue;
-        console.log(responseNote);
-        return { responseNote };
-      })
-      // .then(data => {
-      // this.setState(prevState => {
-      //   return {
-      //     activeNote:
-      //       prevState.activeNote &&
-      //       prevState.activeNote._id === data.responseNote._id
-      //         ? data.responseNote
-      //         : prevState.activeNote,
-      //     notes: prevState.notes.map(note =>
-      //       note._id === data.responseNote._id
-      //         ? { ...note, favorite: data.responseNote.favorite }
-      //         : note
-      //     )
-      //   };
-      // });
-      // })
-      .catch(err => {
-        console.log(err);
-        return err;
-      })
-  );
+    .then(r => {
+      const responseNote = r.data.noteFavoriteTrue;
+      console.log(responseNote);
+      return { responseNote };
+    })
+    .catch(err => {
+      console.log(err);
+      return err;
+    });
 }
 
-/** NOTE TOGGLE FAVORITE TRUE **/
-
+/** NOTE TOGGLE FAVORITE FALSE **/
 export function noteFavoriteFalseReq(note, token) {
   const query = noteFavoriteFalse;
   const auth = "Bearer " + token;
@@ -597,42 +529,25 @@ export function noteFavoriteFalseReq(note, token) {
     query: query(note._id)
   });
 
-  return (
-    fetch(url, {
-      ...options,
-      body: requestBody,
-      headers: { ...options.headers, Authorization: auth }
+  return fetch(url, {
+    ...options,
+    body: requestBody,
+    headers: { ...options.headers, Authorization: auth }
+  })
+    .then(res => {
+      if (res.status !== 200 && res.status !== 201) {
+        throw new Error("noteFavoriteFalse Request Failed!");
+      }
+      return res.json();
     })
-      .then(res => {
-        if (res.status !== 200 && res.status !== 201) {
-          throw new Error("noteFavoriteFalse Request Failed!");
-        }
-        return res.json();
-      })
-      .then(r => {
-        const responseNote = r.data.noteFavoriteFalse;
-        console.log(responseNote);
-        return { responseNote };
-      })
-      // .then(data => {
-      // this.setState(prevState => {
-      //   return {
-      //     activeNote:
-      //       prevState.activeNote &&
-      //       prevState.activeNote._id === data.responseNote._id
-      //         ? data.responseNote
-      //         : prevState.activeNote,
-      //     notes: prevState.notes.map(note =>
-      //       note._id === data.responseNote._id
-      //         ? { ...note, favorite: data.responseNote.favorite }
-      //         : note
-      //     )
-      //   };
-      // });
-      // })
-      .catch(err => {
-        console.log(err);
-        return err;
-      })
-  );
+    .then(r => {
+      const responseNote = r.data.noteFavoriteFalse;
+      console.log(responseNote);
+      return { responseNote };
+    })
+
+    .catch(err => {
+      console.log(err);
+      return err;
+    });
 }

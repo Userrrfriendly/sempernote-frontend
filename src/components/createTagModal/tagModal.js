@@ -28,25 +28,17 @@ const customStyles = {
 Modal.setAppElement("#root");
 
 const TagModal = props => {
-  // state = {
-  //   value: "",
-  //   error: false
-  // };
   const [state, setState] = useState({ value: "", error: false });
   const dispatch = useContext(DispatchContext);
 
   const onChange = e => {
-    if (e.target.value.length < 30) {
+    if (e.target.value.length < 15) {
       setState({
         value: e.target.value,
         error: false
       });
     }
   };
-
-  // componentDidUpdate() {
-  //   console.log("noteBOOK modal updated");
-  // }
 
   const onSubmit = e => {
     e.preventDefault();
@@ -61,7 +53,6 @@ const TagModal = props => {
       setState({ ...state, error: true });
     } else {
       const updateDB = async () => {
-        // props.createTag(this.state.value);
         createTagReq(state.value, props.token).then(tag => {
           dispatch({
             type: CREATE_TAG,
@@ -85,7 +76,6 @@ const TagModal = props => {
     <div>
       <Modal
         isOpen={props.isOpen}
-        // onAfterOpen={this.afterOpenModal}
         onRequestClose={props.closeModal}
         style={customStyles}
         contentLabel="Create Tag" //improves accessibility

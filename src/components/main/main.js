@@ -7,7 +7,7 @@ import StateContext from "../../context/StateContext";
 import { SET_ACTIVE_NOTE, UPDATE_NOTE_BODY } from "../../context/rootReducer";
 import { updateNoteBodyReq } from "../../requests/requests";
 
-import "./main.css";
+// import "./main.css";
 import ExpandedNote from "../editor/expandedNote";
 import NotebookModal from "../createNotebookModal/notebookModal";
 import NoteModal from "../createNoteModal/noteModal";
@@ -21,11 +21,35 @@ import { useTheme } from "@material-ui/core/styles";
 import MainAppBar from "../mainAppBar/mainAppBar";
 import Paper from "../paper/paper";
 
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles(theme => ({
+  main_section: {
+    backgroundColor: "#fff",
+    width: "100%",
+    minHeight: "calc(100vh - 3rem)",
+    /* display: flex; */
+    flexFlow: "column",
+    overflow: "hidden",
+    direction: "row",
+    justifyContent: "flex-start",
+    alignItems: "flex-start"
+  },
+  main_subcontainer: {
+    /* width: 100%;
+    display: flex; */
+    width: "60%",
+    maxWidth: "100%",
+    flexGrow: "1"
+  }
+}));
+
 const Main = props => {
   const [noteModal, setNoteModal] = useState(false);
   const [notebookModal, setNotebookModal] = useState(false);
   const [tagModal, setTagModal] = useState(false);
   const theme = useTheme();
+  const classes = useStyles();
   const matches = useMediaQuery(theme.breakpoints.down("md"));
 
   // const context = useContext(Context);
@@ -83,7 +107,6 @@ const Main = props => {
     });
   };
 
-  //Simulates componentDidUpdate lifecycle
   useEffect(() => {
     console.log("useEffect triggered in <MAIN>");
     //when the user presses the back button the activeNote is set to null thus hidding the editor
@@ -105,12 +128,13 @@ const Main = props => {
   // console.log(matches);
   return (
     <main
-      className="main-section l10"
-      style={{
-        direction: "row",
-        justifyContent: "flex-start",
-        alignItems: "flex-start"
-      }}
+      className={classes.main_section}
+      // className="main-section"
+      // style={{
+      //   direction: "row",
+      //   justifyContent: "flex-start",
+      //   alignItems: "flex-start"
+      // }}
     >
       <Hidden mdDown>
         <SideNav
@@ -133,7 +157,10 @@ const Main = props => {
             />
           )}
         />
-        <div className="main-subcontainer">
+        <div
+          className={classes.main_subcontainer}
+          // className="main-subcontainer"
+        >
           <Switch>
             <Route
               exact
@@ -143,7 +170,6 @@ const Main = props => {
                   {appState.activeNote && (
                     <ExpandedNote
                       note={appState.activeNote}
-                      // updateNoteBody={appState.updateNoteBody}
                       updateNoteBody={updateNoteBody}
                     />
                   )}
@@ -152,12 +178,10 @@ const Main = props => {
             />
           </Switch>
         </div>
-        {/* whats the point of conditional rendering? ther will always be at least one notebook(hopefully) */}
         {appState.notebooks && (
           <>
             <NotebookModal
               notebooks={appState.notebooks}
-              // createNotebook={appState.createNotebook}
               token={appState.token}
               openModal={openCreateNotebookModal}
               closeModal={closeCreateNotebookModal}
@@ -171,14 +195,11 @@ const Main = props => {
               openModal={openCreateNoteModal}
               closeModal={closenoteModal}
               isOpen={noteModal}
-              // pushNoteToState={appState.pushNoteToState}
-              // setActiveNote={appState.setActiveNote}
               token={appState.token}
             />
             <TagModal
               tags={appState.tags}
               token={appState.token}
-              // createTag={appState.createTag}
               openModal={openCreateTagModal}
               closeModal={closeCreateTagModal}
               isOpen={tagModal}
@@ -186,8 +207,6 @@ const Main = props => {
           </>
         )}
       </Paper>
-      {/* </Grid>
-      </Grid> */}
     </main>
   );
 };

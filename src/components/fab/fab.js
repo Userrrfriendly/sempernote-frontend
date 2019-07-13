@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import Context from "../../context/context";
+// import Context from "../../context/context";
 import { withStyles } from "@material-ui/core/styles";
 // import Button from "@material-ui/core/Button";
 import SpeedDial from "@material-ui/lab/SpeedDial";
@@ -55,7 +55,7 @@ class SpeedDialTooltipOpen extends React.Component {
     { icon: <StyleRounded />, name: "Tags" }
   ];
 
-  static contextType = Context;
+  // static contextType = Context;
 
   handleVisibility = () => {
     this.setState(state => ({
@@ -112,10 +112,6 @@ class SpeedDialTooltipOpen extends React.Component {
               tooltipTitle={action.name}
               onClick={action.callback}
               // tooltipOpen
-              // onClick={this.handleClick.bind(
-              //   this,
-              //   this.props.createTag.bind(this, action.name)
-              // )}
             />
           ))}
         </SpeedDial>

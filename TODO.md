@@ -34,7 +34,6 @@
 
 # Favorites:
 
-
 # Notes:
 
 - Nice2Have: when create note modal is opened it should get the default selected notebook from activenotebook if it exists
@@ -84,6 +83,7 @@
   - \*PWD
 
 # Random
+
 - FetchUserData doesn't need authentication?!?! srsly!?
 - implement defaultNotebook on the front end
 - ChangeNotebook (note goes from notebook A to notebook B) \*\*\* ASK JS13 ABOUT HOW IT CAN BE DONE BETTER
@@ -95,7 +95,7 @@
 
 **_ BUGS _**
 
-- create a new note/notebook/tag edit note add the new tag -> can trigger bug where the tag is not shown in select 
+- create a new note/notebook/tag edit note add the new tag -> can trigger bug where the tag is not shown in select
 - when moving a note to a different notebook upDatedAt is modified but the sorting doesnt change in AppBar
 -
 - - edit a note and quickpress trash --> this will trigger two posts:
@@ -118,11 +118,9 @@
 - \*https://github.com/mui-org/material-ui/issues/11824
 - (_modals_) Could not ditch Reac-modal since MAterialUI (Modal/Dialog) overflows
 
-
 * -rename activeUITypes (CONSTANT)
 * !@! REFACTOR NOTELISTS! needs to have star/delete/info button either static or appear on hover
 * The way you close previously openned modals if another one is clicked is not great... better think of smth better
-
 
 ## Nice2Have:
 
@@ -161,7 +159,12 @@
 
 - SearchDrawer has no implementation for filters at the app bar (setNoteFilter)
 - renameNotebook should probably be reveresed (first rename then send request) also its a waste of bandwith since it returns the whole notebook but it could return just ID and the modified notebook.name
-      //NEED TO COMPARE IDS IN CASE A NOTE MATCHES WITH TITLE AND BODY, TO AVOID DUPLICATES
-- SEARCH DRAWER TYPE 'A' ENTER -> TWO NOTES APPEAR 
-- edit a note and before the autosave deleteit -> returns 2 nots one in trash one alive 
+  //NEED TO COMPARE IDS IN CASE A NOTE MATCHES WITH TITLE AND BODY, TO AVOID DUPLICATES
+- SEARCH DRAWER TYPE 'A' ENTER -> TWO NOTES APPEAR
+- edit a note and before the autosave deleteit -> returns 2 nots one in trash one alive
 - resize the window and the app crashes
+- (DELETENOTEBOOK DIALOG) open note x that is in notebook y, delete notebook y --> app crashes (simply add the correct filter at state to fix?)
+- (TAGS DRAWER) it seems that anchorElID is unused -> const [anchorElID, setAnchorElID] = React.useState(null);
+- (TRASH DRAWER) same as above
+- (noteRename DIALOG) seems to be unused?? it needs to be refactored to reducers... and implemented
+- no implementation to delete TAGS!

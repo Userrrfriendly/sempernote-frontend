@@ -59,7 +59,6 @@ const SideNav = props => {
         type: SET_NOTE_FILTER,
         name: NOTES
       });
-    // index === NOTES && context.setNoteFilter(NOTES);
   }
 
   const closeDrawers = openDrawer => {
@@ -93,7 +92,6 @@ const SideNav = props => {
             button
             selected={selectedIndex === 0}
             onClick={openCreateNoteModal}
-            // onClick={props.openCreateNoteModal}
             // onClick={event => handleListItemClick(event, 0)}
           >
             <ListItemIcon>
@@ -121,7 +119,6 @@ const SideNav = props => {
             className={classes.list_item}
             button
             selected={selectedIndex === 2}
-            // onClick={props.openCreateTagModal}
             onClick={openCreateTag}
           >
             <ListItemIcon>
@@ -145,19 +142,6 @@ const SideNav = props => {
           closed={openDrawer}
         />
 
-        {/* <Tooltip title="Favorites" placement="right">
-          <ListItem
-            className={classes.list_item}
-            button
-            selected={selectedIndex === FAVORITES}
-            onClick={event => handleListItemClick(event, FAVORITES)}
-          >
-            <ListItemIcon>
-              <StarRounded />
-            </ListItemIcon>
-          </ListItem>
-        </Tooltip> */}
-
         <Tooltip title="Notes" placement="right">
           <ListItem
             className={classes.list_item}
@@ -175,13 +159,11 @@ const SideNav = props => {
           listSelected={selectedIndex === NOTEBOOK}
           listClick={event => handleListItemClick(event, NOTEBOOK)}
           closed={openDrawer}
-          // createNotebook={props.openCreateNotebookModal}
         />
 
         <TagsDrawer
           listSelected={selectedIndex === TAG}
           listClick={event => handleListItemClick(event, TAG)}
-          // openCreateTagModal={props.openCreateTagModal}
           closed={openDrawer}
         />
 
