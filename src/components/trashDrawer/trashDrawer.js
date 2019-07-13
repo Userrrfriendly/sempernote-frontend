@@ -65,16 +65,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function TrashDrawer(props) {
   const appState = useContext(StateContext);
-  const [open, setOpen] = useState(false);
-  const [trash, setTrash] = useState(appState.notebooks);
-
-  //closes this drawer if another one is opened
-  useEffect(() => {
-    console.log("Trash useEffect");
-    if (props.closed !== TRASH) {
-      setOpen(false);
-    }
-  }, [props.closed]);
+  const [trash, setTrash] = useState(appState.trash);
 
   //menu
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -95,23 +86,9 @@ export default function TrashDrawer(props) {
   }
   //end menu
   const classes = useStyles();
-  // const theme = useTheme();
-
-  function handleDrawerOpen() {
-    setOpen(true);
-  }
-
-  function handleDrawerClose() {
-    setOpen(false);
-  }
-
-  const handleListClick = e => {
-    props.listClick();
-    handleDrawerOpen();
-  };
 
   const handleTrashNoteClick = trashID => {
-    handleDrawerClose();
+    props.toggleDrawer();
     appState.setNoteFilter(TRASH, trashID);
   };
 
@@ -132,16 +109,12 @@ export default function TrashDrawer(props) {
   }, [appState.trash]);
 
   return (
-    <div
-      className={classes.root}
-      // onClick={handleDrawerClose}
-    >
+    <div className={classes.root}>
       <Tooltip title="Trash" placement="right">
         <ListItem
           className={classes.list_item}
           button
-          selected={props.listSelected}
-          onClick={handleListClick}
+          onClick={props.toggleDrawer.bind(this, "trash", true)}
           style={{ marginBottom: "1rem" }}
         >
           <ListItemIcon>
@@ -153,8 +126,8 @@ export default function TrashDrawer(props) {
       <Drawer
         className={classes.drawer}
         anchor="left"
-        open={open}
-        onClose={handleDrawerClose}
+        open={props.drawerState.trash}
+        onClose={props.toggleDrawer.bind(this, "trash", false)}
         classes={{
           paper: classes.drawerPaper
         }}
@@ -169,7 +142,7 @@ export default function TrashDrawer(props) {
               Trash
             </Typography>
 
-            <IconButton onClick={handleDrawerClose}>
+            <IconButton onClick={props.toggleDrawer.bind(this, "trash", false)}>
               <ChevronLeft />
             </IconButton>
           </div>

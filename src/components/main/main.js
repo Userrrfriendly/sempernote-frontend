@@ -1,13 +1,11 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Switch, Route, withRouter } from "react-router-dom";
 
-// import Context from "../../context/context";
 import DispatchContext from "../../context/DispatchContext";
 import StateContext from "../../context/StateContext";
 import { SET_ACTIVE_NOTE, UPDATE_NOTE_BODY } from "../../context/rootReducer";
 import { updateNoteBodyReq } from "../../requests/requests";
 
-// import "./main.css";
 import ExpandedNote from "../editor/expandedNote";
 import NotebookModal from "../createNotebookModal/notebookModal";
 import NoteModal from "../createNoteModal/noteModal";
@@ -20,7 +18,6 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { useTheme } from "@material-ui/core/styles";
 import MainAppBar from "../mainAppBar/mainAppBar";
 import Paper from "../paper/paper";
-
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles(theme => ({
@@ -48,6 +45,40 @@ const Main = props => {
   const [noteModal, setNoteModal] = useState(false);
   const [notebookModal, setNotebookModal] = useState(false);
   const [tagModal, setTagModal] = useState(false);
+
+  /**Sidenav Drawers */
+  const [drawerState, setDrawerState] = useState({
+    tags: false,
+    favorites: false,
+    notebooks: false,
+    trash: false,
+    search: false
+  });
+
+  const toggleDrawer = (drawer, open) => {
+    // console.log(`toggleDrawer props: drawer= ${drawer} open= ${open}`);
+    if (!drawer) {
+      //close all drawers
+      setDrawerState({
+        tags: false,
+        favorites: false,
+        notebooks: false,
+        trash: false,
+        search: false
+      });
+    } else {
+      //close any open drawer and toggle the one that was targeted
+      setDrawerState({
+        tags: false,
+        favorites: false,
+        notebooks: false,
+        trash: false,
+        search: false,
+        [drawer]: open
+      });
+    }
+  };
+
   const theme = useTheme();
   const classes = useStyles();
   const matches = useMediaQuery(theme.breakpoints.down("md"));
@@ -55,6 +86,13 @@ const Main = props => {
   // const context = useContext(Context);
   const appState = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
+
+  /**SideNav Drawers LEGACY*/
+  //handleDrawer makes sure that only one drawer is opened at a time (it either closes them all || all but one )
+  // const handleDrawer = openDrawer => {
+  //   console.log(openDrawer);
+  //   setOpenDrawer(openDrawer);
+  // };
 
   /**NOTEBOOK Modal */
   const openCreateNotebookModal = () => {
@@ -127,20 +165,16 @@ const Main = props => {
 
   // console.log(matches);
   return (
-    <main
-      className={classes.main_section}
-      // className="main-section"
-      // style={{
-      //   direction: "row",
-      //   justifyContent: "flex-start",
-      //   alignItems: "flex-start"
-      // }}
-    >
+    <main className={classes.main_section}>
       <Hidden mdDown>
         <SideNav
           openCreateNoteModal={openCreateNoteModal}
           openCreateNotebookModal={openCreateNotebookModal}
           openCreateTagModal={openCreateTagModal}
+          // openDrawer={openDrawer}
+          // handleDrawer={handleDrawer}
+          drawerState={drawerState}
+          toggleDrawer={toggleDrawer}
         />
       </Hidden>
 
@@ -154,7 +188,10 @@ const Main = props => {
               createNote={openCreateNoteModal}
               createNotebook={openCreateNotebookModal}
               createTag={openCreateTagModal}
+              // triggerDrawer={handleDrawer}
+              toggleDrawer={toggleDrawer}
             />
+            // <div>fab</div>
           )}
         />
         <div

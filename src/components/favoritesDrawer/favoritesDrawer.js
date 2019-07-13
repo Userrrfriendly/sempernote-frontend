@@ -3,7 +3,6 @@ import { withRouter } from "react-router-dom";
 
 import Delta from "quill-delta";
 
-// import { truncate as _truncate } from "lodash";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   IconButton,
@@ -28,7 +27,7 @@ import {
 } from "@material-ui/icons";
 import StateContext from "../../context/StateContext";
 import DispatchContext from "../../context/DispatchContext";
-import { NOTEBOOK, NOTES, TAG, FAVORITES } from "../../context/activeUItypes";
+import { NOTEBOOK, NOTES, TAG } from "../../context/activeUItypes";
 import {
   notebookToggleFavoriteReq,
   tagToggleFavoriteReq,
@@ -38,7 +37,8 @@ import {
   NOTEBOOK_TOGGLE_FAVORITE,
   TAG_TOGGLE_FAVORITE,
   SET_NOTE_FILTER,
-  NOTE_REMOVE_FAVORITE
+  NOTE_REMOVE_FAVORITE,
+  SET_ACTIVE_NOTE
 } from "../../context/rootReducer";
 
 import { deltaToPlainText } from "../../helpers/helpers";
@@ -117,7 +117,6 @@ const FavoritesDrawer = props => {
     return notes.concat(notebooks, tags);
   };
 
-  const [open, setOpen] = useState(false);
   const [hoveredItemID, setHoveredItemID] = useState(false);
   const [results, setResults] = useState(initialState());
   const classes = useStyles();
@@ -165,26 +164,6 @@ const FavoritesDrawer = props => {
     setHoveredItemID(null);
   };
 
-  useEffect(() => {
-    console.log("tags useEffect");
-    if (props.closed !== FAVORITES) {
-      setOpen(false);
-    }
-  }, [props.closed]);
-
-  function handleDrawerOpen() {
-    setOpen(true);
-  }
-
-  function handleDrawerClose() {
-    setOpen(false);
-  }
-
-  const handleListClick = e => {
-    props.listClick();
-    handleDrawerOpen();
-  };
-
   const previewText = str => {
     const parsedDelta = new Delta(JSON.parse(str));
     let plainText = deltaToPlainText(parsedDelta);
@@ -196,7 +175,7 @@ const FavoritesDrawer = props => {
 
   const handleFavoriteClick = (resultID, resultType, e) => {
     //default behaviour (if the list item was clicked anywhere except the remove buton)
-    handleDrawerClose();
+    props.toggleDrawer(); //closes the drawer on click
     switch (resultType) {
       case TAG:
         dispatch({
@@ -211,14 +190,17 @@ const FavoritesDrawer = props => {
           name: NOTEBOOK,
           options: resultID
         });
-        appState.setActiveNotebook(resultID);
+        // appState.setActiveNotebook(resultID);
         break;
       case NOTES:
         dispatch({
           type: SET_NOTE_FILTER,
           name: NOTES
         });
-        appState.setActiveNote(resultID);
+        dispatch({
+          type: SET_ACTIVE_NOTE,
+          _id: resultID
+        });
         let path = `/main/editor`;
         props.history.push(path);
         break;
@@ -255,7 +237,7 @@ const FavoritesDrawer = props => {
           className={classes.list_item}
           button
           selected={props.listSelected}
-          onClick={handleListClick}
+          onClick={props.toggleDrawer.bind(this, "favorites", true)}
           style={{ marginBottom: "1rem" }}
         >
           <ListItemIcon>
@@ -267,8 +249,8 @@ const FavoritesDrawer = props => {
       <Drawer
         className={classes.drawer}
         anchor="left"
-        open={open}
-        onClose={handleDrawerClose}
+        open={props.drawerState.favorites}
+        onClose={props.toggleDrawer.bind(this, "favorites", false)}
         classes={{
           paper: classes.drawerPaper
         }}
@@ -283,7 +265,9 @@ const FavoritesDrawer = props => {
               Favorites
             </Typography>
 
-            <IconButton onClick={handleDrawerClose}>
+            <IconButton
+              onClick={props.toggleDrawer.bind(this, "favorites", false)}
+            >
               <ChevronLeft />
             </IconButton>
           </div>

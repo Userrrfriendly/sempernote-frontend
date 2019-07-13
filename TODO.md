@@ -9,11 +9,6 @@
 
 **_ FAB _**
 
-- make FAB expanded when clicked
-- Open Favorites
-- Open NoteBooks
-- Open Tags
-
 **_ APPBAR _**
 
 - Note Info icon
@@ -28,6 +23,8 @@
 
 **_ SIDENAV ITEMS _**
 
+- When a sideNav item is clicked it is selected but when you click out it stays selected even if it didn't do anything(
+- click search, click away -> search remains selected) 
 # Search
 
 - Nice2have: Highlighted search result text (either in result name or the body text in case of note deep search)
@@ -58,8 +55,6 @@
 - Restore
 - Hard Delete -> needs a confirmation dialog
 - Open Note in spectator Mode (locked Quill Editor)
-
-* BUG: Upon resize trash crashes (sidenav hidden causes it?)
 
 **_ Backend _**
 
@@ -159,12 +154,12 @@
 
 - SearchDrawer has no implementation for filters at the app bar (setNoteFilter)
 - renameNotebook should probably be reveresed (first rename then send request) also its a waste of bandwith since it returns the whole notebook but it could return just ID and the modified notebook.name
-  //NEED TO COMPARE IDS IN CASE A NOTE MATCHES WITH TITLE AND BODY, TO AVOID DUPLICATES
-- SEARCH DRAWER TYPE 'A' ENTER -> TWO NOTES APPEAR
 - edit a note and before the autosave deleteit -> returns 2 nots one in trash one alive
-- resize the window and the app crashes
 - (DELETENOTEBOOK DIALOG) open note x that is in notebook y, delete notebook y --> app crashes (simply add the correct filter at state to fix?)
 - (TAGS DRAWER) it seems that anchorElID is unused -> const [anchorElID, setAnchorElID] = React.useState(null);
 - (TRASH DRAWER) same as above
 - (noteRename DIALOG) seems to be unused?? it needs to be refactored to reducers... and implemented
 - no implementation to delete TAGS!
+
+
+- (*Responsiveness*)Could I save the screen size in the state and then render things based on screen size?

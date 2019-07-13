@@ -82,7 +82,6 @@ const useStyles = makeStyles(theme => ({
 export default function NotebookDrawer(props) {
   const appState = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
-  const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [notebooks, setNotebooks] = useState(appState.notebooks);
 
@@ -117,14 +116,6 @@ export default function NotebookDrawer(props) {
     setDeleteOpen(false);
   }
 
-  //closes this drawer if another one is opened
-  useEffect(() => {
-    console.log("Notebook Drawer useEffect");
-    if (props.closed !== NOTEBOOK) {
-      setOpen(false);
-    }
-  }, [props.closed]);
-
   //menu
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorElID, setAnchorElID] = React.useState(null);
@@ -142,19 +133,6 @@ export default function NotebookDrawer(props) {
   }
   //end menu
   const classes = useStyles();
-
-  function handleDrawerOpen() {
-    setOpen(true);
-  }
-
-  function handleDrawerClose() {
-    setOpen(false);
-  }
-
-  const handleListClick = e => {
-    props.listClick();
-    handleDrawerOpen();
-  };
 
   const handleSearch = e => {
     setSearch(e.target.value);
@@ -180,7 +158,7 @@ export default function NotebookDrawer(props) {
       });
     } else {
       //default behaviour (if the list item was clicked anywhere except the Star Checkbox or the Menu, expands the results)
-      handleDrawerClose();
+      props.toggleDrawer();
       dispatch({
         type: SET_NOTE_FILTER,
         name: NOTEBOOK,
@@ -208,7 +186,7 @@ export default function NotebookDrawer(props) {
           className={classes.list_item}
           button
           selected={props.listSelected}
-          onClick={handleListClick}
+          onClick={props.toggleDrawer.bind(this, "notebooks", true)}
           style={{ marginBottom: "1rem" }}
         >
           <ListItemIcon>
@@ -220,8 +198,8 @@ export default function NotebookDrawer(props) {
       <Drawer
         className={classes.drawer}
         anchor="left"
-        open={open}
-        onClose={handleDrawerClose}
+        open={props.drawerState.notebooks}
+        onClose={props.toggleDrawer.bind(this, "notebooks", false)}
         classes={{
           paper: classes.drawerPaper
         }}
@@ -236,7 +214,9 @@ export default function NotebookDrawer(props) {
               Notebooks
             </Typography>
 
-            <IconButton onClick={handleDrawerClose}>
+            <IconButton
+              onClick={props.toggleDrawer.bind(this, "notebooks", false)}
+            >
               <ChevronLeft />
             </IconButton>
           </div>

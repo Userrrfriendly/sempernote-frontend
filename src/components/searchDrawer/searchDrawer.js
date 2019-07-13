@@ -31,7 +31,7 @@ import {
 import DispatchContext from "../../context/DispatchContext";
 import StateContext from "../../context/StateContext";
 import { SET_NOTE_FILTER, SET_ACTIVE_NOTE } from "../../context/rootReducer";
-import { SEARCH, NOTEBOOK, NOTES, TAG } from "../../context/activeUItypes";
+import { NOTEBOOK, NOTES, TAG } from "../../context/activeUItypes";
 import { deltaToPlainText } from "../../helpers/helpers";
 
 const drawerWidth = 400;
@@ -88,33 +88,10 @@ const useStyles = makeStyles(theme => ({
 const SearchDrawer = props => {
   const appState = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
-
-  const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [results, setResults] = useState([]);
 
-  //Closes the Drawer if another one is opened
-  useEffect(() => {
-    console.log("tags useEffect");
-    if (props.closed !== SEARCH) {
-      setOpen(false);
-    }
-  }, [props.closed]);
-
   const classes = useStyles();
-
-  function handleDrawerOpen() {
-    setOpen(true);
-  }
-
-  function handleDrawerClose() {
-    setOpen(false);
-  }
-
-  const handleListClick = e => {
-    props.listClick();
-    handleDrawerOpen();
-  };
 
   const handleSearch = e => {
     setSearch(e.target.value);
@@ -129,8 +106,8 @@ const SearchDrawer = props => {
     return plainText;
   };
 
-  const handleTagClick = (resultID, resultType) => {
-    handleDrawerClose();
+  const handleResultItemClick = (resultID, resultType) => {
+    props.toggleDrawer();
     switch (resultType) {
       case TAG:
         dispatch({
@@ -226,7 +203,7 @@ const SearchDrawer = props => {
           className={classes.list_item}
           button
           selected={props.listSelected}
-          onClick={handleListClick}
+          onClick={props.toggleDrawer.bind(this, "search", true)}
           style={{ marginBottom: "1rem" }}
         >
           <ListItemIcon>
@@ -238,8 +215,8 @@ const SearchDrawer = props => {
       <Drawer
         className={classes.drawer}
         anchor="left"
-        open={open}
-        onClose={handleDrawerClose}
+        open={props.drawerState.search}
+        onClose={props.toggleDrawer.bind(this, "search", false)}
         classes={{
           paper: classes.drawerPaper
         }}
@@ -254,7 +231,9 @@ const SearchDrawer = props => {
               Search
             </Typography>
 
-            <IconButton onClick={handleDrawerClose}>
+            <IconButton
+              onClick={props.toggleDrawer.bind(this, "search", false)}
+            >
               <ChevronLeft />
             </IconButton>
           </div>
@@ -297,7 +276,7 @@ const SearchDrawer = props => {
                   <Fragment key={result._id}>
                     <ListItem
                       button
-                      onClick={handleTagClick.bind(
+                      onClick={handleResultItemClick.bind(
                         this,
                         result._id,
                         resultType(result)

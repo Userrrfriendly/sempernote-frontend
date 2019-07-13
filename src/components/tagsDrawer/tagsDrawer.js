@@ -88,17 +88,9 @@ const TagDrawer = props => {
   const appState = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
 
-  const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [tags, setTags] = useState(appState.tags);
 
-  //cleses TAGS DRAWER if another drawer is opened
-  useEffect(() => {
-    console.log("tags useEffect");
-    if (props.closed !== TAG) {
-      setOpen(false);
-    }
-  }, [props.closed]);
   //menu
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorElID, setAnchorElID] = React.useState(null);
@@ -110,7 +102,6 @@ const TagDrawer = props => {
   }
 
   function closeMenu(e) {
-    // console.log(e);
     console.log(anchorElID); //or get the notebook._id that will be modified from state
     setAnchorEl(null);
     setAnchorElID(null);
@@ -131,19 +122,6 @@ const TagDrawer = props => {
   //end menu
   const classes = useStyles();
 
-  function handleDrawerOpen() {
-    setOpen(true);
-  }
-
-  function handleDrawerClose() {
-    setOpen(false);
-  }
-
-  const handleListClick = e => {
-    props.listClick();
-    handleDrawerOpen();
-  };
-
   const handleSearch = e => {
     setSearch(e.target.value);
   };
@@ -153,7 +131,7 @@ const TagDrawer = props => {
   };
 
   const handleTagClick = tagID => {
-    handleDrawerClose();
+    props.toggleDrawer();
     dispatch({
       type: SET_NOTE_FILTER,
       name: TAG,
@@ -163,7 +141,6 @@ const TagDrawer = props => {
 
   useEffect(() => {
     console.log("useEffect from Notebook drawer");
-    // console.log(appState.tags);
     if (!search) {
       setTags(appState.tags);
     } else {
@@ -181,7 +158,7 @@ const TagDrawer = props => {
           className={classes.list_item}
           button
           selected={props.listSelected}
-          onClick={handleListClick}
+          onClick={props.toggleDrawer.bind(this, "tags", true)}
           style={{ marginBottom: "1rem" }}
         >
           <ListItemIcon>
@@ -193,8 +170,8 @@ const TagDrawer = props => {
       <Drawer
         className={classes.drawer}
         anchor="left"
-        open={open}
-        onClose={handleDrawerClose}
+        open={props.drawerState.tags}
+        onClose={props.toggleDrawer.bind(this, "tags", false)}
         classes={{
           paper: classes.drawerPaper
         }}
@@ -209,7 +186,7 @@ const TagDrawer = props => {
               TAGS
             </Typography>
 
-            <IconButton onClick={handleDrawerClose}>
+            <IconButton onClick={props.toggleDrawer.bind(this, "tags", false)}>
               <ChevronLeft />
             </IconButton>
           </div>

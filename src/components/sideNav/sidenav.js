@@ -9,14 +9,7 @@ import {
 import { SET_NOTE_FILTER } from "../../context/rootReducer";
 import DispatchContext from "../../context/DispatchContext";
 
-import {
-  NOTES,
-  NOTEBOOK,
-  FAVORITES,
-  TAG,
-  TRASH,
-  SEARCH
-} from "../../context/activeUItypes";
+import { NOTES } from "../../context/activeUItypes";
 
 import CreateTagIcon from "../svgCreateTag/svgCreateTag";
 import NotebookDrawer from "../notebookDrawer/notebookDrawer";
@@ -47,38 +40,21 @@ const useStyles = makeStyles(theme => ({
 
 const SideNav = props => {
   const classes = useStyles();
-  const [selectedIndex, setSelectedIndex] = React.useState(NOTES);
-  const [openDrawer, setOpenDrawer] = React.useState("");
+
   const dispatch = useContext(DispatchContext);
 
-  function handleListItemClick(event, index) {
-    closeDrawers(index);
-    setSelectedIndex(index);
-    index === NOTES &&
-      dispatch({
-        type: SET_NOTE_FILTER,
-        name: NOTES
-      });
-  }
-
-  const closeDrawers = openDrawer => {
-    setOpenDrawer(openDrawer);
-  };
-
-  const openCreateNoteModal = async () => {
-    //why async/await? beacause the drawer needs to close before the modal opens
-    //otherwise the focus stays on sidenav (conflic between react-modal and materialUI drawer which is also a modal)
-    await closeDrawers("");
+  const openCreateNoteModal = () => {
+    props.toggleDrawer();
     props.openCreateNoteModal();
   };
 
-  const openCreateNotebook = async () => {
-    await closeDrawers("");
+  const openCreateNotebook = () => {
+    props.toggleDrawer();
     props.openCreateNotebookModal();
   };
 
-  const openCreateTag = async () => {
-    await closeDrawers("");
+  const openCreateTag = () => {
+    props.toggleDrawer();
     props.openCreateTagModal();
   };
 
@@ -90,9 +66,7 @@ const SideNav = props => {
             style={{ marginTop: "2rem" }}
             className={classes.list_item}
             button
-            selected={selectedIndex === 0}
             onClick={openCreateNoteModal}
-            // onClick={event => handleListItemClick(event, 0)}
           >
             <ListItemIcon>
               <NoteAddRounded />
@@ -104,8 +78,6 @@ const SideNav = props => {
           <ListItem
             className={classes.list_item}
             button
-            selected={selectedIndex === 1}
-            // onClick={props.openCreateNotebookModal}
             onClick={openCreateNotebook}
           >
             <ListItemIcon>
@@ -118,7 +90,6 @@ const SideNav = props => {
           <ListItem
             className={classes.list_item}
             button
-            selected={selectedIndex === 2}
             onClick={openCreateTag}
           >
             <ListItemIcon>
@@ -131,23 +102,26 @@ const SideNav = props => {
         {/* </List>
       <List component="nav"> */}
         <SearchDrawer
-          listSelected={selectedIndex === SEARCH}
-          listClick={event => handleListItemClick(event, SEARCH)}
-          closed={openDrawer}
+          toggleDrawer={props.toggleDrawer}
+          drawerState={props.drawerState}
         />
 
         <FavoritesDrawer
-          listSelected={selectedIndex === FAVORITES}
-          listClick={event => handleListItemClick(event, FAVORITES)}
-          closed={openDrawer}
+          toggleDrawer={props.toggleDrawer}
+          drawerState={props.drawerState}
         />
 
-        <Tooltip title="Notes" placement="right">
+        <Tooltip title="All Notes" placement="right">
           <ListItem
             className={classes.list_item}
             button
-            selected={selectedIndex === NOTES}
-            onClick={event => handleListItemClick(event, NOTES)}
+            onClick={() => {
+              dispatch({
+                type: SET_NOTE_FILTER,
+                name: NOTES
+              });
+              props.toggleDrawer();
+            }}
           >
             <ListItemIcon>
               <DescriptionRounded />
@@ -156,21 +130,18 @@ const SideNav = props => {
         </Tooltip>
 
         <NotebookDrawer
-          listSelected={selectedIndex === NOTEBOOK}
-          listClick={event => handleListItemClick(event, NOTEBOOK)}
-          closed={openDrawer}
+          toggleDrawer={props.toggleDrawer}
+          drawerState={props.drawerState}
         />
 
         <TagsDrawer
-          listSelected={selectedIndex === TAG}
-          listClick={event => handleListItemClick(event, TAG)}
-          closed={openDrawer}
+          toggleDrawer={props.toggleDrawer}
+          drawerState={props.drawerState}
         />
 
         <TrashDrawer
-          listSelected={selectedIndex === TRASH}
-          listClick={event => handleListItemClick(event, TRASH)}
-          closed={openDrawer}
+          toggleDrawer={props.toggleDrawer}
+          drawerState={props.drawerState}
         />
       </List>
     </div>

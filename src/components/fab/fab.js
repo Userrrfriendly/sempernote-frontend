@@ -1,17 +1,13 @@
 import React from "react";
 import PropTypes from "prop-types";
-// import Context from "../../context/context";
 import { withStyles } from "@material-ui/core/styles";
-// import Button from "@material-ui/core/Button";
 import SpeedDial from "@material-ui/lab/SpeedDial";
 import SpeedDialIcon from "@material-ui/lab/SpeedDialIcon";
 import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
-// import DeleteIcon from "@material-ui/icons/Delete";
 import {
   LibraryAddRounded,
   NoteAddRounded,
   StarRounded,
-  // DescriptionRounded,
   LibraryBooksRounded,
   StyleRounded
 } from "@material-ui/icons";
@@ -50,12 +46,22 @@ class SpeedDialTooltipOpen extends React.Component {
       name: "Create Tag",
       callback: this.props.createTag
     },
-    { icon: <StarRounded />, name: "Favorites" },
-    { icon: <LibraryBooksRounded />, name: "Notebooks" },
-    { icon: <StyleRounded />, name: "Tags" }
+    {
+      icon: <StarRounded />,
+      name: "Favorites",
+      callback: this.props.toggleDrawer.bind(this, "favorites", true)
+    },
+    {
+      icon: <LibraryBooksRounded />,
+      name: "Notebooks",
+      callback: this.props.toggleDrawer.bind(this, "notebooks", true)
+    },
+    {
+      icon: <StyleRounded />,
+      name: "Tags",
+      callback: this.props.toggleDrawer.bind(this, "tags", true)
+    }
   ];
-
-  // static contextType = Context;
 
   handleVisibility = () => {
     this.setState(state => ({
