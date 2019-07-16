@@ -11,25 +11,25 @@ import {
   Button
 } from "@material-ui/core";
 
-import { notebookDeleteReq } from "../../requests/requests";
-import { DELETE_NOTEBOOK } from "../../context/rootReducer";
+import { trashNoteReq } from "../../requests/requests";
+import { TRASH_NOTE } from "../../context/rootReducer";
 
 export default function DeleteNotebook(props) {
   const appState = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
+
   const handleDelete = () => {
+    // console.log(props.note);
     props.close();
-    notebookDeleteReq(props.notebook._id, appState.token).then(r => {
+    trashNoteReq(props.note, appState.token).then(r => {
       if (r && r.name === "Error") {
         console.log("failed to Delete!");
         console.log(r.message);
-      } else {
-        dispatch({
-          type: DELETE_NOTEBOOK,
-          _id: r._id
-        });
       }
-      console.log(r);
+    });
+    dispatch({
+      type: TRASH_NOTE,
+      note: props.note
     });
   };
 
@@ -41,12 +41,11 @@ export default function DeleteNotebook(props) {
         aria-labelledby="form-dialog-title"
         style={{ minWidth: "450px" }}
       >
-        <DialogTitle id="form-dialog-title">Delete Notebook</DialogTitle>
+        <DialogTitle id="form-dialog-title">Delete Note</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete notebook "
-            {props.notebook ? props.notebook.name + '" notebook? ' : ""}" All
-            notes inside it will be moved to thrash!"
+            Are you sure you want to move note "
+            {props.note ? props.note.title : ""}" to thrash?
           </DialogContentText>
         </DialogContent>
         <DialogActions>

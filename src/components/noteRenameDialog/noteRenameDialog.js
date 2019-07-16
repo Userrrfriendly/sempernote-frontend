@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
-import Context from "../../context/context";
+import StateContext from "../../context/StateContext";
+import DispatchContext from "../../context/DispatchContext";
 import {
   DialogTitle,
   DialogContentText,
@@ -9,11 +10,14 @@ import {
   TextField,
   Button
 } from "@material-ui/core";
+import { RENAME_NOTE } from "../../context/rootReducer";
+import { renameNoteReq } from "../../requests/requests";
 
 export default function RenameNoteDialog(props) {
   const [value, setValue] = useState("");
   const [error, setError] = useState(false);
-  const context = useContext(Context);
+  const appState = useContext(StateContext);
+  const dispatch = useContext(DispatchContext);
 
   useEffect(() => {
     setValue(props.note ? props.note.title : "");
@@ -33,7 +37,7 @@ export default function RenameNoteDialog(props) {
     if (value.length === 0) {
       setError("Note title must be at least one character long");
     } else {
-      const existingNotes = context.notes.reduce(
+      const existingNotes = appState.notes.reduce(
         (accumulator, currentValue) => {
           accumulator.push(currentValue.title.toLowerCase());
           return accumulator;
@@ -43,8 +47,16 @@ export default function RenameNoteDialog(props) {
       if (existingNotes.includes(value.toLocaleLowerCase())) {
         setError("A note with the same title already exists!");
       } else {
+        console.log(props.close());
+        console.log(props.open);
         props.close();
-        context.renameNote(props.note._id, value);
+        dispatch({
+          type: RENAME_NOTE,
+          _id: props.note._id,
+          newTitle: value
+        });
+        renameNoteReq(props.note._id, value, appState.token);
+
         setError(false);
       }
     }

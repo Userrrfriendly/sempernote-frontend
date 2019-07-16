@@ -188,10 +188,8 @@ const Main = props => {
               createNote={openCreateNoteModal}
               createNotebook={openCreateNotebookModal}
               createTag={openCreateTagModal}
-              // triggerDrawer={handleDrawer}
               toggleDrawer={toggleDrawer}
             />
-            // <div>fab</div>
           )}
         />
         <div

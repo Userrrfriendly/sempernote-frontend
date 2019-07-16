@@ -24,7 +24,8 @@ import {
   unAssignTag,
   noteFavoriteTrue,
   noteFavoriteFalse,
-  trashNote
+  trashNote,
+  renameNote
 } from "../helpers/graphQLrequests";
 
 const url = "http://localhost:8000/graphql";
@@ -250,7 +251,7 @@ export function assignTagReq(tagID, noteID, token) {
     });
 }
 
-/***UNASSIGNTAG TO NOTE ***/
+/***UNASSIGN TAG TO NOTE ***/
 export function unAssignTagReq(tagID, noteID, token) {
   const requestBody = JSON.stringify({
     query: unAssignTag(tagID, noteID)
@@ -545,7 +546,35 @@ export function noteFavoriteFalseReq(note, token) {
       console.log(responseNote);
       return { responseNote };
     })
+    .catch(err => {
+      console.log(err);
+      return err;
+    });
+}
 
+/** RENAME NOTE**/
+export function renameNoteReq(noteID, newTitle, token) {
+  const auth = "Bearer " + token;
+  const requestBody = JSON.stringify({
+    query: renameNote(noteID, newTitle)
+  });
+
+  return fetch(url, {
+    ...options,
+    body: requestBody,
+    headers: { ...options.headers, Authorization: auth }
+  })
+    .then(res => {
+      if (res.status !== 200 && res.status !== 201) {
+        throw new Error("renameNote Request Failed!");
+      }
+      return res.json();
+    })
+    .then(r => {
+      const responseNote = r.data.renameNote;
+      // console.log(responseNote);
+      return { responseNote };
+    })
     .catch(err => {
       console.log(err);
       return err;

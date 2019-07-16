@@ -1,6 +1,6 @@
 **_ AUTH SCREEN _**
 
-- Sign Up should display info if user was created or an error occured (user created successfully, etc)
+- Sign Up should display info/TOAST if user was created or an error occured (user created successfully, etc)
 - Nice2Have: needs more than just a logIn/SignUp (halfPage Stylish Side with bla bla about the app maybe? )
 
 **_ EDITOR _**
@@ -23,8 +23,6 @@
 
 **_ SIDENAV ITEMS _**
 
-- When a sideNav item is clicked it is selected but when you click out it stays selected even if it didn't do anything(
-- click search, click away -> search remains selected) 
 # Search
 
 - Nice2have: Highlighted search result text (either in result name or the body text in case of note deep search)
@@ -42,8 +40,8 @@
 
 # Notebooks:
 
-- Delete Default Notebook -> should trigger a Toast telling the user that the default notebook can't be deleted
-- On the front show warning when the notebook exceeds max-length (max 30-40 chars)
+- Nice2Have:Delete Default Notebook -> should trigger a Toast telling the user that the default notebook can't be deleted
+- Nice2Have:On the front show warning when the notebook exceeds max-length (max 30-40 chars)
 
 # Tags:
 
@@ -81,9 +79,6 @@
 
 - FetchUserData doesn't need authentication?!?! srsly!?
 - implement defaultNotebook on the front end
-- ChangeNotebook (note goes from notebook A to notebook B) \*\*\* ASK JS13 ABOUT HOW IT CAN BE DONE BETTER
-- Research populate i think you need to delete it from your code (at least in note)
-- Note
 - BACKEND DeleteNote should target only notes in TrashNotebook
 - HardDelete
 - - - Reset Password/Send Email Validation/Security Questions
@@ -91,8 +86,6 @@
 **_ BUGS _**
 
 - create a new note/notebook/tag edit note add the new tag -> can trigger bug where the tag is not shown in select
-- when moving a note to a different notebook upDatedAt is modified but the sorting doesnt change in AppBar
--
 - - edit a note and quickpress trash --> this will trigger two posts:
 - \*1)update notebody 2)moveNotetotrash, since moveNoteToTrash is fired instantly the trashed note will not have the last edits
 - \*but the note will stay in state with the edit in state.notes.
@@ -115,12 +108,10 @@
 
 * -rename activeUITypes (CONSTANT)
 * !@! REFACTOR NOTELISTS! needs to have star/delete/info button either static or appear on hover
-* The way you close previously openned modals if another one is clicked is not great... better think of smth better
 
 ## Nice2Have:
 
 - Login page enable 'remember me' commented out checkbox, along with its functionality
-
 - for TAGS SELECT could use Material-UI example with chips https://material-ui.com/components/autocomplete/
   (it still uses react-select under the hood)
 - create a theme for the app global styles / create a dark theme
@@ -140,26 +131,23 @@
 
 - Create Documentation
 - https://github.com/material-components/material-components-web/issues/1912
-- https://material-ui.com/api/typography/ -> nowrap
-- godbless \_lodash https://lodash.com/docs/4.17.11#truncate
-- https://stackoverflow.com/questions/1199352/smart-way-to-shorten-long-strings-with-javascript
 
 ## Sprint
 
 - Rename Note... should wait for a big refactor
-- Delete Notebook
 - -WHY DO I HAVE BODY ON CREATE NOTE?
-
-- use IMMER !?
 
 - SearchDrawer has no implementation for filters at the app bar (setNoteFilter)
 - renameNotebook should probably be reveresed (first rename then send request) also its a waste of bandwith since it returns the whole notebook but it could return just ID and the modified notebook.name
-- edit a note and before the autosave deleteit -> returns 2 nots one in trash one alive
+- edit a note and before the autosave deleteit -> returns 2 nots one in trash one alive -->
+  - autosave.flush().then->(delete)
 - (DELETENOTEBOOK DIALOG) open note x that is in notebook y, delete notebook y --> app crashes (simply add the correct filter at state to fix?)
 - (TAGS DRAWER) it seems that anchorElID is unused -> const [anchorElID, setAnchorElID] = React.useState(null);
 - (TRASH DRAWER) same as above
 - (noteRename DIALOG) seems to be unused?? it needs to be refactored to reducers... and implemented
 - no implementation to delete TAGS!
-
-
-- (*Responsiveness*)Could I save the screen size in the state and then render things based on screen size?
+- UPDATE LODASH IN PACKAGE.JSON also on backend to
+- long note names hide the morevertical icon at the notelist
+- when favorite note is active always display it at the app bar
+- rename activeNote from the appBar
+- (_Responsiveness_)Could I save the screen size in the state and then render things based on screen size?

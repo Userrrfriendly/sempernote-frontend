@@ -40,15 +40,17 @@ import { find as _find } from "lodash";
 
 import {
   noteFavoriteFalseReq,
-  noteFavoriteTrueReq,
-  trashNoteReq
+  noteFavoriteTrueReq
+  // trashNoteReq
 } from "../../requests/requests";
 import {
   NOTE_ADD_FAVORITE,
   NOTE_REMOVE_FAVORITE,
-  TRASH_NOTE,
+  // TRASH_NOTE,
   SET_ACTIVE_NOTE
 } from "../../context/rootReducer";
+import DeleteNoteDialog from "../deleteNoteDialog/deleteNoteDialog";
+import RenameNoteDialog from "../noteRenameDialog/noteRenameDialog";
 
 const useStyles = makeStyles({
   root: {
@@ -73,11 +75,21 @@ const AdapterLink = React.forwardRef((props, ref) => (
 ));
 
 const MainAppBar = props => {
+  const appState = useContext(StateContext);
+  const dispatch = useContext(DispatchContext);
   const [displayNotes, setdisplayNotes] = useState(null);
   const [title, setTitle] = useState(null);
   const [noteNumber, setNoteNumber] = useState(null);
-  const appState = useContext(StateContext);
-  const dispatch = useContext(DispatchContext);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteDialogTargetNote, setDeleteDialogTargetNote] = useState(false);
+  function openDeleteDialog(note) {
+    setDeleteDialogTargetNote(note);
+    setDeleteDialogOpen(true);
+  }
+
+  function deleteDialogClose() {
+    setDeleteDialogOpen(false);
+  }
 
   const classes = useStyles();
   const theme = useTheme();
@@ -85,6 +97,17 @@ const MainAppBar = props => {
   let noteListStyle = {};
   if (appState.activeNote) noteListStyle.flexBasis = "250px";
   if (smallScreen && appState.activeNote) noteListStyle.display = "none";
+
+  const [renameNoteDialogOpen, setRenameNoteDialogOpen] = useState(false);
+  const [renameDialogTargetNote, setRenameDialogTargetNote] = useState(false);
+  function openRenameDialog(note) {
+    setRenameDialogTargetNote(note);
+    setRenameNoteDialogOpen(true);
+  }
+
+  function closeRenameDialog() {
+    setRenameNoteDialogOpen(false);
+  }
 
   const noteToggleFavorite = () => {
     if (appState.activeNote.favorite) {
@@ -102,17 +125,8 @@ const MainAppBar = props => {
     }
   };
 
-  const moveToTrash = () => {
-    trashNoteReq(appState.activeNote, appState.token);
-    dispatch({
-      type: TRASH_NOTE,
-      note: appState.activeNote
-    });
-  };
-
   useEffect(() => {
     console.log("Appbar did update");
-    // console.log(appState.noteFilter.name);
     let notesToRender;
     switch (appState.noteFilter.name) {
       case NOTES:
@@ -137,6 +151,8 @@ const MainAppBar = props => {
                   note._id,
                   note.notebook._id
                 )}
+                openDeleteDialog={openDeleteDialog}
+                openRenameDialog={openRenameDialog}
               />
             );
           })
@@ -174,13 +190,13 @@ const MainAppBar = props => {
                     note._id,
                     note.notebook._id
                   )}
+                  openDeleteDialog={openDeleteDialog}
                 />
               );
             })
         ) : (
           <LinearProgress />
         );
-        // console.log(appState.noteFilter);
         setNoteNumber(notesToRender ? notesToRender.length : 0);
         setdisplayNotes(notesToRender);
         break;
@@ -226,7 +242,6 @@ const MainAppBar = props => {
         ) : (
           <LinearProgress />
         );
-        // console.log(appState.noteFilter);
         setNoteNumber(notesToRender ? notesToRender.length : 0);
         setdisplayNotes(notesToRender);
         break;
@@ -258,13 +273,13 @@ const MainAppBar = props => {
                     note._id,
                     note.notebook._id
                   )}
+                  openDeleteDialog={openDeleteDialog}
                 />
               );
             })
         ) : (
           <LinearProgress />
         );
-        // console.log(appState.noteFilter);
         setNoteNumber(notesToRender ? notesToRender.length : 0);
         setdisplayNotes(notesToRender);
         break;
@@ -351,22 +366,11 @@ const MainAppBar = props => {
                     color="inherit"
                     component={AdapterLink}
                     to="/main/"
-                    onClick={moveToTrash}
+                    onClick={openDeleteDialog.bind(this, appState.activeNote)}
                   >
                     <DeleteRounded />
                   </IconButton>
                 </Tooltip>
-
-                {/* <Tooltip title="Settings">
-                  <IconButton
-                    // aria-owns={open ? 'menu-appbar' : undefined}
-                    aria-haspopup="true"
-                    // onClick={handleMenu}
-                    color="inherit"
-                  >
-                    <MoreVertRounded />
-                  </IconButton>
-                </Tooltip> */}
               </>
             )}
           </Toolbar>
@@ -381,6 +385,16 @@ const MainAppBar = props => {
       >
         {displayNotes}
       </div>
+      <DeleteNoteDialog
+        note={deleteDialogTargetNote}
+        open={deleteDialogOpen}
+        close={deleteDialogClose}
+      />
+      <RenameNoteDialog
+        note={renameDialogTargetNote}
+        open={renameNoteDialogOpen}
+        close={closeRenameDialog}
+      />
     </>
   );
 };

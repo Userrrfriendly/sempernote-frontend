@@ -26,6 +26,7 @@ export const UNASSIGN_TAG = "UNASSIGN_TAG";
 export const NOTE_REMOVE_FAVORITE = "NOTE_REMOVE_FAVORITE";
 export const NOTE_ADD_FAVORITE = "NOTE_ADD_FAVORITE";
 export const TRASH_NOTE = "TRASH_NOTE";
+export const RENAME_NOTE = "RENAME_NOTE";
 
 const logIn = (token, userId, state) => {
   return { ...state, token: token, userId: userId };
@@ -262,6 +263,21 @@ const trashNote = (action, state) => {
   return { ...state, tags, activeNote, notes, trash };
 };
 
+const renameNote = (action, state) => {
+  const updatedNote = state.notes.filter(note => note._id === action._id)[0];
+  updatedNote.title = action.newTitle;
+  // console.log(updatedNote);
+  const activeNote =
+    state.activeNote && state.activeNote._id === action._id
+      ? updatedNote
+      : state.activeNote;
+  const updatedNotes = state.notes.map(note =>
+    note._id === action._id ? updatedNote : note
+  );
+
+  return { ...state, activeNote, notes: updatedNotes };
+};
+
 /** TAGS **/
 const createTag = (action, state) => {
   const tags = [...state.tags];
@@ -379,6 +395,9 @@ export const rootReducer = (state, action) => {
     case TRASH_NOTE:
       console.log(action);
       return trashNote(action, state);
+    case RENAME_NOTE:
+      console.log(action);
+      return renameNote(action, state);
     default:
       return state;
   }
