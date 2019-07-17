@@ -81,61 +81,64 @@ const MainAppBar = props => {
   useEffect(() => {
     console.log("Appbar did update");
 
-    switch (appState.noteFilter.name) {
-      case NOTES:
-        setTitle(appState.activeNote ? appState.activeNote.title : "ALL NOTES");
-        setNoteNumber(appState.notes ? appState.notes.length : 0);
-
-        break;
-      case NOTEBOOK:
-        setTitle(
-          'Notebook: "' +
-            appState.notebooks.filter(
-              notebook => notebook._id === appState.noteFilter.options
-            )[0].name +
-            '"'
-        );
-        const notesInNotebook = appState.notes
-          ? appState.notes
-              .filter(note => note.notebook._id === appState.noteFilter.options)
-              .map(note => note)
-          : null;
-
-        setNoteNumber(notesInNotebook ? notesInNotebook.length : 0);
-        break;
-      case TAG:
-        setTitle(
-          'Notes tagged with: "' +
-            appState.tags.filter(
-              tag => tag._id === appState.noteFilter.options
-            )[0].tagname +
-            '"'
-        );
-        const notesInTags = appState.notes
-          ? appState.notes.filter(note =>
-              _find(note.tags, { _id: appState.noteFilter.options })
-            )
-          : null;
-
-        setNoteNumber(notesInTags ? notesInTags.length : 0);
-        break;
-      case TRASH:
-        setTitle(
-          'Notebook: "' +
-            appState.notebooks.filter(
-              notebook => notebook._id === appState.noteFilter.options
-            )[0].name +
-            '"'
-        );
-        const notesInTrash = appState.notes
-          ? appState.notes.filter(
-              note => note.notebook._id === appState.noteFilter.options
-            )
-          : null;
-        setNoteNumber(notesInTrash ? notesInTrash.length : 0);
-        break;
-      default:
-        throw new Error("Invalid argument in activeUI");
+    if (appState.activeNote) {
+      setTitle(appState.activeNote.title);
+    } else {
+      switch (appState.noteFilter.name) {
+        case NOTES:
+          setTitle("ALL NOTES");
+          setNoteNumber(appState.notes ? appState.notes.length : 0);
+          break;
+        case NOTEBOOK:
+          setTitle(
+            'Notebook: "' +
+              appState.notebooks.filter(
+                notebook => notebook._id === appState.noteFilter.options
+              )[0].name +
+              '"'
+          );
+          const notesInNotebook = appState.notes
+            ? appState.notes
+                .filter(
+                  note => note.notebook._id === appState.noteFilter.options
+                )
+                .map(note => note)
+            : null;
+          setNoteNumber(notesInNotebook ? notesInNotebook.length : 0);
+          break;
+        case TAG:
+          setTitle(
+            'Notes tagged with: "' +
+              appState.tags.filter(
+                tag => tag._id === appState.noteFilter.options
+              )[0].tagname +
+              '"'
+          );
+          const notesInTags = appState.notes
+            ? appState.notes.filter(note =>
+                _find(note.tags, { _id: appState.noteFilter.options })
+              )
+            : null;
+          setNoteNumber(notesInTags ? notesInTags.length : 0);
+          break;
+        case TRASH:
+          setTitle(
+            'Notebook: "' +
+              appState.notebooks.filter(
+                notebook => notebook._id === appState.noteFilter.options
+              )[0].name +
+              '"'
+          );
+          const notesInTrash = appState.notes
+            ? appState.notes.filter(
+                note => note.notebook._id === appState.noteFilter.options
+              )
+            : null;
+          setNoteNumber(notesInTrash ? notesInTrash.length : 0);
+          break;
+        default:
+          throw new Error("Invalid argument in activeUI");
+      }
     }
   }, [
     appState.notes,

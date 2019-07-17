@@ -17,9 +17,6 @@
 - SaveNote Button Animation when the note is beeing saved
 - Maybe a Toast notification when the note is moved/saved/tagged/starred
 - Nice2Have: create a tag on the fly, straight from the react-select in the appBar
-- list of notes should be decoupled from the appbar
-
-* BUG: When the drawer is opened(notebooks/tags/etc) and then a note is expanded the appBar title doesn't update to the note name
 
 **_ SIDENAV ITEMS _**
 
@@ -63,7 +60,6 @@
 - transformTag is mistyped... tranformTag or smth
 - Hard DeletNote && DeleteNotebook
 - Password Length and Validation.... maybe this should be handled at front end?
-- clean some of the resolvers & other dead code
 
 - Nice2have:
   - Password verification with email
@@ -73,7 +69,7 @@
   - data Encryption on the backend
   - Set Reminders
   - Text Encrytion on the front end
-  - \*PWD
+  - PWD features
 
 # Random
 
@@ -137,7 +133,6 @@
 - Rename Note... should wait for a big refactor
 - -WHY DO I HAVE BODY ON CREATE NOTE?
 
-- SearchDrawer has no implementation for filters at the app bar (setNoteFilter)
 - renameNotebook should probably be reveresed (first rename then send request) also its a waste of bandwith since it returns the whole notebook but it could return just ID and the modified notebook.name
 - edit a note and before the autosave deleteit -> returns 2 nots one in trash one alive -->
   - autosave.flush().then->(delete)
@@ -148,6 +143,5 @@
 - no implementation to delete TAGS!
 - UPDATE LODASH IN PACKAGE.JSON also on backend to
 - long note names hide the morevertical icon at the notelist
-- when favorite note is active always display it at the app bar
 - rename activeNote from the appBar
 - (_Responsiveness_)Could I save the screen size in the state and then render things based on screen size?
