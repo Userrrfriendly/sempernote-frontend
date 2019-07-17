@@ -7,9 +7,9 @@ import { SET_ACTIVE_NOTE, UPDATE_NOTE_BODY } from "../../context/rootReducer";
 import { updateNoteBodyReq } from "../../requests/requests";
 
 import ExpandedNote from "../editor/expandedNote";
-import NotebookModal from "../createNotebookModal/notebookModal";
-import NoteModal from "../createNoteModal/noteModal";
-import TagModal from "../createTagModal/tagModal";
+import CreateNotebookModal from "../createNotebookModal/createNotebookModal";
+import CreateNoteModal from "../createNoteModal/createNoteModal";
+import CreateTagModal from "../createTagModal/createTagModal";
 import SideNav from "../sideNav/sidenav";
 import Fab from "../fab/fab";
 
@@ -19,13 +19,15 @@ import { useTheme } from "@material-ui/core/styles";
 import MainAppBar from "../mainAppBar/mainAppBar";
 import Paper from "../paper/paper";
 import { makeStyles } from "@material-ui/core/styles";
+import DeleteNoteDialog from "../deleteNoteDialog/deleteNoteDialog";
+import RenameNoteDialog from "../noteRenameDialog/noteRenameDialog";
+import NoteList from "../noteList/noteList";
 
 const useStyles = makeStyles(theme => ({
   main_section: {
     backgroundColor: "#fff",
     width: "100%",
     minHeight: "calc(100vh - 3rem)",
-    /* display: flex; */
     flexFlow: "column",
     overflow: "hidden",
     direction: "row",
@@ -33,8 +35,6 @@ const useStyles = makeStyles(theme => ({
     alignItems: "flex-start"
   },
   main_subcontainer: {
-    /* width: 100%;
-    display: flex; */
     width: "60%",
     maxWidth: "100%",
     flexGrow: "1"
@@ -45,8 +45,34 @@ const Main = props => {
   const [noteModal, setNoteModal] = useState(false);
   const [notebookModal, setNotebookModal] = useState(false);
   const [tagModal, setTagModal] = useState(false);
+  const appState = useContext(StateContext);
+  const dispatch = useContext(DispatchContext);
+  const theme = useTheme();
+  const classes = useStyles();
+  const matches = useMediaQuery(theme.breakpoints.down("md"));
 
-  /**Sidenav Drawers */
+  /**DELETE/RENAME NOTE DIALOGS */
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteDialogTargetNote, setDeleteDialogTargetNote] = useState(false);
+  function openDeleteDialog(note) {
+    setDeleteDialogTargetNote(note);
+    setDeleteDialogOpen(true);
+  }
+  function deleteDialogClose() {
+    setDeleteDialogOpen(false);
+  }
+
+  const [renameNoteDialogOpen, setRenameNoteDialogOpen] = useState(false);
+  const [renameDialogTargetNote, setRenameDialogTargetNote] = useState(false);
+  function openRenameDialog(note) {
+    setRenameDialogTargetNote(note);
+    setRenameNoteDialogOpen(true);
+  }
+  function closeRenameDialog() {
+    setRenameNoteDialogOpen(false);
+  }
+
+  /**SIDENAV DRAWERS */
   const [drawerState, setDrawerState] = useState({
     tags: false,
     favorites: false,
@@ -56,7 +82,6 @@ const Main = props => {
   });
 
   const toggleDrawer = (drawer, open) => {
-    // console.log(`toggleDrawer props: drawer= ${drawer} open= ${open}`);
     if (!drawer) {
       //close all drawers
       setDrawerState({
@@ -67,7 +92,7 @@ const Main = props => {
         search: false
       });
     } else {
-      //close any open drawer and toggle the one that was targeted
+      //close all open drawers and open the one that was targeted
       setDrawerState({
         tags: false,
         favorites: false,
@@ -78,21 +103,6 @@ const Main = props => {
       });
     }
   };
-
-  const theme = useTheme();
-  const classes = useStyles();
-  const matches = useMediaQuery(theme.breakpoints.down("md"));
-
-  // const context = useContext(Context);
-  const appState = useContext(StateContext);
-  const dispatch = useContext(DispatchContext);
-
-  /**SideNav Drawers LEGACY*/
-  //handleDrawer makes sure that only one drawer is opened at a time (it either closes them all || all but one )
-  // const handleDrawer = openDrawer => {
-  //   console.log(openDrawer);
-  //   setOpenDrawer(openDrawer);
-  // };
 
   /**NOTEBOOK Modal */
   const openCreateNotebookModal = () => {
@@ -125,7 +135,6 @@ const Main = props => {
     console.log(
       `note with ID ${noteId} and notebookID: ${notebookId} expanded`
     );
-    // context.setActiveNote(noteId);
     dispatch({
       type: SET_ACTIVE_NOTE,
       _id: noteId
@@ -135,7 +144,7 @@ const Main = props => {
     props.history.push(path);
   };
 
-  //Update noteBody - defined here because and passed as props to <ExpandedNote/> is a classBased component
+  //Update noteBody - defined here, and passed as props to <ExpandedNote/>  which is a class component and cant use hooks
   const updateNoteBody = (noteId, currentDelta) => {
     updateNoteBodyReq(noteId, currentDelta, appState.token).then(res => {
       dispatch({
@@ -148,11 +157,8 @@ const Main = props => {
   useEffect(() => {
     console.log("useEffect triggered in <MAIN>");
     //when the user presses the back button the activeNote is set to null thus hidding the editor
-    //probably will need more solid logic in the future but this will do for now
-
     window.onpopstate = e => {
       //onpopstate detects if the back/forward button was pressed
-      // console.log(props.location.pathname);
       if (props.history.location.pathname === "/main/" && appState.activeNote) {
         dispatch({
           type: SET_ACTIVE_NOTE,
@@ -163,7 +169,6 @@ const Main = props => {
     };
   }, [props.history.location.pathname, appState.activeNote, dispatch]);
 
-  // console.log(matches);
   return (
     <main className={classes.main_section}>
       <Hidden mdDown>
@@ -171,15 +176,22 @@ const Main = props => {
           openCreateNoteModal={openCreateNoteModal}
           openCreateNotebookModal={openCreateNotebookModal}
           openCreateTagModal={openCreateTagModal}
-          // openDrawer={openDrawer}
-          // handleDrawer={handleDrawer}
           drawerState={drawerState}
           toggleDrawer={toggleDrawer}
         />
       </Hidden>
 
       <Paper style={matches ? { marginLeft: 0 } : { marginLeft: "60px" }}>
-        <MainAppBar expandNote={expandNote} />
+        <MainAppBar
+          expandNote={expandNote}
+          openDeleteDialog={openDeleteDialog}
+          openRenameDialog={openRenameDialog}
+        />
+        <NoteList
+          openDeleteDialog={openDeleteDialog}
+          openRenameDialog={openRenameDialog}
+          expandNote={expandNote}
+        />
         <Route
           exact
           path="/main/"
@@ -192,10 +204,7 @@ const Main = props => {
             />
           )}
         />
-        <div
-          className={classes.main_subcontainer}
-          // className="main-subcontainer"
-        >
+        <div className={classes.main_subcontainer}>
           <Switch>
             <Route
               exact
@@ -213,9 +222,19 @@ const Main = props => {
             />
           </Switch>
         </div>
+        <DeleteNoteDialog
+          note={deleteDialogTargetNote}
+          open={deleteDialogOpen}
+          close={deleteDialogClose}
+        />
+        <RenameNoteDialog
+          note={renameDialogTargetNote}
+          open={renameNoteDialogOpen}
+          close={closeRenameDialog}
+        />
         {appState.notebooks && (
           <>
-            <NotebookModal
+            <CreateNotebookModal
               notebooks={appState.notebooks}
               token={appState.token}
               openModal={openCreateNotebookModal}
@@ -223,7 +242,7 @@ const Main = props => {
               isOpen={notebookModal}
             />
 
-            <NoteModal
+            <CreateNoteModal
               notes={appState.notes}
               notebooks={appState.notebooks}
               pushNoteToServer={appState.pushNoteToServer}
@@ -232,7 +251,7 @@ const Main = props => {
               isOpen={noteModal}
               token={appState.token}
             />
-            <TagModal
+            <CreateTagModal
               tags={appState.tags}
               token={appState.token}
               openModal={openCreateTagModal}

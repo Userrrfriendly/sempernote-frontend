@@ -1,9 +1,9 @@
 import React, { useState, useContext } from "react";
 import Modal from "react-modal";
 import { Typography, TextField, Button } from "@material-ui/core";
-import { CREATE_NOTEBOOK } from "../../context/rootReducer";
+import { CREATE_TAG } from "../../context/rootReducer";
 import DispatchContext from "../../context/DispatchContext";
-import { createNotebookReq } from "../../requests/requests";
+import { createTagReq } from "../../requests/requests";
 
 const customStyles = {
   content: {
@@ -21,18 +21,18 @@ const customStyles = {
     overflow: "visible",
     borderRadius: "4px"
   },
-  overlay: { zIndex: 1502 }
+  overlay: { zIndex: 1402 }
 };
 
 //required for react-modal
 Modal.setAppElement("#root");
 
-const NotebookModal = props => {
+const CreateTagModal = props => {
   const [state, setState] = useState({ value: "", error: false });
   const dispatch = useContext(DispatchContext);
 
   const onChange = e => {
-    if (e.target.value.length < 50) {
+    if (e.target.value.length < 15) {
       setState({
         value: e.target.value,
         error: false
@@ -42,24 +42,21 @@ const NotebookModal = props => {
 
   const onSubmit = e => {
     e.preventDefault();
-    const existingNotebooks = props.notebooks.reduce(
-      (accumulator, currentValue) => {
-        accumulator.push(currentValue.name.toLowerCase());
-        return accumulator;
-      },
-      []
-    );
+    const existingTags = props.tags.reduce((accumulator, currentValue) => {
+      accumulator.push(currentValue.tagname.toLowerCase());
+      return accumulator;
+    }, []);
     if (
-      existingNotebooks.includes(state.value.toLocaleLowerCase()) ||
+      existingTags.includes(state.value.toLocaleLowerCase()) ||
       state.value === ""
     ) {
       setState({ ...state, error: true });
     } else {
       const updateDB = async () => {
-        createNotebookReq(state.value, props.token).then(res => {
+        createTagReq(state.value, props.token).then(tag => {
           dispatch({
-            type: CREATE_NOTEBOOK,
-            notebook: res
+            type: CREATE_TAG,
+            tag
           });
         });
       };
@@ -81,32 +78,32 @@ const NotebookModal = props => {
         isOpen={props.isOpen}
         onRequestClose={props.closeModal}
         style={customStyles}
-        contentLabel="Create Notebook" //improves accessibility
+        contentLabel="Create Tag" //improves accessibility
       >
         <form onSubmit={onSubmit}>
           <div className="modal-content1">
             <Typography variant="h4" component="h1">
-              Create Notebook
+              Create Tag
             </Typography>
             <div>
               <TextField
                 autoFocus
                 margin="dense"
-                label="Note Title"
+                label="Tag name"
                 type="text"
                 fullWidth
                 value={state.value}
                 onChange={onChange}
-                placeholder="Enter Notebook Name"
+                placeholder="Enter Tag Name"
               />
             </div>
             {state.error && state.value && (
               <p style={{ color: "red" }}>
-                Notebook "{state.value}" already exists!
+                Tag "{state.value}" already exists!
               </p>
             )}
             {state.error && !state.value && (
-              <p style={{ color: "red" }}>Please enter a notebook title</p>
+              <p style={{ color: "red" }}>Please enter a tag name</p>
             )}
           </div>
           <div
@@ -120,7 +117,7 @@ const NotebookModal = props => {
               Cancel
             </Button>
             <Button type="submit" onClick={onSubmit} color="primary">
-              Create Notebook
+              Create Tag
             </Button>
           </div>
         </form>
@@ -129,4 +126,4 @@ const NotebookModal = props => {
   );
 };
 
-export default NotebookModal;
+export default CreateTagModal;

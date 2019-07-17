@@ -46,7 +46,7 @@ const DropdownIndicator = props => {
 //requirement for react-modal
 Modal.setAppElement("#root");
 
-const NoteModal = props => {
+const CreateNoteModal = props => {
   const dispatch = useContext(DispatchContext);
   const [title, setTitle] = useState("");
   const [selectedNotebook, setSelectedNotebook] = useState(null);
@@ -58,13 +58,6 @@ const NoteModal = props => {
 
   useEffect(() => {
     console.log("useEffect from note modal (options || notebooks) changed");
-    //check if a notebook was renamed
-    // options.length !== props.notebooks.length &&
-    //   setOptions(
-    //     props.notebooks.map(notebook => {
-    //       return { value: notebook._id, label: notebook.name };
-    //     })
-    //   );
     setOptions(
       props.notebooks.map(notebook => {
         return { value: notebook._id, label: notebook.name };
@@ -97,7 +90,6 @@ const NoteModal = props => {
     /** IF NOTE WITH THE SAME NAME EXISTS ADD A SUFFIX to the new note
      *(myNote->myNote1, myNote1->myNote2, myNote2->myNote3)
      */
-
     const initialTitle = title ? title : "Untitled Note";
     let index = 1;
     let validatedTitle = initialTitle;
@@ -122,10 +114,10 @@ const NoteModal = props => {
         ...selectNotebook(props.notebooks, selectedNotebook.value)[0]
       }
     };
-    console.log(newNote);
+    // console.log(newNote);
     /**
-     * SetActiveNote(tempNote created on the client)->opens editor
-     * SetActiveNote(actual note as response from server)->opens editor again/rerender
+     * CREATE_NOTE(tempNote created on the client && set as activenote)->opens editor
+     * SYNC_NEW_NOTE(actual note as response from server - pushNoteToServerReq)->opens editor again/rerenders with correct _id
      */
 
     const updateState = async () => {
@@ -214,4 +206,4 @@ const NoteModal = props => {
   );
 };
 
-export default withRouter(NoteModal);
+export default withRouter(CreateNoteModal);
