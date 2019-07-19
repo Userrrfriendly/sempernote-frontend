@@ -129,11 +129,10 @@
 
 * renameNotebook should probably be reveresed (first rename then send request) also its a waste of bandwith since it returns the whole notebook but it could return just ID and the modified notebook.name
 
-* (DELETENOTEBOOK DIALOG) open note x that is in notebook y, delete notebook y --> app crashes (simply add the correct filter at state to fix?)
-* (TAGS DRAWER) it seems that anchorElID is unused -> const [anchorElID, setAnchorElID] = React.useState(null);
-* (TRASH DRAWER) same as above
-* (noteRename DIALOG) seems to be unused?? it needs to be refactored to reducers... and implemented
-* no implementation to delete TAGS!
-* UPDATE LODASH IN PACKAGE.JSON also on backend too
-* long note names hide the morevertical icon at the notelist
-* (_Responsiveness_)Could I save the screen size in the state and then render things based on screen size?
+- (TAGS DRAWER) it seems that anchorElID is unused -> const [anchorElID, setAnchorElID] = React.useState(null);
+- (TRASH DRAWER) same as above
+- (noteRename DIALOG) seems to be unused?? it needs to be refactored to reducers... and implemented
+- no implementation to delete TAGS!
+- UPDATE LODASH IN PACKAGE.JSON also on backend too
+- long note names hide the morevertical icon at the notelist
+- (_Responsiveness_)Could I save the screen size in the state and then render things based on screen size?

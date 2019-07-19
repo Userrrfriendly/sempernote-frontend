@@ -12,7 +12,11 @@ import {
 } from "@material-ui/core";
 
 import { notebookDeleteReq } from "../../requests/requests";
-import { DELETE_NOTEBOOK } from "../../context/rootReducer";
+import {
+  DELETE_NOTEBOOK,
+  SET_ACTIVE_NOTE,
+  SET_NOTE_FILTER
+} from "../../context/rootReducer";
 
 export default function DeleteNotebook(props) {
   const appState = useContext(StateContext);
@@ -24,6 +28,17 @@ export default function DeleteNotebook(props) {
         console.log("failed to Delete!");
         console.log(r.message);
       } else {
+        //if a note from the deleted notebook is opened, a)close it b)set note filter to 'ALL NOTES'
+        if (appState.activeNote.notebook._id === r._id) {
+          dispatch({
+            type: SET_ACTIVE_NOTE,
+            _id: null
+          });
+          dispatch({
+            type: SET_NOTE_FILTER,
+            name: "ALL_NOTES"
+          });
+        }
         dispatch({
           type: DELETE_NOTEBOOK,
           _id: r._id

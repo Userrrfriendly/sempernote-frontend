@@ -93,18 +93,18 @@ const TagDrawer = props => {
 
   //menu
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [anchorElID, setAnchorElID] = React.useState(null);
+  // const [anchorElID, setAnchorElID] = React.useState(null);
 
   function handleNotebookMenuClick(event, id) {
     console.log(id);
-    setAnchorElID(id);
+    // setAnchorElID(id);
     setAnchorEl(event.currentTarget);
   }
 
   function closeMenu(e) {
-    console.log(anchorElID); //or get the notebook._id that will be modified from state
+    // console.log(anchorElID); //or get the notebook._id that will be modified from state
     setAnchorEl(null);
-    setAnchorElID(null);
+    // setAnchorElID(null);
   }
 
   const starTag = (tagID, e) => {
@@ -120,6 +120,7 @@ const TagDrawer = props => {
   };
 
   //end menu
+
   const classes = useStyles();
 
   const handleSearch = e => {
@@ -202,7 +203,6 @@ const TagDrawer = props => {
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton
-                  // edge="end"
                   size="small"
                   aria-label="clear"
                   onClick={clearSearch}
@@ -261,7 +261,6 @@ const TagDrawer = props => {
                           aria-controls="long-menu"
                           aria-haspopup="true"
                           onClick={e => handleNotebookMenuClick(e, tag._id)}
-                          // data-notebookid={notebook._id}
                         >
                           <MoreVert />
                         </IconButton>
