@@ -4,6 +4,12 @@ import Delta from "quill-delta";
 import "./quillSnow.css";
 import { debounce, isEqual } from "lodash";
 
+// const style = {
+//   width: "100%",
+//   boxSizing: "inherit",
+//   color: "red"
+// };
+
 class ExpandedNote extends Component {
   constructor(props) {
     super(props);
@@ -135,11 +141,16 @@ class ExpandedNote extends Component {
 
   render() {
     return (
-      <div ref={this.containerRef} className="editor-container">
-        <div ref={this.editorRef} className="editor z-depth-3" />
+      <>
+        {/* <div className="editor_bar" style={style}>
+          {" "}
+          appbar
+        </div> */}
+        <div ref={this.containerRef} className="editor-container">
+          <div ref={this.editorRef} className="editor z-depth-3" />
 
-        {/* THE BUTTONS ARE USED ONLY IN DEBUGGING  */}
-        {/* <button className="btn" onClick={this.getDelta}>
+          {/* THE BUTTONS ARE USED ONLY IN DEBUGGING  */}
+          {/* <button className="btn" onClick={this.getDelta}>
           Get Delta
         </button>
         <button
@@ -149,7 +160,8 @@ class ExpandedNote extends Component {
         >
           SET Delta
         </button> */}
-      </div>
+        </div>
+      </>
     );
   }
 }

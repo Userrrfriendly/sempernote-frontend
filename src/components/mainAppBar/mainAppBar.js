@@ -9,14 +9,18 @@ import {
   Toolbar,
   Typography,
   IconButton,
-  Tooltip
+  Tooltip,
+  TextField,
+  ClickAwayListener,
+  InputAdornment
 } from "@material-ui/core/";
 import {
   DeleteRounded,
   StarRounded,
   Info,
   SaveRounded,
-  ArrowBack
+  ArrowBack,
+  CheckRounded
 } from "@material-ui/icons";
 import NoteCounter from "./noteCounter";
 import SortMenu from "./sortMenu";
@@ -25,12 +29,14 @@ import SelectTag from "./selectTag";
 import { find as _find } from "lodash";
 import {
   noteFavoriteFalseReq,
-  noteFavoriteTrueReq
+  noteFavoriteTrueReq,
+  renameNoteReq
 } from "../../requests/requests";
 import {
   NOTE_ADD_FAVORITE,
   NOTE_REMOVE_FAVORITE,
-  SET_ACTIVE_NOTE
+  SET_ACTIVE_NOTE,
+  RENAME_NOTE
 } from "../../context/rootReducer";
 
 const useStyles = makeStyles({
@@ -46,6 +52,15 @@ const useStyles = makeStyles({
   },
   title: {
     flexGrow: 1
+  },
+  note_name: {
+    height: "42px",
+    flexGrow: 1,
+    backgroundColor: "#fff"
+    // maxWidth: "450px"
+  },
+  arrow: {
+    marginLeft: "1.5rem"
   }
 });
 
@@ -58,9 +73,46 @@ const AdapterLink = React.forwardRef((props, ref) => (
 const MainAppBar = props => {
   const appState = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
+  //title refers to display title in appBar ('ALL NOTES', 'Notes Tagged as ...',etc)
   const [title, setTitle] = useState(null);
+  //refers to note title displayed in the appbar when a note is opened (activeNote)
+  const [noteTitle, setNoteTitle] = useState(null);
+  //renameNoteOpen refers the input box where the note title can be renamed if a note is expanded (activeNote)
+  const [renameNoteOpen, setRenameNoteOpen] = useState(false);
   const [noteNumber, setNoteNumber] = useState(null);
   const classes = useStyles();
+
+  const updateNoteTitle = () => {
+    if (noteTitle !== appState.activeNote.title) {
+      dispatch({
+        type: RENAME_NOTE,
+        _id: appState.activeNote._id,
+        newTitle: noteTitle
+      });
+      renameNoteReq(appState.activeNote._id, noteTitle, appState.token).then(
+        r => console.log
+      );
+    }
+    setRenameNoteOpen(false);
+  };
+
+  const handleClickAway = () => {
+    //handles Click away from the Rename-Note-Title input
+    setRenameNoteOpen(false);
+    updateNoteTitle();
+  };
+
+  const handleRenameNoteClick = e => {
+    //when clicked on the note title in the appbar the <Typography> Element is replaced with an <Input>
+    if (appState.activeNote) {
+      setNoteTitle(appState.activeNote.title);
+      setRenameNoteOpen(true);
+    }
+  };
+
+  const handleRenameChange = e => {
+    if (e.target.value.length < 50) setNoteTitle(e.target.value);
+  };
 
   const noteToggleFavorite = () => {
     if (appState.activeNote.favorite) {
@@ -78,9 +130,18 @@ const MainAppBar = props => {
     }
   };
 
+  //set NoteTitle when a note is expanded
   useEffect(() => {
-    console.log("Appbar did update");
+    if (appState.activeNote && noteTitle !== appState.activeNote.title) {
+      // console.log("setting NoteTitle");
+      setNoteTitle(appState.activeNote.title);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [appState.activeNote]);
 
+  useEffect(() => {
+    //this determines what will be rendered in the AppBar deppending on the global state
+    console.log("Appbar did update");
     if (appState.activeNote) {
       setTitle(appState.activeNote.title);
     } else {
@@ -145,22 +206,60 @@ const MainAppBar = props => {
     appState.activeNote,
     appState.noteFilter,
     appState.notebooks,
-    appState.tags
+    appState.tags,
+    noteTitle
   ]);
 
   return (
     <>
       <div className={classes.root}>
         <AppBar position="static" color="default">
-          <Toolbar>
-            <Typography
-              variant="h6"
-              component="h1"
-              color="inherit"
-              style={appState.activeNote ? { flexGrow: 1 } : {}}
-            >
-              {title}
-            </Typography>
+          <Toolbar style={{ justifyContent: "space-between" }}>
+            {renameNoteOpen && appState.activeNote ? (
+              <ClickAwayListener onClickAway={handleClickAway}>
+                <TextField
+                  id="outlined-simple-start-adornment"
+                  classes={{
+                    root: classes.note_name
+                  }}
+                  onChange={handleRenameChange}
+                  onKeyDown={e => {
+                    if (e.keyCode === 13) updateNoteTitle();
+                  }} //if enter key is pressed trigger save
+                  variant="outlined"
+                  label="Rename Note"
+                  value={noteTitle}
+                  InputProps={{
+                    classes: {
+                      root: classes.note_name
+                    },
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          style={{ padding: "8px" }}
+                          aria-label="Change Title"
+                          onClick={updateNoteTitle}
+                        >
+                          <CheckRounded />
+                        </IconButton>
+                      </InputAdornment>
+                    )
+                  }}
+                />
+              </ClickAwayListener>
+            ) : (
+              <Typography
+                onClick={handleRenameNoteClick}
+                variant={title && title.length > 20 ? "subtitle1" : "h6"}
+                component="h1"
+                color="inherit"
+                style={
+                  appState.activeNote ? { flexGrow: 1, cursor: "pointer" } : {}
+                }
+              >
+                {title}
+              </Typography>
+            )}
             {appState.notes && !appState.activeNote && (
               <>
                 <NoteCounter noteNumber={noteNumber} />
@@ -173,16 +272,18 @@ const MainAppBar = props => {
               <>
                 <Tooltip title="Back">
                   <IconButton
+                    className={classes.arrow}
                     aria-haspopup="true"
                     color="inherit"
                     component={AdapterLink}
                     to="/main/"
-                    onClick={() =>
+                    onClick={() => {
+                      handleClickAway();
                       dispatch({
                         type: SET_ACTIVE_NOTE,
                         note: null
-                      })
-                    }
+                      });
+                    }}
                   >
                     <ArrowBack />
                   </IconButton>

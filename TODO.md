@@ -1,11 +1,11 @@
 **_ AUTH SCREEN _**
 
-- Sign Up should display info/TOAST if user was created or an error occured (user created successfully, etc)
+- \$TOAST Sign Up should display info/TOAST if user was created or an error occured (user created successfully, etc)
 - Nice2Have: needs more than just a logIn/SignUp (halfPage Stylish Side with bla bla about the app maybe? )
 
 **_ EDITOR _**
 
-- Check the various Quill elements that should be used (link is a must, indent, custom headers...)
+- Check the various Quill elements that should be used (link is a must, img, indent, custom headers...)
 
 **_ FAB _**
 
@@ -15,7 +15,7 @@
 - LogOut/ User info
 - SaveNote Button
 - SaveNote Button Animation when the note is beeing saved
-- Maybe a Toast notification when the note is moved/saved/tagged/starred
+- \$TOAST: Maybe a Toast notification when the note is moved/saved/tagged/starred
 - Nice2Have: create a tag on the fly, straight from the react-select in the appBar
 
 **_ SIDENAV ITEMS _**
@@ -28,11 +28,8 @@
 
 # Notes:
 
-- Nice2Have: when create note modal is opened it should get the default selected notebook from activenotebook if it exists
 - UI should be better (more space for the notes, buttons on hover etc.)
-- Delete/Star/Info should be somehow triggered from the sidenav ( menu or buttons)
-- (soft) delete note -> needs a confirmation dialog
-- rename note
+- Delete/Star/Info/Rename should be somehow triggered from the sidenav ( menu or buttons)
 - when notelist is empty display some content to notify the user about it otherwise it looks empty
 
 # Notebooks:
@@ -81,14 +78,6 @@
 
 **_ BUGS _**
 
-- create a new note/notebook/tag edit note add the new tag -> can trigger bug where the tag is not shown in select
-- - edit a note and quickpress trash --> this will trigger two posts:
-- \*1)update notebody 2)moveNotetotrash, since moveNoteToTrash is fired instantly the trashed note will not have the last edits
-- \*but the note will stay in state with the edit in state.notes.
-- \*A)so should I do some short of autosave before trashing the note?
-- \*B)the note that is added to the state is added by the updateNoteBody so I could check there if the note.trash ===true instead of appending it to the
-- \*state.notes, push it into state.trash
-
 # UI Bugs:
 
 - Extremely long tag (without spaces) can underflow in drawer sneaking up to the ... button, (shorten long names?)
@@ -130,18 +119,21 @@
 
 ## Sprint
 
-- Rename Note... should wait for a big refactor
-- -WHY DO I HAVE BODY ON CREATE NOTE?
+- TRASH
+- Tags in tagsDrawer should be: StarIcon TagName DeleteIcon
+- Notebooks in notebooksDrawer should be: StarIcon NotebookName MoreIcon with Delete/Rename menu
+- All Notes: decide about what icons to display and what to display in the menu
+  - vandaloupvanda..loup overflow in notelistitem
 
-- renameNotebook should probably be reveresed (first rename then send request) also its a waste of bandwith since it returns the whole notebook but it could return just ID and the modified notebook.name
-- edit a note and before the autosave deleteit -> returns 2 nots one in trash one alive -->
-  - autosave.flush().then->(delete)
-- (DELETENOTEBOOK DIALOG) open note x that is in notebook y, delete notebook y --> app crashes (simply add the correct filter at state to fix?)
-- (TAGS DRAWER) it seems that anchorElID is unused -> const [anchorElID, setAnchorElID] = React.useState(null);
-- (TRASH DRAWER) same as above
-- (noteRename DIALOG) seems to be unused?? it needs to be refactored to reducers... and implemented
-- no implementation to delete TAGS!
-- UPDATE LODASH IN PACKAGE.JSON also on backend to
-- long note names hide the morevertical icon at the notelist
-- rename activeNote from the appBar
-- (_Responsiveness_)Could I save the screen size in the state and then render things based on screen size?
+* -WHY DO I HAVE BODY ON CREATE NOTE?
+
+* renameNotebook should probably be reveresed (first rename then send request) also its a waste of bandwith since it returns the whole notebook but it could return just ID and the modified notebook.name
+
+* (DELETENOTEBOOK DIALOG) open note x that is in notebook y, delete notebook y --> app crashes (simply add the correct filter at state to fix?)
+* (TAGS DRAWER) it seems that anchorElID is unused -> const [anchorElID, setAnchorElID] = React.useState(null);
+* (TRASH DRAWER) same as above
+* (noteRename DIALOG) seems to be unused?? it needs to be refactored to reducers... and implemented
+* no implementation to delete TAGS!
+* UPDATE LODASH IN PACKAGE.JSON also on backend too
+* long note names hide the morevertical icon at the notelist
+* (_Responsiveness_)Could I save the screen size in the state and then render things based on screen size?
