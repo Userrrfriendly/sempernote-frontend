@@ -32,7 +32,7 @@ const CreateTagModal = props => {
   const dispatch = useContext(DispatchContext);
 
   const onChange = e => {
-    if (e.target.value.length < 15) {
+    if (e.target.value.length <= 15) {
       setState({
         value: e.target.value,
         error: false

@@ -27,6 +27,8 @@ export const NOTE_REMOVE_FAVORITE = "NOTE_REMOVE_FAVORITE";
 export const NOTE_ADD_FAVORITE = "NOTE_ADD_FAVORITE";
 export const TRASH_NOTE = "TRASH_NOTE";
 export const RENAME_NOTE = "RENAME_NOTE";
+export const RENAME_TAG = "RENAME_TAG";
+export const DELETE_TAG = "DELETE_TAG";
 
 const logIn = (token, userId, state) => {
   return { ...state, token: token, userId: userId };
@@ -248,7 +250,7 @@ const trashNote = (action, state) => {
           ? {
               _id: action.note._id,
               title: action.note.title,
-              trash: action.note.trash
+              trash: true
             }
           : note
       )
@@ -312,7 +314,13 @@ const assignTag = (action, state) => {
     tag._id === action.tagID ? modifiedTag : tag
   );
 
-  return { ...state, tags: updatedTags, notes: updatedNotes };
+  const activeNote = state.activeNote ? { ...state.activeNote } : null;
+  //if expanded note the note that will be assigned the tag->
+  if (activeNote && activeNote._id === action.noteID) {
+    activeNote.tags = modifiedNote.tags;
+  }
+
+  return { ...state, tags: updatedTags, notes: updatedNotes, activeNote };
 };
 
 const unAssignTag = (action, state) => {
@@ -330,6 +338,66 @@ const unAssignTag = (action, state) => {
   );
 
   return { ...state, tags: updatedTags, notes: updatedNotes };
+};
+
+const renameTag = (action, state) => {
+  const updatedTag = state.tags.filter(tag => tag._id === action.tagID)[0];
+  updatedTag.tagname = action.title;
+
+  const updatedTags = state.tags.map(tag =>
+    tag._id === action.tagID ? updatedTag : tag
+  );
+  const updatedNotes = [...state.notes];
+  updatedNotes.forEach(note =>
+    note.tags.forEach(tag => {
+      if (tag._id === action.tagID) {
+        tag.tagname = action.title;
+      }
+    })
+  );
+
+  const activeNote = state.activeNote;
+  //if expanded note is tagged with the tag to-be-renamed
+  if (activeNote && activeNote.tags.find(tag => tag._id === action.tagID)) {
+    activeNote.tags.forEach(tag => {
+      if (tag._id === action.tagID) {
+        tag.tagname = action.title;
+      }
+    });
+  }
+
+  console.log(activeNote);
+  return { ...state, tags: updatedTags, notes: updatedNotes, activeNote };
+};
+
+const deleteTag = (action, state) => {
+  const tags = state.tags.filter(tag => tag._id !== action.tagID);
+  const notes = [...state.notes];
+  const deletedTag = state.tags.filter(tag => tag._id === action.tagID)[0];
+  const trash = [...state.trash];
+
+  for (let i = 0; i < deletedTag.notes.length; i++) {
+    let index;
+    if (!deletedTag.notes[i].trash) {
+      index = notes.findIndex(note => note._id === deletedTag.notes[i]._id);
+      notes[index].tags = notes[index].tags.filter(
+        tag => tag._id !== action.tagID
+      );
+    } else {
+      index = trash.findIndex(trash => trash._id === deletedTag.notes[i]._id);
+      trash[index].tags = trash[index].tags.filter(
+        tag => tag._id !== action.tagID
+      );
+    }
+  }
+
+  const activeNote = state.activeNote ? { ...state.activeNote } : null;
+  //if expanded note is tagged with the tag to-be-deleted
+  if (activeNote && activeNote.tags.find(tag => tag._id === action.tagID)) {
+    activeNote.tags.filter(tag => tag._id !== action.tagID);
+  }
+
+  return { ...state, tags, notes, activeNote, trash };
 };
 
 export const rootReducer = (state, action) => {
@@ -398,6 +466,12 @@ export const rootReducer = (state, action) => {
     case RENAME_NOTE:
       console.log(action);
       return renameNote(action, state);
+    case RENAME_TAG:
+      console.log(action);
+      return renameTag(action, state);
+    case DELETE_TAG:
+      console.log(action);
+      return deleteTag(action, state);
     default:
       return state;
   }

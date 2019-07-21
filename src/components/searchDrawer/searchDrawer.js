@@ -62,13 +62,10 @@ const useStyles = makeStyles(theme => ({
   },
   drawerHeader: {
     display: "flex",
-    // alignItems: "center",
     padding: "0 8px",
     ...theme.mixins.toolbar,
-    // justifyContent: "flex-end",
     justifyContent: "space-between",
     flexDirection: "column"
-    // minHeight: "150px"
   },
   drawerSubHeader: {
     display: "flex",
@@ -143,8 +140,6 @@ const SearchDrawer = props => {
 
   const deepSearch = e => {
     e.preventDefault();
-    window._includes = _includes;
-    // console.log(`DeepSearching ${search} in notes`);
     const deepSearch = appState.notes.filter(note => {
       const parsedDelta = new Delta(JSON.parse(note.body));
       const plainText = deltaToPlainText(parsedDelta);

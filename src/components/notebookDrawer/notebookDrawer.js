@@ -126,8 +126,6 @@ export default function NotebookDrawer(props) {
   }
 
   function handleNotebookMenuClose(e) {
-    // console.log(anchorEl); //either extract the value through the data-notebookid html custom attribute
-    // console.log(anchorElID); //or get the notebook._id that will be modified from state
     setAnchorEl(null);
     setAnchorElID(null);
   }
@@ -311,7 +309,7 @@ export default function NotebookDrawer(props) {
             open={Boolean(anchorEl)}
             onClose={handleNotebookMenuClose}
           >
-            <MenuItem onClick={handleNotebookMenuClose}>Info</MenuItem>
+            {/* <MenuItem onClick={handleNotebookMenuClose}>Info</MenuItem> */}
             <MenuItem onClick={handleClickDelete}>Delete</MenuItem>
             <MenuItem onClick={handleClickRename}>Rename</MenuItem>
           </Menu>

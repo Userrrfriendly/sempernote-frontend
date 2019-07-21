@@ -11,40 +11,36 @@ import {
   Button
 } from "@material-ui/core";
 
-import { notebookDeleteReq } from "../../requests/requests";
-import {
-  DELETE_NOTEBOOK,
-  SET_ACTIVE_NOTE,
-  SET_NOTE_FILTER
-} from "../../context/rootReducer";
+import { deleteTagReq } from "../../requests/requests";
+import { DELETE_TAG, SET_NOTE_FILTER } from "../../context/rootReducer";
+import { TAG } from "../../context/activeUItypes";
 
 export default function DeleteNotebook(props) {
   const appState = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
   const handleDelete = () => {
     props.close();
-    notebookDeleteReq(props.notebook._id, appState.token).then(r => {
+    deleteTagReq(props.tag._id, appState.token).then(r => {
       if (r && r.name === "Error") {
         console.log("failed to Delete!");
         console.log(r.message);
-      } else {
-        //if a note from the deleted notebook is opened, a)close it b)set note filter to 'ALL NOTES'
-        if (appState.activeNote && appState.activeNote.notebook._id === r._id) {
-          dispatch({
-            type: SET_ACTIVE_NOTE,
-            _id: null
-          });
-          dispatch({
-            type: SET_NOTE_FILTER,
-            name: "ALL_NOTES"
-          });
-        }
-        dispatch({
-          type: DELETE_NOTEBOOK,
-          _id: r._id
-        });
       }
       console.log(r);
+    });
+    //if the user has filtered the notes by the to-be-deleted-tag (noteFilter ===TAG)
+    //reset filter to ALL_NOTES and then delete the TAG.
+    if (
+      appState.noteFilter.name === TAG &&
+      appState.noteFilter.options === props.tag._id
+    ) {
+      dispatch({
+        type: SET_NOTE_FILTER,
+        name: "ALL_NOTES"
+      });
+    }
+    dispatch({
+      type: DELETE_TAG,
+      tagID: props.tag._id
     });
   };
 
@@ -56,12 +52,11 @@ export default function DeleteNotebook(props) {
         aria-labelledby="form-dialog-title"
         style={{ minWidth: "450px" }}
       >
-        <DialogTitle id="form-dialog-title">Delete Notebook</DialogTitle>
+        <DialogTitle id="form-dialog-title">Delete Tag</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete notebook "
-            {props.notebook ? props.notebook.name + '" notebook? ' : ""}" All
-            notes inside it will be moved to thrash!"
+            Are you sure you want to delete the "
+            {props.tag ? props.tag.tagname + '" Tag? ' : ""}
           </DialogContentText>
         </DialogContent>
         <DialogActions>

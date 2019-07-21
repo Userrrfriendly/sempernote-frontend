@@ -367,7 +367,7 @@ export const tagFavoriteFalse = tagID =>
 //returns the deleted Tag object
 export const deleteTag = tagID =>
   `mutation {
-  deleteTag(tagID:"5cfe6ce5eccbc71ccc20d003") {
+  deleteTag(tagID:"${tagID}") {
     _id
     tagname
     favorite
@@ -378,3 +378,17 @@ export const deleteTag = tagID =>
     }
   }
 }`;
+
+export const renameTag = (tagID, newTagName) =>
+  `mutation {
+    renameTag(tagID: "${tagID}", newTagName: "${newTagName}") {
+      _id
+      tagname
+      favorite
+      notes {
+        _id
+        title
+        trash
+      }
+    }
+  }`;

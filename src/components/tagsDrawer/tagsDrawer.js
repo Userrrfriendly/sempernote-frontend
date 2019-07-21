@@ -34,6 +34,8 @@ import {
   TAG_TOGGLE_FAVORITE,
   SET_NOTE_FILTER
 } from "../../context/rootReducer";
+import RenameTagDialog from "./renameTagDialog";
+import DeleteTagDialog from "./deleteTagDialog";
 
 const drawerWidth = 340;
 
@@ -61,13 +63,10 @@ const useStyles = makeStyles(theme => ({
   },
   drawerHeader: {
     display: "flex",
-    // alignItems: "center",
     padding: "0 8px",
     ...theme.mixins.toolbar,
-    // justifyContent: "flex-end",
     justifyContent: "space-between",
     flexDirection: "column"
-    // minHeight: "150px"
   },
   drawerSubHeader: {
     display: "flex",
@@ -91,35 +90,54 @@ const TagDrawer = props => {
   const [search, setSearch] = useState("");
   const [tags, setTags] = useState(appState.tags);
 
+  //delete tag
+  const [deleteOpen, setDeleteOpen] = React.useState(false);
+  const handleClickDelete = () => {
+    closeMenu();
+    setDeleteOpen(true);
+    const tag = appState.tags.filter(tag => tag._id === anchorElID)[0];
+    setDialogTargetTag(tag);
+  };
+  function handleDeleteClose() {
+    setDeleteOpen(false);
+  }
+  //rename tag
+  const [renameOpen, setRenameOpen] = React.useState(false);
+  const [dialogTargetTag, setDialogTargetTag] = React.useState(null);
+  function handleClickRename() {
+    closeMenu();
+    setRenameOpen(true);
+    const tag = appState.tags.filter(tag => tag._id === anchorElID)[0];
+    setDialogTargetTag(tag);
+  }
+  function handleRenameClose() {
+    setRenameOpen(false);
+  }
+
   //menu
   const [anchorEl, setAnchorEl] = React.useState(null);
-  // const [anchorElID, setAnchorElID] = React.useState(null);
+  const [anchorElID, setAnchorElID] = React.useState(null);
 
-  function handleNotebookMenuClick(event, id) {
+  function handleTagMenuClick(event, id) {
     console.log(id);
-    // setAnchorElID(id);
+    setAnchorElID(id);
     setAnchorEl(event.currentTarget);
   }
 
   function closeMenu(e) {
-    // console.log(anchorElID); //or get the notebook._id that will be modified from state
     setAnchorEl(null);
-    // setAnchorElID(null);
   }
+  //end menu
 
   const starTag = (tagID, e) => {
     e.stopPropagation();
     const tag = appState.tags.filter(tag => tag._id === tagID)[0];
-    //send a request to change toggle the tag
     tagToggleFavoriteReq(tag, appState.token);
-    //update appState
     dispatch({
       type: TAG_TOGGLE_FAVORITE,
       tag
     });
   };
-
-  //end menu
 
   const classes = useStyles();
 
@@ -260,7 +278,7 @@ const TagDrawer = props => {
                           aria-label="More"
                           aria-controls="long-menu"
                           aria-haspopup="true"
-                          onClick={e => handleNotebookMenuClick(e, tag._id)}
+                          onClick={e => handleTagMenuClick(e, tag._id)}
                         >
                           <MoreVert />
                         </IconButton>
@@ -279,10 +297,20 @@ const TagDrawer = props => {
             open={Boolean(anchorEl)}
             onClose={closeMenu}
           >
-            <MenuItem onClick={closeMenu}>Info</MenuItem>
-            <MenuItem onClick={closeMenu}>Delete</MenuItem>
+            <MenuItem onClick={handleClickRename}>Rename</MenuItem>
+            <MenuItem onClick={handleClickDelete}>Delete</MenuItem>
             {/* <MenuItem onClick={starTag}>Favourite</MenuItem> */}
           </Menu>
+          <RenameTagDialog
+            tag={dialogTargetTag}
+            open={renameOpen}
+            close={handleRenameClose}
+          />
+          <DeleteTagDialog
+            tag={dialogTargetTag}
+            open={deleteOpen}
+            close={handleDeleteClose}
+          />
         </List>
       </Drawer>
     </div>

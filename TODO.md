@@ -39,7 +39,6 @@
 
 # Tags:
 
-- Delete Tag (Should also delete all references from all notes)
 
 # Trash:
 
@@ -120,7 +119,6 @@
 ## Sprint
 
 - TRASH
-- Tags in tagsDrawer should be: StarIcon TagName DeleteIcon
 - Notebooks in notebooksDrawer should be: StarIcon NotebookName MoreIcon with Delete/Rename menu
 - All Notes: decide about what icons to display and what to display in the menu
   - vandaloupvanda..loup overflow in notelistitem
@@ -135,4 +133,11 @@
 - no implementation to delete TAGS!
 - UPDATE LODASH IN PACKAGE.JSON also on backend too
 - long note names hide the morevertical icon at the notelist
+- rename note has the same problem with rename tag-> when a note is renamed notebooks....note.title is note updated
+- create   2notes add them to a TAG, delete one note, in the tags drawer it will show as having two notes (does not filter trash) -> check it with deleteNote && delete NoteBook
+- 
+- OPEN A NOTE, CREATE A TAG, ASSIGN TAG TO NOTE-->NOTE Is assigned the tag at the backend but not on the front end
+  - the problem is that the activenote.Tags is not updated
+  - fix this and then test All CASES with delte TAG, related? bug->
+  - (LIne:373 for (let i = 0; i < deletedTag.notes.length; i++) Uncaught TypeError: Cannot read property 'notes' of undefined)
 - (_Responsiveness_)Could I save the screen size in the state and then render things based on screen size?

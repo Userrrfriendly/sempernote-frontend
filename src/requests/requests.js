@@ -25,7 +25,9 @@ import {
   noteFavoriteTrue,
   noteFavoriteFalse,
   trashNote,
-  renameNote
+  renameNote,
+  renameTag,
+  deleteTag
 } from "../helpers/graphQLrequests";
 
 const url = "http://localhost:8000/graphql";
@@ -278,12 +280,66 @@ export function unAssignTagReq(tagID, noteID, token) {
     });
 }
 
+/** RENAME TAG */
+export function renameTagReq(tagID, newTagName, token) {
+  const requestBody = JSON.stringify({
+    query: renameTag(tagID, newTagName)
+  });
+  const auth = "Bearer " + token;
+
+  return fetch(url, {
+    ...options,
+    body: requestBody,
+    headers: { ...options.headers, Authorization: auth }
+  })
+    .then(res => {
+      if (res.status !== 200 && res.status !== 201) {
+        throw new Error("rename Tag  Request Failed!");
+      }
+      return res.json();
+    })
+    .then(r => {
+      return r.data.renameTag;
+    })
+    .catch(err => {
+      console.log(err);
+      return err;
+    });
+}
+
+/** DELETE TAG */
+export function deleteTagReq(tagID, token) {
+  const requestBody = JSON.stringify({
+    query: deleteTag(tagID)
+  });
+  const auth = "Bearer " + token;
+
+  return fetch(url, {
+    ...options,
+    body: requestBody,
+    headers: { ...options.headers, Authorization: auth }
+  })
+    .then(res => {
+      if (res.status !== 200 && res.status !== 201) {
+        throw new Error("Delete Tag  Request Failed!");
+      }
+      return res.json();
+    })
+    .then(r => {
+      return r.data.deleteTag;
+    })
+    .catch(err => {
+      console.log(err);
+      return err;
+    });
+}
+
 /*** DELETE NOTEBOOK */
 export function notebookDeleteReq(id, token) {
-  const query = notebookDelete;
+  // const query = notebookDelete;
 
   const requestBody = JSON.stringify({
-    query: query(id)
+    query: notebookDelete(id)
   });
   const auth = "Bearer " + token;
 
