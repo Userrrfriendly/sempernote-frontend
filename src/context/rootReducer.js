@@ -43,7 +43,8 @@ const fetchUserData = (action, state) => {
     notebooks: action.notebooks,
     tags: action.tags,
     notes: action.notes,
-    trash: action.trash
+    trash: action.trash,
+    defaultNotebook: action.defaultNotebook
   };
 };
 /** NOTEBOOKS **/
@@ -65,11 +66,23 @@ const deleteNotebook = (action, state) => {
   const notebooks = state.notebooks.filter(
     notebook => notebook._id !== action._id
   );
-  const trashedNotes = state.notes.filter(
+  let trashedNotes = state.notes.filter(
     note => note.notebook._id === action._id
   );
+  trashedNotes = trashedNotes.map(note => ({
+    ...note,
+    trash: true,
+    notebook: state.defaultNotebook
+  }));
+  const stateTrashUpdated = state.trash.map(note =>
+    note.notebook._id === action._id
+      ? { ...note, notebook: state.defaultNotebook }
+      : note
+  );
   const trash =
-    trashedNotes.length > 0 ? state.trash.concat(trashedNotes) : state.trash;
+    trashedNotes.length > 0
+      ? stateTrashUpdated.concat(trashedNotes)
+      : stateTrashUpdated;
   return { ...state, activeNote, notes, notebooks, trash };
 };
 
@@ -263,13 +276,29 @@ const trashNote = (action, state) => {
       )
     };
   });
+
+  const notebooks = state.notebooks.map(book => {
+    return {
+      ...book,
+      notes: book.notes.map(note =>
+        note._id === action.note._id
+          ? {
+              _id: action.note._id,
+              title: action.note.title,
+              trash: true
+            }
+          : note
+      )
+    };
+  });
+
   const activeNote =
     state.activeNote && state.activeNote._id === action.note._id
       ? null
       : state.activeNote;
   const notes = state.notes.filter(note => note._id !== action.note._id);
   const trash = state.trash.concat({ ...action.note, trash: true });
-  return { ...state, tags, activeNote, notes, trash };
+  return { ...state, tags, activeNote, notes, trash, notebooks };
 };
 
 // deleteNoteForever
@@ -288,7 +317,6 @@ const deleteNoteForever = (action, state) => {
 
   const notes = state.notes.filter(note => note._id !== action.note._id);
   const trash = state.trash.filter(note => note._id !== action.note._id);
-  // concat({ ...action.note, trash: true });
   return { ...state, tags, activeNote, notes, trash };
 };
 
@@ -315,7 +343,21 @@ const restoreNote = (action, state) => {
 
   const trash = state.trash.filter(note => note._id !== action.note._id);
   const notes = state.notes.concat({ ...action.note, trash: false });
-  return { ...state, tags, activeNote, notes, trash };
+  const notebooks = state.notebooks.map(book => {
+    return {
+      ...book,
+      notes: book.notes.map(note =>
+        note._id === action.note._id
+          ? {
+              _id: action.note._id,
+              title: action.note.title,
+              trash: false
+            }
+          : note
+      )
+    };
+  });
+  return { ...state, tags, activeNote, notes, trash, notebooks };
 };
 
 const renameNote = (action, state) => {

@@ -92,7 +92,6 @@ const useStyles = makeStyles(theme => ({
   listItemTextTypography: {
     marginRight: "1.25rem"
   }
-
 }));
 
 const FavoritesDrawer = props => {
@@ -185,7 +184,6 @@ const FavoritesDrawer = props => {
           name: NOTEBOOK,
           options: resultID
         });
-        // appState.setActiveNotebook(resultID);
         break;
       case NOTES:
         dispatch({

@@ -2,6 +2,9 @@ export const fetchUserData = userId =>
   `query {
   user(userId: "${userId}") {
     username
+    defaultNotebook{
+      _id
+    }
     tags{
       _id
       tagname

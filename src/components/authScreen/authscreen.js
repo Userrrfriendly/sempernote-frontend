@@ -119,7 +119,6 @@ const AuthScreen = () => {
       logInReq(email, password)
         .then(r => {
           if (r.name === "Error") {
-            // console.log(r.name, r.message);
             setState({ ...state, failedLogIn: true });
           } else if (r.token) {
             dispatch({
@@ -127,19 +126,20 @@ const AuthScreen = () => {
               userId: r.userId,
               token: r.token
             });
-            return r.userId;
+            return { userId: r.userId, token: r.token };
           }
         })
-        .then(userId => {
-          if (userId) {
-            fetchUserDataReq(userId).then(userData => {
+        .then(res => {
+          if (res.userId) {
+            fetchUserDataReq(res.userId, res.token).then(userData => {
               dispatch({
                 type: FETCH_USER_DATA,
                 userName: userData.userName,
                 notebooks: userData.notebooks,
                 tags: userData.tags,
                 notes: userData.notes,
-                trash: userData.trash
+                trash: userData.trash,
+                defaultNotebook: userData.defaultNotebook
               });
             });
           }

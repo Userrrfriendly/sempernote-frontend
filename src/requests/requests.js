@@ -51,12 +51,17 @@ const logInOptions = {
 };
 
 /**FETCH USER DATA */
-export function fetchUserDataReq(userId) {
+export function fetchUserDataReq(userId, token) {
   let requestBody = JSON.stringify({
     query: fetchUserData(userId)
   });
+  const auth = "Bearer " + token;
 
-  return fetch(url, { ...logInOptions, body: requestBody })
+  return fetch(url, {
+    ...options,
+    body: requestBody,
+    headers: { ...options.headers, Authorization: auth }
+  })
     .then(res => {
       if (res.status !== 200 && res.status !== 201) {
         throw new Error("fetchUserData Request Failed!");
@@ -77,7 +82,8 @@ export function fetchUserDataReq(userId) {
         notebooks: simplifyNotebooks(resData.data.user.notebooks),
         tags: resData.data.user.tags,
         notes: filteredNotes.notes,
-        trash: filteredNotes.trash
+        trash: filteredNotes.trash,
+        defaultNotebook: resData.data.user.defaultNotebook
       };
     })
     .catch(err => {
@@ -144,7 +150,7 @@ export function createNotebookReq(name, token) {
     query: createNotebook(name)
   });
   const auth = "Bearer " + token;
-  console.log(auth);
+  // console.log(auth);
   return fetch(url, {
     ...options,
     body: requestBody,

@@ -13,7 +13,7 @@ export default function Store(props) {
     noteFilter: { name: "ALL_NOTES" },
     trash: null,
     activeNote: null,
-    activeNotebook: null,
+    defaultNotebook: null,
     tags: null
   };
 
