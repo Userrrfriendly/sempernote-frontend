@@ -115,6 +115,7 @@
 
 ## Sprint
 
+- Editor toolbar with deletenote dialog bug
 - All Notes: decide about what icons to display and what to display in the menu
   - vandaloupvanda..loup overflow in notelistitem
 

@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+
 import DispatchContext from "../../context/DispatchContext";
 import StateContext from "../../context/StateContext";
 import { NOTES, NOTEBOOK, TAG, TRASH } from "../../context/activeUItypes";
@@ -99,7 +100,8 @@ const MainAppBar = props => {
         // setError("A note with the same title already exists!");
         console.log("A note with the same title already exists!");
       } else {
-        props.close();
+        setRenameNoteOpen(false);
+
         dispatch({
           type: RENAME_NOTE,
           _id: appState.activeNote._id,
@@ -251,8 +253,9 @@ const MainAppBar = props => {
                   }}
                   onChange={handleRenameChange}
                   onKeyDown={e => {
-                    if (e.keyCode === 13) updateNoteTitle();
-                  }} //if enter key is pressed trigger save
+                    if (e.keyCode === 27) setRenameNoteOpen(false); // if escape key is pressed close rename
+                    if (e.keyCode === 13) updateNoteTitle(); // if enter key is pressed trigger save
+                  }}
                   variant="outlined"
                   label="Rename Note"
                   value={noteTitle}
@@ -345,8 +348,6 @@ const MainAppBar = props => {
                   <IconButton
                     aria-haspopup="true"
                     color="inherit"
-                    component={AdapterLink}
-                    to="/main/"
                     onClick={props.openDeleteDialog.bind(
                       this,
                       appState.activeNote
@@ -390,8 +391,6 @@ const MainAppBar = props => {
                       this,
                       appState.activeNote
                     )}
-                    component={AdapterLink}
-                    to="/main/"
                   >
                     <DeleteForeverRounded style={{ color: "red" }} />
                   </IconButton>

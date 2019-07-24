@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import { withRouter } from "react-router-dom";
 import StateContext from "../../context/StateContext";
 import DispatchContext from "../../context/DispatchContext";
 
@@ -14,12 +15,14 @@ import {
 import { trashNoteReq, deleteNoteForeverReq } from "../../requests/requests";
 import { TRASH_NOTE, DELETE_NOTE_FOREVER } from "../../context/rootReducer";
 
-export default function DeleteNotebook(props) {
+const DeleteNoteDialog = props => {
   const appState = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
 
   const handleDelete = () => {
     props.close(); //deleteDialogClose
+    const activeNote = appState.activeNote;
+
     if (!props.note.trash) {
       //if note is not TRASH -> softDelete (move it to TRASH):
       trashNoteReq(props.note, appState.token).then(r => {
@@ -44,6 +47,10 @@ export default function DeleteNotebook(props) {
         type: DELETE_NOTE_FOREVER,
         note: props.note
       });
+    }
+    //if the deleted note is opened -> redirect to /main/
+    if (activeNote && activeNote._id === props.note._id) {
+      props.history.push("/main/");
     }
   };
 
@@ -85,4 +92,6 @@ export default function DeleteNotebook(props) {
       </Dialog>
     </div>
   );
-}
+};
+
+export default withRouter(DeleteNoteDialog);
