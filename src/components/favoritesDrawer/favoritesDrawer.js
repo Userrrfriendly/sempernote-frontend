@@ -71,13 +71,10 @@ const useStyles = makeStyles(theme => ({
   },
   drawerHeader: {
     display: "flex",
-    // alignItems: "center",
     padding: "0 8px",
     ...theme.mixins.toolbar,
-    // justifyContent: "flex-end",
     justifyContent: "space-between",
     flexDirection: "column"
-    // minHeight: "150px"
   },
   drawerSubHeader: {
     display: "flex",
@@ -95,9 +92,7 @@ const useStyles = makeStyles(theme => ({
   listItemTextTypography: {
     marginRight: "1.25rem"
   }
-  // secondaryTypography: {
-  //   marginRight: "1.25rem"
-  // }
+
 }));
 
 const FavoritesDrawer = props => {

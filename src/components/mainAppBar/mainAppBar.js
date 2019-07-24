@@ -16,6 +16,8 @@ import {
 } from "@material-ui/core/";
 import {
   DeleteRounded,
+  DeleteForeverRounded,
+  RestoreFromTrash,
   StarRounded,
   Info,
   SaveRounded,
@@ -73,9 +75,9 @@ const AdapterLink = React.forwardRef((props, ref) => (
 const MainAppBar = props => {
   const appState = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
-  //title refers to display title in appBar ('ALL NOTES', 'Notes Tagged as ...',etc)
+  // title refers to display title in appBar ('ALL NOTES', 'Notes Tagged as ...',etc)
   const [title, setTitle] = useState(null);
-  //refers to note title displayed in the appbar when a note is opened (activeNote)
+  // noteTitle refers to note title displayed in the appbar when a note is opened (activeNote)
   const [noteTitle, setNoteTitle] = useState(null);
   //renameNoteOpen refers the input box where the note title can be renamed if a note is expanded (activeNote)
   const [renameNoteOpen, setRenameNoteOpen] = useState(false);
@@ -83,15 +85,35 @@ const MainAppBar = props => {
   const classes = useStyles();
 
   const updateNoteTitle = () => {
-    if (noteTitle !== appState.activeNote.title) {
-      dispatch({
-        type: RENAME_NOTE,
-        _id: appState.activeNote._id,
-        newTitle: noteTitle
-      });
-      renameNoteReq(appState.activeNote._id, noteTitle, appState.token).then(
-        r => console.log
+    const str = noteTitle;
+    if (renameNoteOpen && str && str.trim() !== "") {
+      // if str is not empty:
+      const existingNotes = appState.notes.reduce(
+        (accumulator, currentValue) => {
+          accumulator.push(currentValue.title.toLowerCase());
+          return accumulator;
+        },
+        []
       );
+      if (existingNotes.includes(str.toLocaleLowerCase().trim())) {
+        // setError("A note with the same title already exists!");
+        console.log("A note with the same title already exists!");
+      } else {
+        props.close();
+        dispatch({
+          type: RENAME_NOTE,
+          _id: appState.activeNote._id,
+          newTitle: str.trim()
+        });
+        renameNoteReq(appState.activeNote._id, str.trim(), appState.token).then(
+          r => console.log(r)
+        );
+
+        // setError(false);
+      }
+    } else {
+      // setError("Note title must be at least one character long");
+      console.log("Note title must be at least one character long");
     }
     setRenameNoteOpen(false);
   };
@@ -130,20 +152,13 @@ const MainAppBar = props => {
     }
   };
 
-  //set NoteTitle when a note is expanded
-  useEffect(() => {
-    if (appState.activeNote && noteTitle !== appState.activeNote.title) {
-      // console.log("setting NoteTitle");
-      setNoteTitle(appState.activeNote.title);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [appState.activeNote]);
-
   useEffect(() => {
     //this determines what will be rendered in the AppBar deppending on the global state
     console.log("Appbar did update");
     if (appState.activeNote) {
-      setTitle(appState.activeNote.title);
+      appState.activeNote.trash
+        ? setTitle(appState.activeNote.title + " (TRASH)")
+        : setTitle(appState.activeNote.title);
     } else {
       switch (appState.noteFilter.name) {
         case NOTES:
@@ -210,12 +225,24 @@ const MainAppBar = props => {
     noteTitle
   ]);
 
+  const titleStyle = () => {
+    if (appState.activeNote) {
+      return appState.activeNote && !appState.activeNote.trash
+        ? { flexGrow: 1, cursor: "pointer" }
+        : { flexGrow: 1 };
+    } else {
+      return {};
+    }
+  };
+
   return (
     <>
       <div className={classes.root}>
         <AppBar position="static" color="default">
           <Toolbar style={{ justifyContent: "space-between" }}>
-            {renameNoteOpen && appState.activeNote ? (
+            {renameNoteOpen &&
+            appState.activeNote &&
+            !appState.activeNote.trash ? (
               <ClickAwayListener onClickAway={handleClickAway}>
                 <TextField
                   id="outlined-simple-start-adornment"
@@ -249,13 +276,15 @@ const MainAppBar = props => {
               </ClickAwayListener>
             ) : (
               <Typography
-                onClick={handleRenameNoteClick}
+                onClick={
+                  appState.activeNote && !appState.activeNote.trash
+                    ? handleRenameNoteClick
+                    : () => {}
+                }
                 variant={title && title.length > 20 ? "subtitle1" : "h6"}
                 component="h1"
                 color="inherit"
-                style={
-                  appState.activeNote ? { flexGrow: 1, cursor: "pointer" } : {}
-                }
+                style={titleStyle()}
               >
                 {title}
               </Typography>
@@ -267,8 +296,8 @@ const MainAppBar = props => {
                 <SortMenu />
               </>
             )}
-
-            {appState.activeNote && (
+            {/* RENDER A REGULAR NOTE (not TRASH) */}
+            {appState.activeNote && !appState.activeNote.trash && (
               <>
                 <Tooltip title="Back">
                   <IconButton
@@ -324,6 +353,63 @@ const MainAppBar = props => {
                     )}
                   >
                     <DeleteRounded />
+                  </IconButton>
+                </Tooltip>
+              </>
+            )}
+            {/* RENDER TRASHED NOTE */}
+            {appState.activeNote && appState.activeNote.trash && (
+              <>
+                <Tooltip title="Back">
+                  <IconButton
+                    className={classes.arrow}
+                    aria-haspopup="true"
+                    color="inherit"
+                    component={AdapterLink}
+                    to="/main/"
+                    onClick={() => {
+                      dispatch({
+                        type: SET_ACTIVE_NOTE,
+                        note: null
+                      });
+                    }}
+                  >
+                    <ArrowBack />
+                  </IconButton>
+                </Tooltip>
+
+                <SelectNotebook />
+
+                <SelectTag />
+
+                <Tooltip title="Permanent Delete">
+                  <IconButton
+                    aria-haspopup="true"
+                    color="inherit"
+                    onClick={props.openDeleteDialog.bind(
+                      this,
+                      appState.activeNote
+                    )}
+                    component={AdapterLink}
+                    to="/main/"
+                  >
+                    <DeleteForeverRounded style={{ color: "red" }} />
+                  </IconButton>
+                </Tooltip>
+
+                <Tooltip title="Note info">
+                  <IconButton aria-haspopup="true" color="inherit">
+                    <Info />
+                  </IconButton>
+                </Tooltip>
+
+                <Tooltip title="Restore Note">
+                  <IconButton
+                    aria-haspopup="true"
+                    color="inherit"
+                    onClick={props.restoreNote.bind(this, appState.activeNote)}
+                  >
+                    <RestoreFromTrash style={{ color: "green" }} />
                   </IconButton>
                 </Tooltip>
               </>

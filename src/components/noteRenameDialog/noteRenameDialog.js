@@ -34,9 +34,10 @@ export default function RenameNoteDialog(props) {
 
   const handleSubmit = e => {
     e.preventDefault();
-    if (value.length === 0) {
-      setError("Note title must be at least one character long");
-    } else {
+
+    const str = value;
+    if (str && str.trim() !== "") {
+      // if str is not empty:
       const existingNotes = appState.notes.reduce(
         (accumulator, currentValue) => {
           accumulator.push(currentValue.title.toLowerCase());
@@ -44,21 +45,23 @@ export default function RenameNoteDialog(props) {
         },
         []
       );
-      if (existingNotes.includes(value.toLocaleLowerCase())) {
+      if (existingNotes.includes(str.toLocaleLowerCase().trim())) {
         setError("A note with the same title already exists!");
       } else {
-        console.log(props.close());
-        console.log(props.open);
         props.close();
         dispatch({
           type: RENAME_NOTE,
           _id: props.note._id,
-          newTitle: value
+          newTitle: str.trim()
         });
-        renameNoteReq(props.note._id, value, appState.token);
+        renameNoteReq(props.note._id, str.trim(), appState.token).then(r =>
+          console.log(r)
+        );
 
         setError(false);
       }
+    } else {
+      setError("Note title must be at least one character long");
     }
   };
 

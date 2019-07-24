@@ -11,26 +11,40 @@ import {
   Button
 } from "@material-ui/core";
 
-import { trashNoteReq } from "../../requests/requests";
-import { TRASH_NOTE } from "../../context/rootReducer";
+import { trashNoteReq, deleteNoteForeverReq } from "../../requests/requests";
+import { TRASH_NOTE, DELETE_NOTE_FOREVER } from "../../context/rootReducer";
 
 export default function DeleteNotebook(props) {
   const appState = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
 
   const handleDelete = () => {
-    // console.log(props.note);
-    props.close();
-    trashNoteReq(props.note, appState.token).then(r => {
-      if (r && r.name === "Error") {
-        console.log("failed to Delete!");
-        console.log(r.message);
-      }
-    });
-    dispatch({
-      type: TRASH_NOTE,
-      note: props.note
-    });
+    props.close(); //deleteDialogClose
+    if (!props.note.trash) {
+      //if note is not TRASH -> softDelete (move it to TRASH):
+      trashNoteReq(props.note, appState.token).then(r => {
+        if (r && r.name === "Error") {
+          console.log("failed to move note to TRASH!");
+          console.log(r.message);
+        }
+      });
+      dispatch({
+        type: TRASH_NOTE,
+        note: props.note
+      });
+    } else {
+      //note is TRASH -> delete note forever
+      deleteNoteForeverReq(props.note, appState.token).then(r => {
+        if (r && r.name === "Error") {
+          console.log("failed to Permanently Delete Note!");
+          console.log(r.message);
+        }
+      });
+      dispatch({
+        type: DELETE_NOTE_FOREVER,
+        note: props.note
+      });
+    }
   };
 
   return (
@@ -41,11 +55,18 @@ export default function DeleteNotebook(props) {
         aria-labelledby="form-dialog-title"
         style={{ minWidth: "450px" }}
       >
-        <DialogTitle id="form-dialog-title">Delete Note</DialogTitle>
+        <DialogTitle id="form-dialog-title">
+          {props.note.trash ? "Delete note forever " : "Move note to Trash"}
+        </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to move note "
-            {props.note ? props.note.title : ""}" to thrash?
+            {props.note && !props.note.trash
+              ? 'Are you sure you want to move note "' +
+                props.note.title +
+                '" to thrash?'
+              : 'Are you sure you want to permanently delete note "' +
+                props.note.title +
+                '" ? Warning this action cannot be undone!'}
           </DialogContentText>
         </DialogContent>
         <DialogActions>

@@ -119,7 +119,6 @@ const TagDrawer = props => {
   const [anchorElID, setAnchorElID] = React.useState(null);
 
   function handleTagMenuClick(event, id) {
-    console.log(id);
     setAnchorElID(id);
     setAnchorEl(event.currentTarget);
   }

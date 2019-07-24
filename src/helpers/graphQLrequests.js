@@ -231,6 +231,26 @@ export const trashNote = noteID =>
   }
   }`;
 
+//PERMANENT DELETE
+export const deleteNoteForever = noteID =>
+  `mutation {
+    deleteNoteForever(noteID:"${noteID}"){
+    title
+    _id
+    trash
+    body
+    createdAt
+    updatedAt
+    favorite
+    trash
+    notebook{
+      _id
+      name
+      favorite
+    }
+  }
+  }`;
+
 export const restoreNote = noteID =>
   `mutation {
     restoreNote(noteID:"${noteID}"){

@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useContext, Fragment } from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import { withRouter } from "react-router-dom";
+import DispatchContext from "../../context/DispatchContext";
+import StateContext from "../../context/StateContext";
 
+import { makeStyles } from "@material-ui/core/styles";
 import {
   IconButton,
   List,
@@ -17,8 +20,7 @@ import {
 } from "@material-ui/core";
 
 import { DeleteSweepRounded, ChevronLeft, MoreVert } from "@material-ui/icons";
-import StateContext from "../../context/StateContext";
-import { TRASH } from "../../context/activeUItypes";
+import { SET_ACTIVE_NOTE } from "../../context/rootReducer";
 
 const drawerWidth = 340;
 
@@ -63,8 +65,10 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function TrashDrawer(props) {
+const TrashDrawer = props => {
   const appState = useContext(StateContext);
+  const dispatch = useContext(DispatchContext);
+
   const [trash, setTrash] = useState(appState.trash);
 
   //menu
@@ -72,40 +76,48 @@ export default function TrashDrawer(props) {
   const [anchorElID, setAnchorElID] = React.useState(null);
 
   function handleNotebookMenuClick(event, id) {
-    console.log(id);
     setAnchorElID(id);
     setAnchorEl(event.currentTarget);
   }
 
   function closeTrashMenu(e) {
-    console.log(e);
-    // console.log(anchorEl); //either extract the value through the data-trashID
-    console.log(anchorElID); //or get the notebook._id that will be modified from state
     setAnchorEl(null);
     setAnchorElID(null);
   }
+
+  //DELETE
+  const deleteForever = () => {
+    closeTrashMenu();
+    const noteToDelete = appState.trash.filter(
+      note => note._id === anchorElID
+    )[0];
+    props.openDeleteDialog(noteToDelete);
+  };
+
+  const restoreNote = () => {
+    closeTrashMenu();
+    const noteToRestore = appState.trash.filter(
+      note => note._id === anchorElID
+    )[0];
+    props.restoreNote(noteToRestore);
+  };
   //end menu
   const classes = useStyles();
 
   const handleTrashNoteClick = trashID => {
     props.toggleDrawer();
-    appState.setNoteFilter(TRASH, trashID);
+    dispatch({
+      type: SET_ACTIVE_NOTE,
+      _id: trashID,
+      trash: true
+    });
+    let path = `/main/editor`;
+    props.history.push(path);
   };
 
   useEffect(() => {
     console.log("useEffect from Trash drawer");
     setTrash(appState.trash);
-    // console.log(context.notebooks);
-    // if (!search) {
-    //   setTrash(context.trash);
-    // } else {
-    //   const filteredTrash = context.trash.filter(note =>
-    //     note.name.toLowerCase().includes(search.toLowerCase())
-    //   );
-    //   console.log(`searching... for ${search} & found :`);
-    //   console.log(filteredTrash);
-    //   setTrash(filteredTrash);
-    // }
   }, [appState.trash]);
 
   return (
@@ -184,7 +196,6 @@ export default function TrashDrawer(props) {
                           onClick={e =>
                             handleNotebookMenuClick(e, trashNote._id)
                           }
-                          // data-trashID={notebook._id}
                         >
                           <MoreVert />
                         </IconButton>
@@ -204,11 +215,13 @@ export default function TrashDrawer(props) {
             onClose={closeTrashMenu}
           >
             <MenuItem onClick={closeTrashMenu}>Info</MenuItem>
-            <MenuItem onClick={closeTrashMenu}>Delete</MenuItem>
-            <MenuItem onClick={closeTrashMenu}>Favourite</MenuItem>
+            <MenuItem onClick={deleteForever}>Permanent Delete</MenuItem>
+            <MenuItem onClick={restoreNote}>Restore Note</MenuItem>
           </Menu>
         </List>
       </Drawer>
     </div>
   );
-}
+};
+
+export default withRouter(TrashDrawer);

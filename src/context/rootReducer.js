@@ -29,6 +29,8 @@ export const TRASH_NOTE = "TRASH_NOTE";
 export const RENAME_NOTE = "RENAME_NOTE";
 export const RENAME_TAG = "RENAME_TAG";
 export const DELETE_TAG = "DELETE_TAG";
+export const RESTORE_NOTE = "RESTORE_NOTE";
+export const DELETE_NOTE_FOREVER = "DELETE_NOTE_FOREVER";
 
 const logIn = (token, userId, state) => {
   return { ...state, token: token, userId: userId };
@@ -110,10 +112,15 @@ const notebookToggleFavorite = (action, state) => {
 
 /** NOTES **/
 const setActiveNote = (action, state) => {
-  const activeNote = state.notes.find(note => note._id === action._id);
+  let activeNote;
+  //if aciveNote is trash:
+  if (action.trash) {
+    activeNote = state.trash.find(note => note._id === action._id);
+  } else {
+    activeNote = state.notes.find(note => note._id === action._id);
+  }
   return { ...state, activeNote };
 };
-
 const updateNoteBody = (action, state) => {
   const updatedNotes = state.notes.filter(note => note._id !== action.note._id);
   updatedNotes.push(action.note);
@@ -262,6 +269,52 @@ const trashNote = (action, state) => {
       : state.activeNote;
   const notes = state.notes.filter(note => note._id !== action.note._id);
   const trash = state.trash.concat({ ...action.note, trash: true });
+  return { ...state, tags, activeNote, notes, trash };
+};
+
+// deleteNoteForever
+const deleteNoteForever = (action, state) => {
+  const tags = state.tags.map(tag => {
+    return {
+      ...tag,
+      notes: tag.notes.filter(note => note._id !== action.note._id)
+    };
+  });
+
+  const activeNote =
+    state.activeNote && state.activeNote._id === action.note._id
+      ? null
+      : state.activeNote;
+
+  const notes = state.notes.filter(note => note._id !== action.note._id);
+  const trash = state.trash.filter(note => note._id !== action.note._id);
+  // concat({ ...action.note, trash: true });
+  return { ...state, tags, activeNote, notes, trash };
+};
+
+const restoreNote = (action, state) => {
+  const tags = state.tags.map(tag => {
+    return {
+      ...tag,
+      notes: tag.notes.map(note =>
+        note._id === action.note._id
+          ? {
+              _id: action.note._id,
+              title: action.note.title,
+              trash: false
+            }
+          : note
+      )
+    };
+  });
+
+  const activeNote =
+    state.activeNote && state.activeNote._id === action.note._id
+      ? { ...state.activeNote, trash: false }
+      : state.activeNote;
+
+  const trash = state.trash.filter(note => note._id !== action.note._id);
+  const notes = state.notes.concat({ ...action.note, trash: false });
   return { ...state, tags, activeNote, notes, trash };
 };
 
@@ -472,6 +525,12 @@ export const rootReducer = (state, action) => {
     case DELETE_TAG:
       console.log(action);
       return deleteTag(action, state);
+    case RESTORE_NOTE:
+      console.log(action);
+      return restoreNote(action, state);
+    case DELETE_NOTE_FOREVER:
+      console.log(action);
+      return deleteNoteForever(action, state);
     default:
       return state;
   }

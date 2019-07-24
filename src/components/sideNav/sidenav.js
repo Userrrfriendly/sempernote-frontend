@@ -142,6 +142,8 @@ const SideNav = props => {
         <TrashDrawer
           toggleDrawer={props.toggleDrawer}
           drawerState={props.drawerState}
+          restoreNote={props.restoreNote}
+          openDeleteDialog={props.openDeleteDialog}
         />
       </List>
     </div>

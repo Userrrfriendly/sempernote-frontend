@@ -3,8 +3,12 @@ import { Switch, Route, withRouter } from "react-router-dom";
 
 import DispatchContext from "../../context/DispatchContext";
 import StateContext from "../../context/StateContext";
-import { SET_ACTIVE_NOTE, UPDATE_NOTE_BODY } from "../../context/rootReducer";
-import { updateNoteBodyReq } from "../../requests/requests";
+import {
+  SET_ACTIVE_NOTE,
+  UPDATE_NOTE_BODY,
+  RESTORE_NOTE
+} from "../../context/rootReducer";
+import { updateNoteBodyReq, restoreNoteReq } from "../../requests/requests";
 
 import ExpandedNote from "../editor/expandedNote";
 import CreateNotebookModal from "../createNotebookModal/createNotebookModal";
@@ -144,6 +148,14 @@ const Main = props => {
     props.history.push(path);
   };
 
+  const restoreNote = note => {
+    restoreNoteReq(note, appState.token).then(r => console.log(r));
+    dispatch({
+      type: RESTORE_NOTE,
+      note: note
+    });
+  };
+
   //Update noteBody - defined here, and passed as props to <ExpandedNote/>  which is a class component and cant use hooks
   const updateNoteBody = (noteId, currentDelta) => {
     updateNoteBodyReq(noteId, currentDelta, appState.token).then(res => {
@@ -178,6 +190,8 @@ const Main = props => {
           openCreateTagModal={openCreateTagModal}
           drawerState={drawerState}
           toggleDrawer={toggleDrawer}
+          restoreNote={restoreNote}
+          openDeleteDialog={openDeleteDialog}
         />
       </Hidden>
 
@@ -186,6 +200,7 @@ const Main = props => {
           expandNote={expandNote}
           openDeleteDialog={openDeleteDialog}
           openRenameDialog={openRenameDialog}
+          restoreNote={restoreNote}
         />
         <NoteList
           openDeleteDialog={openDeleteDialog}
@@ -227,6 +242,7 @@ const Main = props => {
           open={deleteDialogOpen}
           close={deleteDialogClose}
         />
+
         <RenameNoteDialog
           note={renameDialogTargetNote}
           open={renameNoteDialogOpen}

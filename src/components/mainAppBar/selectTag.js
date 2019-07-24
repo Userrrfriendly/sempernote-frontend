@@ -124,6 +124,7 @@ const SelectTag = props => {
       closeMenuOnSelect={false}
       placeholder="Select Tags"
       isClearable={false}
+      isDisabled={appState.activeNote.trash}
     />
   );
 };

@@ -78,6 +78,7 @@ const SelectNotebook = props => {
   return (
     <Select
       // className="select-notebook"
+      isDisabled={appState.activeNote.trash}
       className={classes.select_notebook}
       value={selectedOption}
       onChange={handleChange}

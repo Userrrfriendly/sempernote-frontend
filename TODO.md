@@ -29,8 +29,9 @@
 # Notes:
 
 - UI should be better (more space for the notes, buttons on hover etc.)
-- Delete/Star/Info/Rename should be somehow triggered from the sidenav ( menu or buttons)
+- Delete/Star/Info/Rename should be somehow triggered from the <NoteList> ( menu or buttons)
 - when notelist is empty display some content to notify the user about it otherwise it looks empty
+- Nice2Have: DeleteNote Dialog (and other dialogs) should have <Typography> instead of plain text
 
 # Notebooks:
 
@@ -39,13 +40,10 @@
 
 # Tags:
 
-
 # Trash:
 
 - needs properUI or reuse a modified NoteListItem
-- Restore
-- Hard Delete -> needs a confirmation dialog
-- Open Note in spectator Mode (locked Quill Editor)
+- Nice2Have: When a user clicks in the (locked)editor signal a TOAST 'cannot edit a note that is in TRASH'
 
 **_ Backend _**
 
@@ -91,7 +89,6 @@
 - (_modals_) Could not ditch Reac-modal since MAterialUI (Modal/Dialog) overflows
 
 * -rename activeUITypes (CONSTANT)
-* !@! REFACTOR NOTELISTS! needs to have star/delete/info button either static or appear on hover
 
 ## Nice2Have:
 
@@ -104,7 +101,7 @@
 - add sempernote logo in sidenav that will redirect to home (and clean up active note)
 - add font roboto to the list of selected fonts in QUILL -->
   https://stackoverflow.com/questions/43728080/how-to-add-font-types-on-quill-js-with-toolbar-options
-- Probably X^y should be removed (at least from the small screen) and replaced with link, image, indentation which are more usefull
+- link, image, indentation in QUILL
 - mobile tollbar for quill https://stackoverflow.com/questions/51706247/quill-how-to-prevent-toolbar-from-scrolling-and-set-the-height
 
 ## MEdium Priority
@@ -118,26 +115,21 @@
 
 ## Sprint
 
-- TRASH
-- Notebooks in notebooksDrawer should be: StarIcon NotebookName MoreIcon with Delete/Rename menu
 - All Notes: decide about what icons to display and what to display in the menu
   - vandaloupvanda..loup overflow in notelistitem
 
 * -WHY DO I HAVE BODY ON CREATE NOTE?
-
 * renameNotebook should probably be reveresed (first rename then send request) also its a waste of bandwith since it returns the whole notebook but it could return just ID and the modified notebook.name
 
-- (TAGS DRAWER) it seems that anchorElID is unused -> const [anchorElID, setAnchorElID] = React.useState(null);
-- (TRASH DRAWER) same as above
-- (noteRename DIALOG) seems to be unused?? it needs to be refactored to reducers... and implemented
-- no implementation to delete TAGS!
 - UPDATE LODASH IN PACKAGE.JSON also on backend too
 - long note names hide the morevertical icon at the notelist
-- rename note has the same problem with rename tag-> when a note is renamed notebooks....note.title is note updated
-- create   2notes add them to a TAG, delete one note, in the tags drawer it will show as having two notes (does not filter trash) -> check it with deleteNote && delete NoteBook
-- 
-- OPEN A NOTE, CREATE A TAG, ASSIGN TAG TO NOTE-->NOTE Is assigned the tag at the backend but not on the front end
-  - the problem is that the activenote.Tags is not updated
-  - fix this and then test All CASES with delte TAG, related? bug->
-  - (LIne:373 for (let i = 0; i < deletedTag.notes.length; i++) Uncaught TypeError: Cannot read property 'notes' of undefined)
-- (_Responsiveness_)Could I save the screen size in the state and then render things based on screen size?
+- rename note has the same problem with rename tag-> when a note is renamed notebooks....note.title is note updated (appState)
+- create 2notes add them to a TAG, delete one note, in the tags drawer it will show as having two notes (does not filter trash) -> check it with deleteNote && delete NoteBook
+- /_\*\* CHECK NATIVE QUILL FOCUS _/
+- Rename Note in APPBAR needs toast to report errors
+- https://stackoverflow.com/questions/49881826/importing-quill-to-react-app-throws-react-is-not-defined-unexpected-token-im
+
+## Responsive UI
+
+- Could I save the screen size in the state and then render things based on screen size?
+- Dialogs are too big

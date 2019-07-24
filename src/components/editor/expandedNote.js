@@ -22,11 +22,6 @@ class ExpandedNote extends Component {
   containerRef = React.createRef();
 
   componentDidMount() {
-    // console.log(this.editorRef.current);
-    // console.log(this.editorRef.current.querySelector(".ql-editor"));
-
-    // this.editorRef.current.querySelector(".ql-editor").focus();
-
     this._ismounted = true;
     const toolbarOptions = [
       ["bold", "italic", "underline", "strike"], // toggled buttons
@@ -75,6 +70,16 @@ class ExpandedNote extends Component {
       });
     });
 
+    const toolbar = this.containerRef.current.querySelector(".ql-toolbar"); //quill toolbar
+    if (this.props.note.trash) {
+      //disable editing if the note is marked as trash
+      this.editor.disable();
+      toolbar.classList.add("ql-toolbar-disabled");
+    } else {
+      this.editor.enable();
+      toolbar.classList.remove("ql-toolbar-disabled");
+    }
+
     //Prevent Scrolling to Top when a .ql-picker(font-size picker, color-picker,etc ) is clicked
     // https://github.com/quilljs/quill/issues/1690
     const qlPickers = this.containerRef.current.querySelectorAll(".ql-picker");
@@ -82,13 +87,17 @@ class ExpandedNote extends Component {
       picker.addEventListener("mousedown", e => e.preventDefault())
     );
 
+    /*** CHECK NATIVE QUILL FOCUS  */
     //focus the text area in the editor once it opens
     this.editorRef.current.querySelector(".ql-editor").focus();
   }
 
   componentDidUpdate(prevProps, prevState) {
     //the condition will be true if the user opens a new note
-    if (prevProps.note._id !== this.props.note._id) {
+    if (
+      prevProps.note._id !== this.props.note._id ||
+      prevProps.note.trash !== this.props.note.trash
+    ) {
       //double check if the component is mounted
       if (this._ismounted) {
         const newBody = new Delta(JSON.parse(this.props.note.body));
@@ -96,8 +105,19 @@ class ExpandedNote extends Component {
         this.setState({
           delta: newBody
         });
+
+        //disable editing if the note is marked as trash
+        const toolbar = this.containerRef.current.querySelector(".ql-toolbar"); //quill toolbar
+        if (this.props.note.trash) {
+          this.editor.disable();
+          toolbar.classList.add("ql-toolbar-disabled");
+        } else {
+          this.editor.enable();
+          toolbar.classList.remove("ql-toolbar-disabled");
+        }
       }
     }
+
     console.log("EDITOR UPDATED");
   }
 
@@ -109,9 +129,7 @@ class ExpandedNote extends Component {
 
   autoSave = debounce((currentDelta, prevDelta, noteId) => {
     if (!isEqual(currentDelta, prevDelta)) {
-      // console.log("currentDelta and prevDelta are NOT equal, saving changes");
       this.props.updateNoteBody(noteId, currentDelta);
-      // this.props.updateNoteBody(noteId, currentDelta);
     }
   }, 3000);
 
@@ -167,5 +185,3 @@ class ExpandedNote extends Component {
 }
 
 export default ExpandedNote;
-
-// https://stackoverflow.com/questions/49881826/importing-quill-to-react-app-throws-react-is-not-defined-unexpected-token-im

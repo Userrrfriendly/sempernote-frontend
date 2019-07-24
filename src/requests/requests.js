@@ -27,7 +27,9 @@ import {
   trashNote,
   renameNote,
   renameTag,
-  deleteTag
+  deleteTag,
+  restoreNote,
+  deleteNoteForever
 } from "../helpers/graphQLrequests";
 
 const url = "http://localhost:8000/graphql";
@@ -546,6 +548,62 @@ export function trashNoteReq(noteToTrash, token) {
     });
 }
 
+/** RESTORE NOTE */
+export function restoreNoteReq(noteToTrash, token) {
+  const auth = "Bearer " + token;
+  const requestBody = JSON.stringify({
+    query: restoreNote(noteToTrash._id)
+  });
+
+  return fetch(url, {
+    ...options,
+    body: requestBody,
+    headers: { ...options.headers, Authorization: auth }
+  })
+    .then(res => {
+      if (res.status !== 200 && res.status !== 201) {
+        throw new Error("Failed!");
+      }
+      return res.json();
+    })
+    .then(r => {
+      const responseNote = r.data.restoreNote;
+      return { responseNote };
+    })
+    .catch(err => {
+      console.log(err);
+      return err;
+    });
+}
+
+/**PERMANENT DELETE NOTE */
+export function deleteNoteForeverReq(note, token) {
+  const auth = "Bearer " + token;
+  const requestBody = JSON.stringify({
+    query: deleteNoteForever(note._id)
+  });
+
+  return fetch(url, {
+    ...options,
+    body: requestBody,
+    headers: { ...options.headers, Authorization: auth }
+  })
+    .then(res => {
+      if (res.status !== 200 && res.status !== 201) {
+        throw new Error("Failed!");
+      }
+      return res.json();
+    })
+    .then(r => {
+      const responseNote = r.data.deleteNoteForever;
+      return { responseNote };
+    })
+    .catch(err => {
+      console.log(err);
+      return err;
+    });
+}
+
 /** NOTE TOGGLE FAVORITE TRUE **/
 export function noteFavoriteTrueReq(note, token) {
   const query = noteFavoriteTrue;
@@ -568,7 +626,6 @@ export function noteFavoriteTrueReq(note, token) {
     })
     .then(r => {
       const responseNote = r.data.noteFavoriteTrue;
-      console.log(responseNote);
       return { responseNote };
     })
     .catch(err => {

@@ -17,6 +17,7 @@ import {
   SET_ACTIVE_NOTE,
   SET_NOTE_FILTER
 } from "../../context/rootReducer";
+import { NOTEBOOK, NOTES } from "../../context/activeUItypes";
 
 export default function DeleteNotebook(props) {
   const appState = useContext(StateContext);
@@ -27,24 +28,32 @@ export default function DeleteNotebook(props) {
       if (r && r.name === "Error") {
         console.log("failed to Delete!");
         console.log(r.message);
-      } else {
-        //if a note from the deleted notebook is opened, a)close it b)set note filter to 'ALL NOTES'
-        if (appState.activeNote && appState.activeNote.notebook._id === r._id) {
-          dispatch({
-            type: SET_ACTIVE_NOTE,
-            _id: null
-          });
-          dispatch({
-            type: SET_NOTE_FILTER,
-            name: "ALL_NOTES"
-          });
-        }
-        dispatch({
-          type: DELETE_NOTEBOOK,
-          _id: r._id
-        });
       }
       console.log(r);
+    });
+    //if the user has filtered the notes by notebooks(to-be-deleted-notebook) reset noteFilter to ALL_NOTES
+    if (
+      appState.noteFilter.name === NOTEBOOK &&
+      appState.noteFilter.options === props.notebook._id
+    ) {
+      dispatch({
+        type: SET_NOTE_FILTER,
+        name: NOTES
+      });
+    }
+    //if a note from the deleted notebook is opened, a)close it b)set note filter to 'ALL NOTES'
+    if (
+      appState.activeNote &&
+      appState.activeNote.notebook._id === props.notebook._id
+    ) {
+      dispatch({
+        type: SET_ACTIVE_NOTE,
+        _id: null
+      });
+    }
+    dispatch({
+      type: DELETE_NOTEBOOK,
+      _id: props.notebook._id
     });
   };
 
