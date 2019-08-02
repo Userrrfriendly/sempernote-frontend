@@ -11,9 +11,9 @@ import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles(theme => ({
   select_notebook: {
-    minWidth: "8rem",
+    minWidth: "12rem",
     flexGrow: "1",
-    maxWidth: "12rem",
+    maxWidth: "20rem",
     /* override Quill's toolbar z-index:1 */
     zIndex: "2"
   }
@@ -77,7 +77,6 @@ const SelectNotebook = props => {
 
   return (
     <Select
-      // className="select-notebook"
       isDisabled={appState.activeNote.trash}
       className={classes.select_notebook}
       value={selectedOption}

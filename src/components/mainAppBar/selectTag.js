@@ -13,7 +13,7 @@ import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles(theme => ({
   select_tag: {
-    minWidth: "12rem",
+    minWidth: "13rem",
     flexGrow: "1",
     maxWidth: "30rem",
     marginLeft: "1rem",

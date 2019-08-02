@@ -49,6 +49,7 @@ const Main = props => {
   const [noteModal, setNoteModal] = useState(false);
   const [notebookModal, setNotebookModal] = useState(false);
   const [tagModal, setTagModal] = useState(false);
+  const [manualSave, setManualSave] = useState(false);
   const appState = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
   const theme = useTheme();
@@ -166,6 +167,18 @@ const Main = props => {
     });
   };
 
+  /** manualSave is passed as props to ExpandedNote if it is true it will:
+   * trigger autosave.flush()
+   * trigger manualSaveDisable()
+   ** handleManualSave is passed to MainAppBar and is triggered when the user presses the <Save> icon */
+  const handleManualSave = () => {
+    setManualSave(true);
+  };
+
+  const manualSaveDisable = () => {
+    setManualSave(false);
+  };
+
   useEffect(() => {
     console.log("useEffect triggered in <MAIN>");
     //when the user presses the back button the activeNote is set to null thus hidding the editor
@@ -201,6 +214,7 @@ const Main = props => {
           openDeleteDialog={openDeleteDialog}
           openRenameDialog={openRenameDialog}
           restoreNote={restoreNote}
+          handleManualSave={handleManualSave}
         />
         <NoteList
           openDeleteDialog={openDeleteDialog}
@@ -230,6 +244,8 @@ const Main = props => {
                     <ExpandedNote
                       note={appState.activeNote}
                       updateNoteBody={updateNoteBody}
+                      manualSave={manualSave}
+                      manualSaveDisable={manualSaveDisable}
                     />
                   )}
                 </>

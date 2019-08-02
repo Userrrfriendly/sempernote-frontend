@@ -93,7 +93,12 @@ class ExpandedNote extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    //the condition will be true if the user opens a new note
+    // if the save button was pressed -> trigger autoSave.flush()
+    if (this.props.manualSave) {
+      this.autoSave.flush();
+      this.props.manualSaveDisable();
+    }
+    //triggers if the user opens a new note
     if (
       prevProps.note._id !== this.props.note._id ||
       prevProps.note.trash !== this.props.note.trash
@@ -131,7 +136,7 @@ class ExpandedNote extends Component {
     if (!isEqual(currentDelta, prevDelta)) {
       this.props.updateNoteBody(noteId, currentDelta);
     }
-  }, 3000);
+  }, 2000);
 
   /*
   // getDelta & setDelta ARE USED ONLY IN DEBUGGING

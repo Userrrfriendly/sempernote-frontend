@@ -120,6 +120,19 @@ const MainAppBar = props => {
     setRenameNoteOpen(false);
   };
 
+  // Will format the note title based on length and whitespaces
+  const formatTitle = str => {
+    if (
+      (str.length >= 25 && str.indexOf(" ") >= 25) ||
+      str.indexOf(" ") === -1
+    ) {
+      let value = str.slice(0, 24) + " " + str.slice(24);
+      return value;
+    } else {
+      return str;
+    }
+  };
+
   const handleClickAway = () => {
     //handles Click away from the Rename-Note-Title input
     setRenameNoteOpen(false);
@@ -135,7 +148,7 @@ const MainAppBar = props => {
   };
 
   const handleRenameChange = e => {
-    if (e.target.value.length < 50) setNoteTitle(e.target.value);
+    if (e.target.value.length <= 50) setNoteTitle(e.target.value);
   };
 
   const noteToggleFavorite = () => {
@@ -259,6 +272,7 @@ const MainAppBar = props => {
                   variant="outlined"
                   label="Rename Note"
                   value={noteTitle}
+                  // value={formatTitle(noteTitle)}
                   InputProps={{
                     classes: {
                       root: classes.note_name
@@ -289,7 +303,8 @@ const MainAppBar = props => {
                 color="inherit"
                 style={titleStyle()}
               >
-                {title}
+                {/* {title} */}
+                {appState.activeNote ? formatTitle(title) : title}
               </Typography>
             )}
             {appState.notes && !appState.activeNote && (
@@ -321,7 +336,7 @@ const MainAppBar = props => {
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Save changes">
-                  <IconButton color="inherit">
+                  <IconButton color="inherit" onClick={props.handleManualSave}>
                     <SaveRounded />
                   </IconButton>
                 </Tooltip>

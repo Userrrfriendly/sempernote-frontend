@@ -72,7 +72,7 @@ const CreateNoteModal = props => {
   };
 
   const onTitleChange = e => {
-    if (e.target.value.length < 100) {
+    if (e.target.value.length <= 50) {
       setTitle(e.target.value);
     }
   };
