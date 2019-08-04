@@ -36,50 +36,48 @@ import {
   NOTEBOOK_TOGGLE_FAVORITE,
   SET_NOTE_FILTER
 } from "../../context/rootReducer";
-const drawerWidth = 400;
-
-const useStyles = makeStyles(theme => ({
-  root: {
-    display: "flex"
-  },
-
-  menuButton: {
-    marginRight: theme.spacing(2),
-    position: "fixed",
-    left: "40rem",
-    zIndex: 3
-  },
-  hide: {
-    display: "none"
-  },
-  drawer: {
-    width: drawerWidth,
-    flexShrink: 0
-  },
-  drawerPaper: {
-    width: drawerWidth,
-    left: "62px"
-  },
-  drawerHeader: {
-    display: "flex",
-    padding: "0 8px",
-    ...theme.mixins.toolbar,
-    justifyContent: "space-between",
-    flexDirection: "column"
-  },
-  drawerSubHeader: {
-    display: "flex",
-    justifyContent: "space-between"
-  },
-  drawerTitle: {
-    marginTop: "8px"
-  },
-  textField: {
-    margin: "8px 8px 16px"
-  }
-}));
+import { useScreenSize } from "../../helpers/useScreenSize";
 
 export default function NotebookDrawer(props) {
+  const scrSize = useScreenSize();
+  const drawerWidth = scrSize ? 400 : "75vw";
+
+  const useStyles = makeStyles(theme => ({
+    root: {
+      display: "flex"
+    },
+    drawer: {
+      width: drawerWidth,
+      flexShrink: 0
+    },
+    drawerPaper: {
+      width: drawerWidth,
+      left: "62px"
+    },
+    drawerPaperSm: {
+      width: drawerWidth,
+      left: "0"
+    },
+    drawerHeader: {
+      display: "flex",
+      padding: "0 8px",
+      ...theme.mixins.toolbar,
+      justifyContent: "space-between",
+      flexDirection: "column"
+    },
+    drawerSubHeader: {
+      display: "flex",
+      justifyContent: "space-between"
+    },
+    drawerTitle: {
+      marginTop: "8px"
+    },
+    textField: {
+      margin: "8px 8px 16px"
+    }
+  }));
+
+  const classes = useStyles();
   const appState = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
   const [search, setSearch] = useState("");
@@ -130,7 +128,6 @@ export default function NotebookDrawer(props) {
     setAnchorElID(null);
   }
   //end menu
-  const classes = useStyles();
 
   const handleSearch = e => {
     setSearch(e.target.value);
@@ -190,6 +187,7 @@ export default function NotebookDrawer(props) {
           <ListItemIcon>
             <LibraryBooksRounded />
           </ListItemIcon>
+          {!scrSize && <ListItemText primary="Notebooks" />}
         </ListItem>
       </Tooltip>
 
@@ -199,7 +197,7 @@ export default function NotebookDrawer(props) {
         open={props.drawerState.notebooks}
         onClose={props.toggleDrawer.bind(this, "notebooks", false)}
         classes={{
-          paper: classes.drawerPaper
+          paper: scrSize ? classes.drawerPaper : classes.drawerPaperSm
         }}
       >
         <div className={classes.drawerHeader}>
@@ -230,7 +228,6 @@ export default function NotebookDrawer(props) {
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton
-                  // edge="end"
                   size="small"
                   aria-label="clear"
                   onClick={clearSearch}
@@ -309,7 +306,6 @@ export default function NotebookDrawer(props) {
             open={Boolean(anchorEl)}
             onClose={handleNotebookMenuClose}
           >
-            {/* <MenuItem onClick={handleNotebookMenuClose}>Info</MenuItem> */}
             <MenuItem onClick={handleClickDelete}>Delete</MenuItem>
             <MenuItem onClick={handleClickRename}>Rename</MenuItem>
           </Menu>

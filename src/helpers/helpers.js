@@ -106,3 +106,14 @@ export const deltaToPlainText = delta => {
     return text + op.insert;
   }, "");
 };
+
+// Will insert a whitespace into a string (note title) based on its length and whether it contains whitespaces
+// is used incase the user creates a very long str(note title) in order for the ui to wrap the text instead of overflowing
+export const formatTitle = str => {
+  if ((str.length >= 25 && str.indexOf(" ") >= 25) || str.indexOf(" ") === -1) {
+    let value = str.slice(0, 24) + " " + str.slice(24);
+    return value;
+  } else {
+    return str;
+  }
+};

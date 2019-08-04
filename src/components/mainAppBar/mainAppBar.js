@@ -23,7 +23,8 @@ import {
   Info,
   SaveRounded,
   ArrowBack,
-  CheckRounded
+  CheckRounded,
+  MenuRounded
 } from "@material-ui/icons";
 import NoteCounter from "./noteCounter";
 import SortMenu from "./sortMenu";
@@ -41,16 +42,18 @@ import {
   SET_ACTIVE_NOTE,
   RENAME_NOTE
 } from "../../context/rootReducer";
+import { formatTitle } from "../../helpers/helpers";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
+  menuButton: {
+    marginRight: theme.spacing(2),
+    [theme.breakpoints.up("sm")]: {
+      display: "none"
+    }
+  },
   root: {
     flexGrow: 1,
     marginBottom: "1rem",
-    width: "100%"
-  },
-  notecontainer: {
-    overflowY: "scroll",
-    maxHeight: "calc(100vh - 98px)",
     width: "100%"
   },
   title: {
@@ -60,12 +63,11 @@ const useStyles = makeStyles({
     height: "42px",
     flexGrow: 1,
     backgroundColor: "#fff"
-    // maxWidth: "450px"
   },
   arrow: {
     marginLeft: "1.5rem"
   }
-});
+}));
 
 // required for react-router-dom < 6.0.0
 // see https://github.com/ReactTraining/react-router/issues/6056#issuecomment-435524678
@@ -118,19 +120,6 @@ const MainAppBar = props => {
       console.log("Note title must be at least one character long");
     }
     setRenameNoteOpen(false);
-  };
-
-  // Will format the note title based on length and whitespaces
-  const formatTitle = str => {
-    if (
-      (str.length >= 25 && str.indexOf(" ") >= 25) ||
-      str.indexOf(" ") === -1
-    ) {
-      let value = str.slice(0, 24) + " " + str.slice(24);
-      return value;
-    } else {
-      return str;
-    }
   };
 
   const handleClickAway = () => {
@@ -252,9 +241,18 @@ const MainAppBar = props => {
 
   return (
     <>
-      <div className={classes.root}>
+      <div className={props.classes.appBar}>
         <AppBar position="static" color="default">
           <Toolbar style={{ justifyContent: "space-between" }}>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={props.handleDrawerToggle}
+              className={classes.menuButton}
+            >
+              <MenuRounded />
+            </IconButton>
             {renameNoteOpen &&
             appState.activeNote &&
             !appState.activeNote.trash ? (
@@ -272,7 +270,6 @@ const MainAppBar = props => {
                   variant="outlined"
                   label="Rename Note"
                   value={noteTitle}
-                  // value={formatTitle(noteTitle)}
                   InputProps={{
                     classes: {
                       root: classes.note_name
@@ -303,7 +300,6 @@ const MainAppBar = props => {
                 color="inherit"
                 style={titleStyle()}
               >
-                {/* {title} */}
                 {appState.activeNote ? formatTitle(title) : title}
               </Typography>
             )}

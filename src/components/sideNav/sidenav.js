@@ -1,6 +1,12 @@
 import React, { useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { List, ListItem, ListItemIcon, Tooltip } from "@material-ui/core";
+import {
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Tooltip
+} from "@material-ui/core";
 import {
   NoteAddRounded,
   DescriptionRounded,
@@ -18,27 +24,35 @@ import TrashDrawer from "../trashDrawer/trashDrawer";
 import SearchDrawer from "../searchDrawer/searchDrawer";
 import FavoritesDrawer from "../favoritesDrawer/favoritesDrawer";
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    width: "100%",
-    maxWidth: 60,
-    backgroundColor: theme.palette.background.paper,
-    height: "100vh",
-    position: "fixed",
-    top: "0",
-    boxShadow:
-      "0px 3px 5px -1px rgba(0,0,0,0.2), 0px 5px 8px 0px rgba(0,0,0,0.14), 0px 1px 14px 0px rgba(0,0,0,0.12)",
-    zIndex: 1301 //override the drawers zIndex
-  },
-  list_item: {
-    marginBottom: "1rem"
-  },
-  hr: {
-    margin: "2rem 0"
-  }
-}));
+import { useScreenSize } from "../../helpers/useScreenSize";
 
 const SideNav = props => {
+  const scrSize = useScreenSize();
+  const useStyles = makeStyles(theme => ({
+    root: {
+      backgroundColor: theme.palette.background.paper,
+      height: scrSize ? "100vh" : "auto",
+      position: "fixed",
+      top: "0",
+      boxShadow:
+        "0px 3px 5px -1px rgba(0,0,0,0.2), 0px 5px 8px 0px rgba(0,0,0,0.14), 0px 1px 14px 0px rgba(0,0,0,0.12)",
+      zIndex: 1301 //override the drawers zIndex
+    },
+    list_item: {
+      marginBottom: "1rem"
+    },
+    hr: {
+      margin: "2rem 0"
+    },
+    smallScreen: {
+      color: "black",
+      width: "240px"
+    },
+    largeScreen: {
+      width: "60px"
+    }
+  }));
+
   const classes = useStyles();
 
   const dispatch = useContext(DispatchContext);
@@ -57,20 +71,24 @@ const SideNav = props => {
     props.toggleDrawer();
     props.openCreateTagModal();
   };
-
   return (
     <div className={classes.root}>
-      <List component="nav">
+      <List
+        component="nav"
+        style={scrSize ? { width: "60px" } : { width: "240px" }}
+        className={scrSize ? classes.largeScreen : classes.smallScreen}
+      >
         <Tooltip title="Create Note" placement="right">
           <ListItem
             style={{ marginTop: "2rem" }}
             className={classes.list_item}
-            button
             onClick={openCreateNoteModal}
+            button
           >
             <ListItemIcon>
               <NoteAddRounded />
             </ListItemIcon>
+            {!scrSize && <ListItemText primary="Create Note" />}
           </ListItem>
         </Tooltip>
 
@@ -83,6 +101,7 @@ const SideNav = props => {
             <ListItemIcon>
               <LibraryAddRounded />
             </ListItemIcon>
+            {!scrSize && <ListItemText primary="Create Notebook" />}
           </ListItem>
         </Tooltip>
 
@@ -95,12 +114,12 @@ const SideNav = props => {
             <ListItemIcon>
               <CreateTagIcon />
             </ListItemIcon>
+            {!scrSize && <ListItemText primary="Create Tag" />}
           </ListItem>
         </Tooltip>
 
         <hr className={classes.hr} />
-        {/* </List>
-      <List component="nav"> */}
+
         <SearchDrawer
           toggleDrawer={props.toggleDrawer}
           drawerState={props.drawerState}
@@ -126,6 +145,7 @@ const SideNav = props => {
             <ListItemIcon>
               <DescriptionRounded />
             </ListItemIcon>
+            {!scrSize && <ListItemText primary="All Notes" />}
           </ListItem>
         </Tooltip>
 

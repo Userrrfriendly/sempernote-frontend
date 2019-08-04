@@ -21,51 +21,46 @@ import {
 
 import { DeleteSweepRounded, ChevronLeft, MoreVert } from "@material-ui/icons";
 import { SET_ACTIVE_NOTE } from "../../context/rootReducer";
-
-const drawerWidth = 340;
-
-const useStyles = makeStyles(theme => ({
-  root: {
-    display: "flex"
-  },
-
-  menuButton: {
-    marginRight: theme.spacing(2),
-    position: "fixed",
-    left: "40rem",
-    zIndex: 3
-  },
-  hide: {
-    display: "none"
-  },
-  drawer: {
-    width: drawerWidth,
-    flexShrink: 0
-  },
-  drawerPaper: {
-    width: drawerWidth,
-    left: "62px"
-  },
-  drawerHeader: {
-    display: "flex",
-    padding: "0 8px",
-    ...theme.mixins.toolbar,
-    justifyContent: "space-between",
-    flexDirection: "column"
-  },
-  drawerSubHeader: {
-    display: "flex",
-    justifyContent: "space-between"
-  },
-  drawerTitle: {
-    marginTop: "8px"
-  },
-  textField: {
-    margin: "8px 8px 16px"
-  }
-}));
+import { useScreenSize } from "../../helpers/useScreenSize";
 
 const TrashDrawer = props => {
+  const scrSize = useScreenSize();
+
+  const drawerWidth = scrSize ? 400 : "75vw";
+
+  const useStyles = makeStyles(theme => ({
+    root: {
+      display: "flex"
+    },
+
+    drawer: {
+      width: drawerWidth,
+      flexShrink: 0
+    },
+    drawerPaper: {
+      width: drawerWidth,
+      left: "62px"
+    },
+    drawerPaperSm: {
+      width: drawerWidth,
+      left: "0"
+    },
+    drawerHeader: {
+      display: "flex",
+      padding: "0 8px",
+      ...theme.mixins.toolbar,
+      justifyContent: "space-between",
+      flexDirection: "column"
+    },
+    drawerSubHeader: {
+      display: "flex",
+      justifyContent: "space-between"
+    },
+    drawerTitle: {
+      marginTop: "8px"
+    }
+  }));
+
   const appState = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
 
@@ -132,6 +127,7 @@ const TrashDrawer = props => {
           <ListItemIcon>
             <DeleteSweepRounded />
           </ListItemIcon>
+          {!scrSize && <ListItemText primary="Trash" />}
         </ListItem>
       </Tooltip>
 
@@ -141,7 +137,7 @@ const TrashDrawer = props => {
         open={props.drawerState.trash}
         onClose={props.toggleDrawer.bind(this, "trash", false)}
         classes={{
-          paper: classes.drawerPaper
+          paper: scrSize ? classes.drawerPaper : classes.drawerPaperSm
         }}
       >
         <div className={classes.drawerHeader}>

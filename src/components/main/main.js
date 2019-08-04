@@ -17,35 +17,81 @@ import CreateTagModal from "../createTagModal/createTagModal";
 import SideNav from "../sideNav/sidenav";
 import Fab from "../fab/fab";
 
-import { Hidden } from "@material-ui/core";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { useTheme } from "@material-ui/core/styles";
+import { Hidden, Drawer } from "@material-ui/core";
 import MainAppBar from "../mainAppBar/mainAppBar";
 import Paper from "../paper/paper";
-import { makeStyles } from "@material-ui/core/styles";
 import DeleteNoteDialog from "../deleteNoteDialog/deleteNoteDialog";
 import RenameNoteDialog from "../noteRenameDialog/noteRenameDialog";
 import NoteList from "../noteList/noteList";
-
-const useStyles = makeStyles(theme => ({
-  main_section: {
-    backgroundColor: "#fff",
-    width: "100%",
-    minHeight: "calc(100vh - 3rem)",
-    flexFlow: "column",
-    overflow: "hidden",
-    direction: "row",
-    justifyContent: "flex-start",
-    alignItems: "flex-start"
-  },
-  main_subcontainer: {
-    width: "60%",
-    maxWidth: "100%",
-    flexGrow: "1"
-  }
-}));
+import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { useScreenSize } from "../../helpers/useScreenSize";
 
 const Main = props => {
+  const scrSize = useScreenSize();
+  const [mobileOpen, setMobileOpen] = React.useState(false); //Sidenav Drawer on small screens
+
+  function handleDrawerToggle() {
+    setMobileOpen(!mobileOpen);
+  }
+
+  const { container } = props;
+  const drawerWidth = scrSize ? 60 : 240;
+
+  const useStyles = makeStyles(theme => ({
+    root: {
+      display: "flex"
+    },
+    drawer: {
+      [theme.breakpoints.up("sm")]: {
+        width: drawerWidth,
+        flexShrink: 0
+      }
+    },
+    appBar: {
+      flexGrow: 1,
+      marginBottom: "1rem",
+      [theme.breakpoints.up("sm")]: {
+        width: `calc(100% - ${drawerWidth}px)`
+      }
+    },
+    menuButton: {
+      marginRight: theme.spacing(2),
+      [theme.breakpoints.up("sm")]: {
+        display: "none"
+      }
+    },
+    toolbar: theme.mixins.toolbar,
+    drawerPaper: {
+      width: drawerWidth,
+      zIndex: 1301 //raise it above the secondary drawers
+    },
+    content: {
+      flexGrow: 1,
+      padding: theme.spacing(3)
+    },
+    main_section: {
+      backgroundColor: "#fff",
+      width: "100%",
+      minHeight: "calc(100vh - 3rem)",
+      flexFlow: "column",
+      overflow: "hidden",
+      direction: "row",
+      justifyContent: "flex-start",
+      alignItems: "flex-start"
+    },
+    main_subcontainer: {
+      width: "60%",
+      maxWidth: "100%",
+      flexGrow: "1"
+    },
+    temp_drawer: {
+      color: "black"
+    },
+    perm_drawer: {
+      color: "black"
+    }
+  }));
+
   const [noteModal, setNoteModal] = useState(false);
   const [notebookModal, setNotebookModal] = useState(false);
   const [tagModal, setTagModal] = useState(false);
@@ -54,7 +100,6 @@ const Main = props => {
   const dispatch = useContext(DispatchContext);
   const theme = useTheme();
   const classes = useStyles();
-  const matches = useMediaQuery(theme.breakpoints.down("md"));
 
   /**DELETE/RENAME NOTE DIALOGS */
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -87,6 +132,7 @@ const Main = props => {
   });
 
   const toggleDrawer = (drawer, open) => {
+    if (!scrSize) setMobileOpen(false); //if in small screen close the main drawer
     if (!drawer) {
       //close all drawers
       setDrawerState({
@@ -196,25 +242,64 @@ const Main = props => {
 
   return (
     <main className={classes.main_section}>
-      <Hidden mdDown>
-        <SideNav
-          openCreateNoteModal={openCreateNoteModal}
-          openCreateNotebookModal={openCreateNotebookModal}
-          openCreateTagModal={openCreateTagModal}
-          drawerState={drawerState}
-          toggleDrawer={toggleDrawer}
-          restoreNote={restoreNote}
-          openDeleteDialog={openDeleteDialog}
-        />
-      </Hidden>
+      <nav className={classes.drawer} aria-label="mailbox folders">
+        <Hidden smUp implementation="js">
+          <Drawer
+            container={container}
+            variant="temporary"
+            anchor={theme.direction === "rtl" ? "right" : "left"}
+            open={mobileOpen}
+            onClose={handleDrawerToggle}
+            classes={{
+              paper: classes.drawerPaper
+            }}
+            ModalProps={{
+              keepMounted: true // Better open performance on mobile.
+            }}
+            className={classes.temp_drawer}
+          >
+            <SideNav
+              openCreateNoteModal={openCreateNoteModal}
+              openCreateNotebookModal={openCreateNotebookModal}
+              openCreateTagModal={openCreateTagModal}
+              drawerState={drawerState}
+              toggleDrawer={toggleDrawer}
+              restoreNote={restoreNote}
+              openDeleteDialog={openDeleteDialog}
+            />
+          </Drawer>
+        </Hidden>
+        <Hidden xsDown implementation="js">
+          <Drawer
+            classes={{
+              paper: classes.drawerPaper
+            }}
+            variant="permanent"
+            open
+            className={classes.perm_drawer}
+          >
+            <SideNav
+              openCreateNoteModal={openCreateNoteModal}
+              openCreateNotebookModal={openCreateNotebookModal}
+              openCreateTagModal={openCreateTagModal}
+              drawerState={drawerState}
+              toggleDrawer={toggleDrawer}
+              restoreNote={restoreNote}
+              openDeleteDialog={openDeleteDialog}
+            />
+          </Drawer>
+        </Hidden>
+      </nav>
 
-      <Paper style={matches ? { marginLeft: 0 } : { marginLeft: "60px" }}>
+      <Paper>
         <MainAppBar
           expandNote={expandNote}
           openDeleteDialog={openDeleteDialog}
           openRenameDialog={openRenameDialog}
           restoreNote={restoreNote}
           handleManualSave={handleManualSave}
+          handleDrawerToggle={handleDrawerToggle}
+          classes={classes}
         />
         <NoteList
           openDeleteDialog={openDeleteDialog}

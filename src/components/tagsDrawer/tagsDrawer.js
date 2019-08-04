@@ -36,54 +36,50 @@ import {
 } from "../../context/rootReducer";
 import RenameTagDialog from "./renameTagDialog";
 import DeleteTagDialog from "./deleteTagDialog";
-
-const drawerWidth = 340;
-
-const useStyles = makeStyles(theme => ({
-  root: {
-    display: "flex"
-  },
-
-  menuButton: {
-    marginRight: theme.spacing(2),
-    position: "fixed",
-    left: "40rem",
-    zIndex: 3
-  },
-  hide: {
-    display: "none"
-  },
-  drawer: {
-    width: drawerWidth,
-    flexShrink: 0
-  },
-  drawerPaper: {
-    width: drawerWidth,
-    left: "62px"
-  },
-  drawerHeader: {
-    display: "flex",
-    padding: "0 8px",
-    ...theme.mixins.toolbar,
-    justifyContent: "space-between",
-    flexDirection: "column"
-  },
-  drawerSubHeader: {
-    display: "flex",
-    justifyContent: "space-between"
-  },
-  drawerTitle: {
-    marginTop: "8px"
-  },
-  textField: {
-    margin: "8px 8px 16px"
-  },
-  fab: {
-    margin: "1rem"
-  }
-}));
+import { useScreenSize } from "../../helpers/useScreenSize";
 
 const TagDrawer = props => {
+  const scrSize = useScreenSize();
+  const drawerWidth = scrSize ? 400 : "75vw";
+
+  const useStyles = makeStyles(theme => ({
+    root: {
+      display: "flex"
+    },
+    drawer: {
+      width: drawerWidth,
+      flexShrink: 0,
+      overflowX: "hidden"
+    },
+    drawerPaper: {
+      width: drawerWidth,
+      left: "62px",
+      overflowX: "hidden"
+    },
+    drawerPaperSm: {
+      width: drawerWidth,
+      left: "0",
+      overFlowX: "hidden"
+    },
+    drawerHeader: {
+      display: "flex",
+      padding: "0 8px",
+      ...theme.mixins.toolbar,
+      justifyContent: "space-between",
+      flexDirection: "column"
+    },
+    drawerSubHeader: {
+      display: "flex",
+      justifyContent: "space-between"
+    },
+    drawerTitle: {
+      marginTop: "8px"
+    },
+    textField: {
+      margin: "8px 8px 16px"
+    }
+  }));
+
   const appState = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
 
@@ -182,6 +178,7 @@ const TagDrawer = props => {
           <ListItemIcon>
             <StyleRounded />
           </ListItemIcon>
+          {!scrSize && <ListItemText primary="Tags" />}
         </ListItem>
       </Tooltip>
 
@@ -191,7 +188,7 @@ const TagDrawer = props => {
         open={props.drawerState.tags}
         onClose={props.toggleDrawer.bind(this, "tags", false)}
         classes={{
-          paper: classes.drawerPaper
+          paper: scrSize ? classes.drawerPaper : classes.drawerPaperSm
         }}
       >
         <div className={classes.drawerHeader}>
@@ -258,17 +255,6 @@ const TagDrawer = props => {
                       <ListItemText
                         primary={tag.tagname}
                         secondary={numberOfNotes.length + " notes"}
-                        primaryTypographyProps={
-                          //if the  name is very long and doesn't contain spaces it is trancated
-                          (tag.tagname.length > 25 &&
-                            tag.tagname.indexOf(" ") > 30) ||
-                          tag.tagname.indexOf(" ") === -1
-                            ? {
-                                noWrap: true,
-                                component: "p"
-                              }
-                            : {}
-                        }
                       />
 
                       <ListItemSecondaryAction>
@@ -298,7 +284,6 @@ const TagDrawer = props => {
           >
             <MenuItem onClick={handleClickRename}>Rename</MenuItem>
             <MenuItem onClick={handleClickDelete}>Delete</MenuItem>
-            {/* <MenuItem onClick={starTag}>Favourite</MenuItem> */}
           </Menu>
           <RenameTagDialog
             tag={dialogTargetTag}

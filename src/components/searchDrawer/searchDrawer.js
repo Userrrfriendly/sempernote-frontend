@@ -33,56 +33,50 @@ import StateContext from "../../context/StateContext";
 import { SET_NOTE_FILTER, SET_ACTIVE_NOTE } from "../../context/rootReducer";
 import { NOTEBOOK, NOTES, TAG } from "../../context/activeUItypes";
 import { deltaToPlainText } from "../../helpers/helpers";
-
-const drawerWidth = 400;
-
-const useStyles = makeStyles(theme => ({
-  root: {
-    display: "flex"
-  },
-
-  menuButton: {
-    marginRight: theme.spacing(2),
-    position: "fixed",
-    left: "40rem",
-    zIndex: 3
-  },
-  hide: {
-    display: "none"
-  },
-  drawer: {
-    width: drawerWidth,
-    flexShrink: 0,
-    overflowX: "hidden"
-  },
-  drawerPaper: {
-    width: drawerWidth,
-    left: "62px",
-    overflowX: "hidden"
-  },
-  drawerHeader: {
-    display: "flex",
-    padding: "0 8px",
-    ...theme.mixins.toolbar,
-    justifyContent: "space-between",
-    flexDirection: "column"
-  },
-  drawerSubHeader: {
-    display: "flex",
-    justifyContent: "space-between"
-  },
-  drawerTitle: {
-    marginTop: "8px"
-  },
-  textField: {
-    margin: "8px 8px 16px"
-  },
-  fab: {
-    margin: "1rem"
-  }
-}));
+import { useScreenSize } from "../../helpers/useScreenSize";
 
 const SearchDrawer = props => {
+  const scrSize = useScreenSize();
+  const drawerWidth = scrSize ? 400 : "75vw";
+
+  const useStyles = makeStyles(theme => ({
+    root: {
+      display: "flex"
+    },
+    drawer: {
+      width: drawerWidth,
+      flexShrink: 0,
+      overflowX: "hidden"
+    },
+    drawerPaper: {
+      width: drawerWidth,
+      left: "62px",
+      overflowX: "hidden"
+    },
+    drawerPaperSm: {
+      width: drawerWidth,
+      left: "0",
+      overflowX: "hidden"
+    },
+    drawerHeader: {
+      display: "flex",
+      padding: "0 8px",
+      ...theme.mixins.toolbar,
+      justifyContent: "space-between",
+      flexDirection: "column"
+    },
+    drawerSubHeader: {
+      display: "flex",
+      justifyContent: "space-between"
+    },
+    drawerTitle: {
+      marginTop: "8px"
+    },
+    textField: {
+      margin: "8px 8px 16px"
+    }
+  }));
+
   const appState = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
   const [search, setSearch] = useState("");
@@ -204,6 +198,7 @@ const SearchDrawer = props => {
           <ListItemIcon>
             <SearchRounded />
           </ListItemIcon>
+          {!scrSize && <ListItemText primary="Search" />}
         </ListItem>
       </Tooltip>
 
@@ -213,7 +208,7 @@ const SearchDrawer = props => {
         open={props.drawerState.search}
         onClose={props.toggleDrawer.bind(this, "search", false)}
         classes={{
-          paper: classes.drawerPaper
+          paper: scrSize ? classes.drawerPaper : classes.drawerPaperSm
         }}
       >
         <div className={classes.drawerHeader}>
@@ -249,7 +244,6 @@ const SearchDrawer = props => {
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton
-                    // edge="end"
                     size="small"
                     aria-label="clear"
                     onClick={clearSearch}

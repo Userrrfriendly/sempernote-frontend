@@ -1,27 +1,26 @@
 import React from "react";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
+import { useScreenSize } from "../../helpers/useScreenSize";
 
 const useStyles = makeStyles(theme => ({
   root: {
     padding: "4px 8px 8px",
     display: "flex",
     flexWrap: "wrap",
-    minWidth: "calc(100vw - 60px)",
-    marginLeft: "60px"
+    minWidth: "calc(100vw - 60px)"
   }
 }));
 
 const PaperSheet = props => {
+  const scrSize = useScreenSize();
+
   const classes = useStyles();
-  const theme = useTheme();
-  const smallScreen = useMediaQuery(theme.breakpoints.down("md"));
   return (
     <div>
       <Paper
         className={classes.root}
-        style={smallScreen ? { marginLeft: 0 } : {}}
+        style={scrSize ? { marginLeft: "60px" } : { marginLeft: 0 }}
       >
         {props.children}
       </Paper>

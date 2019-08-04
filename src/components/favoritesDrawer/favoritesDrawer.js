@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useContext, Fragment } from "react";
 import { withRouter } from "react-router-dom";
-
 import Delta from "quill-delta";
-
 import { makeStyles } from "@material-ui/core/styles";
 import {
   IconButton,
@@ -16,7 +14,6 @@ import {
   Typography,
   ListItemSecondaryAction
 } from "@material-ui/core";
-
 import {
   ChevronLeft,
   StarRounded,
@@ -40,61 +37,51 @@ import {
   NOTE_REMOVE_FAVORITE,
   SET_ACTIVE_NOTE
 } from "../../context/rootReducer";
-
 import { deltaToPlainText } from "../../helpers/helpers";
-
-const drawerWidth = 400;
-
-const useStyles = makeStyles(theme => ({
-  root: {
-    display: "flex"
-  },
-
-  menuButton: {
-    marginRight: theme.spacing(2),
-    position: "fixed",
-    left: "40rem",
-    zIndex: 3
-  },
-  hide: {
-    display: "none"
-  },
-  drawer: {
-    width: drawerWidth,
-    flexShrink: 0,
-    overflowX: "hidden"
-  },
-  drawerPaper: {
-    width: drawerWidth,
-    left: "62px",
-    overflowX: "hidden"
-  },
-  drawerHeader: {
-    display: "flex",
-    padding: "0 8px",
-    ...theme.mixins.toolbar,
-    justifyContent: "space-between",
-    flexDirection: "column"
-  },
-  drawerSubHeader: {
-    display: "flex",
-    justifyContent: "space-between"
-  },
-  drawerTitle: {
-    marginTop: "8px"
-  },
-  textField: {
-    margin: "8px 8px 16px"
-  },
-  fab: {
-    margin: "1rem"
-  },
-  listItemTextTypography: {
-    marginRight: "1.25rem"
-  }
-}));
+import { useScreenSize } from "../../helpers/useScreenSize";
 
 const FavoritesDrawer = props => {
+  const scrSize = useScreenSize();
+  const drawerWidth = scrSize ? 400 : "75vw";
+
+  const useStyles = makeStyles(theme => ({
+    root: {
+      display: "flex"
+    },
+    drawer: {
+      width: drawerWidth,
+      flexShrink: 0,
+      overflowX: "hidden"
+    },
+    drawerPaper: {
+      width: drawerWidth,
+      left: "62px",
+      overflowX: "hidden"
+    },
+    drawerPaperSm: {
+      width: drawerWidth,
+      left: 0,
+      overFlowX: "hidden"
+    },
+    drawerHeader: {
+      display: "flex",
+      padding: "0 8px",
+      ...theme.mixins.toolbar,
+      justifyContent: "space-between",
+      flexDirection: "column"
+    },
+    drawerSubHeader: {
+      display: "flex",
+      justifyContent: "space-between"
+    },
+    drawerTitle: {
+      marginTop: "8px"
+    },
+    listItemTextTypography: {
+      marginRight: "1.25rem"
+    }
+  }));
+
   const appState = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
 
@@ -236,6 +223,7 @@ const FavoritesDrawer = props => {
           <ListItemIcon>
             <StarRounded />
           </ListItemIcon>
+          {!scrSize && <ListItemText primary="Favorites" />}
         </ListItem>
       </Tooltip>
 
@@ -245,7 +233,7 @@ const FavoritesDrawer = props => {
         open={props.drawerState.favorites}
         onClose={props.toggleDrawer.bind(this, "favorites", false)}
         classes={{
-          paper: classes.drawerPaper
+          paper: scrSize ? classes.drawerPaper : classes.drawerPaperSm
         }}
       >
         <div className={classes.drawerHeader}>
