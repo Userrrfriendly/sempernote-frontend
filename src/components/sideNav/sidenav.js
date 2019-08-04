@@ -31,7 +31,8 @@ const SideNav = props => {
   const useStyles = makeStyles(theme => ({
     root: {
       backgroundColor: theme.palette.background.paper,
-      height: scrSize ? "100vh" : "auto",
+      height: "auto",
+      minHeight: "100vh",
       position: "fixed",
       top: "0",
       boxShadow:

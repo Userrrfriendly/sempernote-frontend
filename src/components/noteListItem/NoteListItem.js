@@ -10,16 +10,16 @@ import {
   CardActionArea,
   makeStyles,
   Menu,
-  MenuItem
+  MenuItem,
+  useMediaQuery
 } from "@material-ui/core/";
-// import useMediaQuery from "@material-ui/core/useMediaQuery";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { deltaToPlainText } from "../../helpers/helpers";
 import {
   DeleteOutlineOutlined,
-  InfoOutlined,
   StarBorderOutlined,
-  StarRounded
+  StarRounded,
+  EditOutlined
 } from "@material-ui/icons";
 
 import StateContext from "../../context/StateContext";
@@ -27,20 +27,24 @@ import DispatchContext from "../../context/DispatchContext";
 import {
   NOTE_ADD_FAVORITE,
   NOTE_REMOVE_FAVORITE
-  // TRASH_NOTE
 } from "../../context/rootReducer";
 import {
   noteFavoriteFalseReq,
   noteFavoriteTrueReq
-  // trashNoteReq
 } from "../../requests/requests";
+import { formatTitle } from "../../helpers/helpers";
+import { useScreenSize } from "../../helpers/useScreenSize";
 
 const useStyles = makeStyles({
   card: {
-    // maxWidth: "100%",
     maxWidth: "345",
     marginBottom: "0.5rem",
-    margin: "0 0.5rem 0.5rem"
+    margin: "0 0.5rem 0.5rem",
+    wordWrap: "break-word",
+    cursor: "pointer",
+    "&:hover": {
+      backgroundColor: "#eeeeee"
+    }
     // boxShadow:
     //   "0px 1px 8px 0px rgba(0,0,0,0.2), 0px 3px 4px 0px rgba(0,0,0,0.14), 0px 3px 3px -2px rgba(0,0,0,0.12)"
   },
@@ -53,16 +57,105 @@ const useStyles = makeStyles({
   },
   subheader: {
     fontSize: "0.87rem"
-  }
+  },
+  content: {
+    maxWidth: "80%"
+  },
+  action: {
+    marginLeft: "auto"
+  },
+  //removes the default hover effect on cardActionArea
+  actionArea: {
+    "&:hover $focusHighlight": {
+      opacity: 0
+    }
+  },
+  focusHighlight: {}
 });
 
 const HeaderActions = props => {
-  const dispatch = useContext(DispatchContext);
   const appState = useContext(StateContext);
-
-  // console.log(props.noteID);
   const note = appState.notes.filter(note => note._id === props.noteID)[0];
-  const toggleFavorite = () => {
+
+  const confirmDelete = (note, e) => {
+    e.stopPropagation();
+    //  1)Grabs the id of the note  2)opens the confirm delete dialog
+    props.openDeleteDialog(note);
+  };
+
+  return (
+    <div>
+      <IconButton
+        aria-haspopup="true"
+        color="inherit"
+        title="Delete Note"
+        onClick={confirmDelete.bind(this, note)}
+      >
+        <DeleteOutlineOutlined />
+      </IconButton>
+      <IconButton
+        aria-haspopup="true"
+        color="inherit"
+        title="Rename Note"
+        onClick={e => {
+          e.stopPropagation();
+          props.openRenameDialog(note);
+        }}
+      >
+        <EditOutlined />
+      </IconButton>
+      <IconButton
+        aria-haspopup="true"
+        color="inherit"
+        title="Add to Favorites"
+        onClick={props.toggleFavorite}
+      >
+        {note && note.favorite ? (
+          <StarRounded style={{ color: "gold" }} />
+        ) : (
+          <StarBorderOutlined />
+        )}
+      </IconButton>
+    </div>
+  );
+};
+
+const NoteListItem = props => {
+  const classes = useStyles();
+  const [raised, setRaised] = useState(false);
+  const scrSize = useScreenSize();
+  const mediumScreen = useMediaQuery("(min-width:900px)");
+  const appState = useContext(StateContext);
+  const dispatch = useContext(DispatchContext);
+
+  //menu
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  function CloseNoteMenu(event, id) {
+    setAnchorEl(event.currentTarget);
+  }
+
+  function closeNoteMenu(e) {
+    setAnchorEl(null);
+  }
+  //end menu
+  const note = appState.notes.filter(note => note._id === props.id)[0];
+
+  const toggleRaised = () => {
+    setRaised(!raised);
+  };
+
+  const previewText = str => {
+    const parsedDelta = new Delta(JSON.parse(str));
+    let plainText = deltaToPlainText(parsedDelta);
+    if (plainText.length > 300) {
+      return plainText.slice(0, 300).concat("...");
+    }
+    return plainText;
+  };
+
+  const toggleFavorite = e => {
+    e.stopPropagation();
     if (note.favorite) {
       dispatch({
         type: NOTE_REMOVE_FAVORITE,
@@ -78,102 +171,32 @@ const HeaderActions = props => {
     }
   };
 
-  const confirmDelete = note => {
-    //  1)Grabs the id of the note  2)opens the confirm delete dialog
-    props.openDeleteDialog(note);
-  };
-
-  return (
-    <div>
-      <IconButton
-        aria-haspopup="true"
-        color="inherit"
-        onClick={confirmDelete.bind(this, note)}
-      >
-        <DeleteOutlineOutlined />
-      </IconButton>
-      <IconButton
-        aria-haspopup="true"
-        color="inherit"
-        onClick={() => console.log("test")}
-      >
-        <InfoOutlined />
-      </IconButton>
-      <IconButton aria-haspopup="true" color="inherit" onClick={toggleFavorite}>
-        {note && note.favorite ? (
-          <StarRounded style={{ color: "gold" }} />
-        ) : (
-          <StarBorderOutlined />
-        )}
-      </IconButton>
-    </div>
-  );
-};
-
-const NoteListItem = props => {
-  const classes = useStyles();
-  const [raised, setRaised] = useState(false);
-  // const smallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-  // const matches = useMediaQuery("(min-width:350px)");
-
-  const appState = useContext(StateContext);
-  // const dispatch = useContext(DispatchContext);
-  //menu
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  // const [anchorElID, setAnchorElID] = React.useState(null);
-
-  function CloseNoteMenu(event, id) {
-    // setAnchorElID(id);
-    setAnchorEl(event.currentTarget);
-  }
-
-  function closeNoteMenu(e) {
-    setAnchorEl(null);
-    // setAnchorElID(null);
-  }
-  //end menu
-  const note = appState.notes.filter(note => note._id === props.id)[0];
-
-  const toggleRaised = () => {
-    setRaised(!raised);
-  };
-
-  const previewText = str => {
-    const parsedDelta = new Delta(JSON.parse(str));
-    let plainText = deltaToPlainText(parsedDelta);
-    // console.log(plainText);
-    if (plainText.length > 300) {
-      return plainText.slice(0, 300).concat("...");
-    }
-    return plainText;
-  };
-
-  // console.log(matches);
   return (
     <>
       <Card
+        onClick={props.expandNote}
         onMouseOver={toggleRaised}
         onMouseOut={toggleRaised}
         raised={raised}
         className={classes.card}
-        // style={matches ? { maxWidth: "100%" } : {}}
-        // style={smallScreen && props.activeNote ? { display: "none" } : {}}
-        // style={props.activeNote && { flexBasis: "250px" }}
       >
-        {/* <h1>
-        MATCHES:
-        {matches ? "true" : "false"}
-      </h1> */}
-
         <CardHeader
-          classes={{ title: classes.title, subheader: classes.subheader }}
+          classes={{
+            title: classes.title,
+            subheader: classes.subheader,
+            content: classes.content,
+            action: classes.action
+          }}
           action={
-            appState.activeNote ? (
+            appState.activeNote || !scrSize ? (
               <IconButton
                 aria-label="More"
                 aria-controls="long-menu"
                 aria-haspopup="true"
-                onClick={e => CloseNoteMenu(e, props.id)}
+                onClick={e => {
+                  e.stopPropagation();
+                  CloseNoteMenu(e, props.id);
+                }}
               >
                 <MoreVertIcon />
               </IconButton>
@@ -181,15 +204,23 @@ const NoteListItem = props => {
               <HeaderActions
                 noteID={props.id}
                 openDeleteDialog={props.openDeleteDialog}
+                openRenameDialog={props.openRenameDialog}
+                toggleFavorite={toggleFavorite}
               />
             )
           }
-          title={props.name}
+          title={mediumScreen ? props.name : formatTitle(props.name)}
           subheader={moment(props.updated).format("LLL")}
         />
 
         <hr style={{ margin: 0 }} />
-        <CardActionArea onClick={props.expandNote}>
+        <CardActionArea
+          onClick={props.expandNote}
+          classes={{
+            root: classes.actionArea,
+            focusHighlight: classes.focusHighlight
+          }}
+        >
           <CardContent>
             <Typography variant="body2" color="textSecondary" component="p">
               {previewText(props.body)}
@@ -205,7 +236,14 @@ const NoteListItem = props => {
         open={Boolean(anchorEl)}
         onClose={closeNoteMenu}
       >
-        <MenuItem onClick={closeNoteMenu}>Info</MenuItem>
+        <MenuItem
+          onClick={e => {
+            toggleFavorite(e);
+            closeNoteMenu();
+          }}
+        >
+          {note.favorite ? "Remove from Favorites" : "Add to Favorites"}
+        </MenuItem>
         <MenuItem
           onClick={e => {
             props.openDeleteDialog(note);

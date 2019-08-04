@@ -10,9 +10,8 @@
 
 **_ APPBAR _**
 
-- Note Info icon
+- Nice2Have: Info icon
 - LogOut/ User info
-- SaveNote Button
 - SaveNote Button Animation when the note is beeing saved
 - Nice2Have: create a tag on the fly, straight from the react-select in the appBar
 
@@ -82,8 +81,6 @@
   - Extremely long tag expands the appbars height and causes a slight scrolling vertical scroll
 - Select Tag can overflow-y very very badly.... need to find a way to target the coresponding div and set its max-height to ~60px
 - Edit a note -> before save is complete delete it (will return two notes one in trash and one in notes);
-  - All Notes: vandaloupvanda..loup overflow in notelistitem
-- long note names hide the morevertical icon at the notelist
 
 ## Nice2Have:
 
@@ -113,8 +110,7 @@
 
 ## Responsive UI
 
-- MediaQuery custom hook?
-
-* bottom shadow in main drawer on small screens (change device nexus 7/galaxy5)
-* font-size and other bugs with the notelist card
-* rename custom hook useScreenSize and the const where its stored in the components (scrSize) once done
+- bottom shadow in main drawer on small screens (change device nexus 7/galaxy5)
+- rename custom hook useScreenSize and the const where its stored in the components (scrSize) once done
+- add ripple effect on CardActionHeader (notelistItem upper section)
+- IphoneX && Pixel (devices with big Height + small width + landscape mode ) have problem with sidenav

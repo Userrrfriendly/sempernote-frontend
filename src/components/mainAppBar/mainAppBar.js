@@ -20,7 +20,7 @@ import {
   DeleteForeverRounded,
   RestoreFromTrash,
   StarRounded,
-  Info,
+  // Info,
   SaveRounded,
   ArrowBack,
   CheckRounded,
@@ -350,11 +350,11 @@ const MainAppBar = props => {
                     />
                   </IconButton>
                 </Tooltip>
-                <Tooltip title="Note info">
+                {/* <Tooltip title="Note info">
                   <IconButton aria-haspopup="true" color="inherit">
                     <Info />
                   </IconButton>
-                </Tooltip>
+                </Tooltip> */}
                 <Tooltip title="Delete Note">
                   <IconButton
                     aria-haspopup="true"
@@ -407,11 +407,11 @@ const MainAppBar = props => {
                   </IconButton>
                 </Tooltip>
 
-                <Tooltip title="Note info">
+                {/* <Tooltip title="Note info">
                   <IconButton aria-haspopup="true" color="inherit">
                     <Info />
                   </IconButton>
-                </Tooltip>
+                </Tooltip> */}
 
                 <Tooltip title="Restore Note">
                   <IconButton

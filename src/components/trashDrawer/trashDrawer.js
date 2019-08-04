@@ -210,7 +210,7 @@ const TrashDrawer = props => {
             open={Boolean(anchorEl)}
             onClose={closeTrashMenu}
           >
-            <MenuItem onClick={closeTrashMenu}>Info</MenuItem>
+            {/* <MenuItem onClick={closeTrashMenu}>Info</MenuItem> */}
             <MenuItem onClick={deleteForever}>Permanent Delete</MenuItem>
             <MenuItem onClick={restoreNote}>Restore Note</MenuItem>
           </Menu>
