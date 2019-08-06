@@ -43,21 +43,20 @@ import {
   RENAME_NOTE
 } from "../../context/rootReducer";
 import { formatTitle } from "../../helpers/helpers";
+import { useScreenWidth } from "../../helpers/customHooks/useScreenWidth";
+import { useScreenHeight } from "../../helpers/customHooks/useScreenHeight";
 
 const useStyles = makeStyles(theme => ({
   menuButton: {
-    marginRight: theme.spacing(2),
-    [theme.breakpoints.up("sm")]: {
-      display: "none"
-    }
+    marginRight: theme.spacing(2)
+    // [theme.breakpoints.up("sm")]: {
+    //   display: "none"
+    // }
   },
   root: {
     flexGrow: 1,
     marginBottom: "1rem",
     width: "100%"
-  },
-  title: {
-    flexGrow: 1
   },
   note_name: {
     height: "42px",
@@ -66,6 +65,18 @@ const useStyles = makeStyles(theme => ({
   },
   arrow: {
     marginLeft: "1.5rem"
+  },
+  title_container: {
+    maxWidth: "70%"
+  },
+  title_container_expanden_note: {
+    maxWidth: "70%",
+    flexGrow: 1
+  },
+  title: {
+    overflow: "hidden",
+    whiteSpace: "wrap",
+    textOverflow: "ellipsis"
   }
 }));
 
@@ -76,6 +87,9 @@ const AdapterLink = React.forwardRef((props, ref) => (
 ));
 
 const MainAppBar = props => {
+  const scrHeight600up = useScreenHeight();
+
+  const scrWidth600up = useScreenWidth();
   const appState = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
   // title refers to display title in appBar ('ALL NOTES', 'Notes Tagged as ...',etc)
@@ -241,15 +255,23 @@ const MainAppBar = props => {
 
   return (
     <>
+      {/* classes.appBar is passed as props from the main because of the dynamic drawer width */}
       <div className={props.classes.appBar}>
         <AppBar position="static" color="default">
-          <Toolbar style={{ justifyContent: "space-between" }}>
+          <Toolbar
+            style={
+              scrWidth600up
+                ? { justifyContent: "space-between" }
+                : { justifyContent: "flex-start" }
+            }
+          >
             <IconButton
               color="inherit"
               aria-label="open drawer"
               edge="start"
               onClick={props.handleDrawerToggle}
               className={classes.menuButton}
+              style={scrWidth600up && scrHeight600up ? { display: "none" } : {}}
             >
               <MenuRounded />
             </IconButton>
@@ -289,21 +311,31 @@ const MainAppBar = props => {
                 />
               </ClickAwayListener>
             ) : (
-              <Typography
-                onClick={
-                  appState.activeNote && !appState.activeNote.trash
-                    ? handleRenameNoteClick
-                    : () => {}
+              <div
+                className={
+                  appState.activeNote
+                    ? classes.title_container_expanden_note
+                    : classes.title_container
                 }
-                variant={title && title.length > 20 ? "subtitle1" : "h6"}
-                component="h1"
-                color="inherit"
-                style={titleStyle()}
+                style={!scrWidth600up ? { maxWidth: "85%" } : {}}
               >
-                {appState.activeNote ? formatTitle(title) : title}
-              </Typography>
+                <Typography
+                  onClick={
+                    appState.activeNote && !appState.activeNote.trash
+                      ? handleRenameNoteClick
+                      : () => {}
+                  }
+                  variant={title && title.length > 20 ? "subtitle1" : "h6"}
+                  component="h1"
+                  color="inherit"
+                  className={classes.title}
+                  style={titleStyle()}
+                >
+                  {appState.activeNote ? formatTitle(title) : title}
+                </Typography>
+              </div>
             )}
-            {appState.notes && !appState.activeNote && (
+            {appState.notes && !appState.activeNote && scrWidth600up && (
               <>
                 <NoteCounter noteNumber={noteNumber} />
 

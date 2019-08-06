@@ -36,11 +36,14 @@ import {
 } from "../../context/rootReducer";
 import RenameTagDialog from "./renameTagDialog";
 import DeleteTagDialog from "./deleteTagDialog";
-import { useScreenSize } from "../../helpers/useScreenSize";
+import { useScreenWidth } from "../../helpers/customHooks/useScreenWidth";
+import { useScreenHeight } from "../../helpers/customHooks/useScreenHeight";
 
 const TagDrawer = props => {
-  const scrSize = useScreenSize();
-  const drawerWidth = scrSize ? 400 : "75vw";
+  const scrWidth600up = useScreenWidth();
+  const scrHeight600up = useScreenHeight();
+
+  const drawerWidth = scrWidth600up ? 400 : "75vw";
 
   const useStyles = makeStyles(theme => ({
     root: {
@@ -178,7 +181,9 @@ const TagDrawer = props => {
           <ListItemIcon>
             <StyleRounded />
           </ListItemIcon>
-          {!scrSize && <ListItemText primary="Tags" />}
+          {(!scrWidth600up || !scrHeight600up) && (
+            <ListItemText primary="Tags" />
+          )}
         </ListItem>
       </Tooltip>
 
@@ -188,7 +193,10 @@ const TagDrawer = props => {
         open={props.drawerState.tags}
         onClose={props.toggleDrawer.bind(this, "tags", false)}
         classes={{
-          paper: scrSize ? classes.drawerPaper : classes.drawerPaperSm
+          paper:
+            scrWidth600up && scrHeight600up
+              ? classes.drawerPaper
+              : classes.drawerPaperSm
         }}
       >
         <div className={classes.drawerHeader}>

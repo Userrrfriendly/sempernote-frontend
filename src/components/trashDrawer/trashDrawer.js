@@ -21,12 +21,14 @@ import {
 
 import { DeleteSweepRounded, ChevronLeft, MoreVert } from "@material-ui/icons";
 import { SET_ACTIVE_NOTE } from "../../context/rootReducer";
-import { useScreenSize } from "../../helpers/useScreenSize";
+import { useScreenWidth } from "../../helpers/customHooks/useScreenWidth";
+import { useScreenHeight } from "../../helpers/customHooks/useScreenHeight";
 
 const TrashDrawer = props => {
-  const scrSize = useScreenSize();
+  const scrWidth600up = useScreenWidth();
+  const scrHeight600up = useScreenHeight();
 
-  const drawerWidth = scrSize ? 400 : "75vw";
+  const drawerWidth = scrWidth600up ? 400 : "75vw";
 
   const useStyles = makeStyles(theme => ({
     root: {
@@ -127,7 +129,9 @@ const TrashDrawer = props => {
           <ListItemIcon>
             <DeleteSweepRounded />
           </ListItemIcon>
-          {!scrSize && <ListItemText primary="Trash" />}
+          {(!scrWidth600up || !scrHeight600up) && (
+            <ListItemText primary="Trash" />
+          )}
         </ListItem>
       </Tooltip>
 
@@ -137,7 +141,10 @@ const TrashDrawer = props => {
         open={props.drawerState.trash}
         onClose={props.toggleDrawer.bind(this, "trash", false)}
         classes={{
-          paper: scrSize ? classes.drawerPaper : classes.drawerPaperSm
+          paper:
+            scrWidth600up && scrHeight600up
+              ? classes.drawerPaper
+              : classes.drawerPaperSm
         }}
       >
         <div className={classes.drawerHeader}>

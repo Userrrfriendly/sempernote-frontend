@@ -24,10 +24,13 @@ import TrashDrawer from "../trashDrawer/trashDrawer";
 import SearchDrawer from "../searchDrawer/searchDrawer";
 import FavoritesDrawer from "../favoritesDrawer/favoritesDrawer";
 
-import { useScreenSize } from "../../helpers/useScreenSize";
+import { useScreenWidth } from "../../helpers/customHooks/useScreenWidth";
+import { useScreenHeight } from "../../helpers/customHooks/useScreenHeight";
 
 const SideNav = props => {
-  const scrSize = useScreenSize();
+  const scrWidth600up = useScreenWidth();
+  const scrHeight600up = useScreenHeight();
+
   const useStyles = makeStyles(theme => ({
     root: {
       backgroundColor: theme.palette.background.paper,
@@ -76,8 +79,16 @@ const SideNav = props => {
     <div className={classes.root}>
       <List
         component="nav"
-        style={scrSize ? { width: "60px" } : { width: "240px" }}
-        className={scrSize ? classes.largeScreen : classes.smallScreen}
+        style={
+          scrWidth600up && scrHeight600up
+            ? { width: "60px" }
+            : { width: "240px" }
+        }
+        className={
+          scrWidth600up && scrHeight600up
+            ? classes.largeScreen
+            : classes.smallScreen
+        }
       >
         <Tooltip title="Create Note" placement="right">
           <ListItem
@@ -89,7 +100,9 @@ const SideNav = props => {
             <ListItemIcon>
               <NoteAddRounded />
             </ListItemIcon>
-            {!scrSize && <ListItemText primary="Create Note" />}
+            {(!scrWidth600up || !scrHeight600up) && (
+              <ListItemText primary="Create Note" />
+            )}
           </ListItem>
         </Tooltip>
 
@@ -102,7 +115,9 @@ const SideNav = props => {
             <ListItemIcon>
               <LibraryAddRounded />
             </ListItemIcon>
-            {!scrSize && <ListItemText primary="Create Notebook" />}
+            {(!scrWidth600up || !scrHeight600up) && (
+              <ListItemText primary="Create Notebook" />
+            )}
           </ListItem>
         </Tooltip>
 
@@ -115,7 +130,9 @@ const SideNav = props => {
             <ListItemIcon>
               <CreateTagIcon />
             </ListItemIcon>
-            {!scrSize && <ListItemText primary="Create Tag" />}
+            {(!scrWidth600up || !scrHeight600up) && (
+              <ListItemText primary="Create Tag" />
+            )}
           </ListItem>
         </Tooltip>
 
@@ -146,7 +163,9 @@ const SideNav = props => {
             <ListItemIcon>
               <DescriptionRounded />
             </ListItemIcon>
-            {!scrSize && <ListItemText primary="All Notes" />}
+            {(!scrWidth600up || !scrHeight600up) && (
+              <ListItemText primary="All Notes" />
+            )}
           </ListItem>
         </Tooltip>
 

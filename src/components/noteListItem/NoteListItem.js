@@ -33,7 +33,7 @@ import {
   noteFavoriteTrueReq
 } from "../../requests/requests";
 import { formatTitle } from "../../helpers/helpers";
-import { useScreenSize } from "../../helpers/useScreenSize";
+import { useScreenWidth } from "../../helpers/customHooks/useScreenWidth";
 
 const useStyles = makeStyles({
   card: {
@@ -45,8 +45,6 @@ const useStyles = makeStyles({
     "&:hover": {
       backgroundColor: "#eeeeee"
     }
-    // boxShadow:
-    //   "0px 1px 8px 0px rgba(0,0,0,0.2), 0px 3px 4px 0px rgba(0,0,0,0.14), 0px 3px 3px -2px rgba(0,0,0,0.12)"
   },
   media: {
     height: 140
@@ -123,7 +121,7 @@ const HeaderActions = props => {
 const NoteListItem = props => {
   const classes = useStyles();
   const [raised, setRaised] = useState(false);
-  const scrSize = useScreenSize();
+  const scrWidth600up = useScreenWidth();
   const mediumScreen = useMediaQuery("(min-width:900px)");
   const appState = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
@@ -188,7 +186,7 @@ const NoteListItem = props => {
             action: classes.action
           }}
           action={
-            appState.activeNote || !scrSize ? (
+            appState.activeNote || !scrWidth600up ? (
               <IconButton
                 aria-label="More"
                 aria-controls="long-menu"

@@ -38,12 +38,14 @@ import {
   SET_ACTIVE_NOTE
 } from "../../context/rootReducer";
 import { deltaToPlainText } from "../../helpers/helpers";
-import { useScreenSize } from "../../helpers/useScreenSize";
+import { useScreenWidth } from "../../helpers/customHooks/useScreenWidth";
+import { useScreenHeight } from "../../helpers/customHooks/useScreenHeight";
 
 const FavoritesDrawer = props => {
-  const scrSize = useScreenSize();
-  const drawerWidth = scrSize ? 400 : "75vw";
+  const scrWidth600up = useScreenWidth();
+  const scrHeight600up = useScreenHeight();
 
+  const drawerWidth = scrWidth600up ? 400 : "75vw";
   const useStyles = makeStyles(theme => ({
     root: {
       display: "flex"
@@ -223,7 +225,9 @@ const FavoritesDrawer = props => {
           <ListItemIcon>
             <StarRounded />
           </ListItemIcon>
-          {!scrSize && <ListItemText primary="Favorites" />}
+          {(!scrWidth600up || !scrHeight600up) && (
+            <ListItemText primary="Favorites" />
+          )}
         </ListItem>
       </Tooltip>
 
@@ -233,7 +237,10 @@ const FavoritesDrawer = props => {
         open={props.drawerState.favorites}
         onClose={props.toggleDrawer.bind(this, "favorites", false)}
         classes={{
-          paper: scrSize ? classes.drawerPaper : classes.drawerPaperSm
+          paper:
+            scrWidth600up && scrHeight600up
+              ? classes.drawerPaper
+              : classes.drawerPaperSm
         }}
       >
         <div className={classes.drawerHeader}>

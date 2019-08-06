@@ -36,11 +36,14 @@ import {
   NOTEBOOK_TOGGLE_FAVORITE,
   SET_NOTE_FILTER
 } from "../../context/rootReducer";
-import { useScreenSize } from "../../helpers/useScreenSize";
+import { useScreenWidth } from "../../helpers/customHooks/useScreenWidth";
+import { useScreenHeight } from "../../helpers/customHooks/useScreenHeight";
 
 export default function NotebookDrawer(props) {
-  const scrSize = useScreenSize();
-  const drawerWidth = scrSize ? 400 : "75vw";
+  const scrWidth600up = useScreenWidth();
+  const scrHeight600up = useScreenHeight();
+
+  const drawerWidth = scrWidth600up ? 400 : "75vw";
 
   const useStyles = makeStyles(theme => ({
     root: {
@@ -187,7 +190,9 @@ export default function NotebookDrawer(props) {
           <ListItemIcon>
             <LibraryBooksRounded />
           </ListItemIcon>
-          {!scrSize && <ListItemText primary="Notebooks" />}
+          {(!scrWidth600up || !scrHeight600up) && (
+            <ListItemText primary="Notebooks" />
+          )}
         </ListItem>
       </Tooltip>
 
@@ -197,7 +202,10 @@ export default function NotebookDrawer(props) {
         open={props.drawerState.notebooks}
         onClose={props.toggleDrawer.bind(this, "notebooks", false)}
         classes={{
-          paper: scrSize ? classes.drawerPaper : classes.drawerPaperSm
+          paper:
+            scrWidth600up && scrHeight600up
+              ? classes.drawerPaper
+              : classes.drawerPaperSm
         }}
       >
         <div className={classes.drawerHeader}>
@@ -268,8 +276,8 @@ export default function NotebookDrawer(props) {
                         secondary={numberOfNotes.length + " notes"}
                         primaryTypographyProps={
                           //if the notebook name is very long and doesn't contain spaces it is trancated
-                          (notebook.name.length > 25 &&
-                            notebook.name.indexOf(" ") > 30) ||
+                          (notebook.name.length > 20 &&
+                            notebook.name.indexOf(" ") > 20) ||
                           notebook.name.indexOf(" ") === -1
                             ? {
                                 noWrap: true,

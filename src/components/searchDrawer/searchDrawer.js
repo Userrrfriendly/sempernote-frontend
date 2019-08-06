@@ -33,11 +33,14 @@ import StateContext from "../../context/StateContext";
 import { SET_NOTE_FILTER, SET_ACTIVE_NOTE } from "../../context/rootReducer";
 import { NOTEBOOK, NOTES, TAG } from "../../context/activeUItypes";
 import { deltaToPlainText } from "../../helpers/helpers";
-import { useScreenSize } from "../../helpers/useScreenSize";
+import { useScreenWidth } from "../../helpers/customHooks/useScreenWidth";
+import { useScreenHeight } from "../../helpers/customHooks/useScreenHeight";
 
 const SearchDrawer = props => {
-  const scrSize = useScreenSize();
-  const drawerWidth = scrSize ? 400 : "75vw";
+  const scrWidth600up = useScreenWidth();
+  const scrHeight600up = useScreenHeight();
+
+  const drawerWidth = scrWidth600up ? 400 : "75vw";
 
   const useStyles = makeStyles(theme => ({
     root: {
@@ -198,7 +201,9 @@ const SearchDrawer = props => {
           <ListItemIcon>
             <SearchRounded />
           </ListItemIcon>
-          {!scrSize && <ListItemText primary="Search" />}
+          {(!scrWidth600up || !scrHeight600up) && (
+            <ListItemText primary="Search" />
+          )}
         </ListItem>
       </Tooltip>
 
@@ -208,7 +213,10 @@ const SearchDrawer = props => {
         open={props.drawerState.search}
         onClose={props.toggleDrawer.bind(this, "search", false)}
         classes={{
-          paper: scrSize ? classes.drawerPaper : classes.drawerPaperSm
+          paper:
+            scrWidth600up && scrHeight600up
+              ? classes.drawerPaper
+              : classes.drawerPaperSm
         }}
       >
         <div className={classes.drawerHeader}>

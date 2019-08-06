@@ -29,6 +29,7 @@
 - when notelist is empty display some content to notify the user about it otherwise it looks empty
 - Nice2Have: DeleteNote Dialog (and other dialogs) should have <Typography> instead of plain text
 - Nice2Have: Highlight NoteListItem that is expanded
+- Nice2Have: add ripple effect on CardActionHeader (notelistItem upper section)
 - no sorting when restoring a note
 
 # Notebooks:
@@ -110,7 +111,5 @@
 
 ## Responsive UI
 
-- bottom shadow in main drawer on small screens (change device nexus 7/galaxy5)
-- rename custom hook useScreenSize and the const where its stored in the components (scrSize) once done
-- add ripple effect on CardActionHeader (notelistItem upper section)
-- IphoneX && Pixel (devices with big Height + small width + landscape mode ) have problem with sidenav
+- MoreVertical icon for Appbar on smallScreens
+- Final boss : appbar with expanded note

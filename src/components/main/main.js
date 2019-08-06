@@ -17,17 +17,20 @@ import CreateTagModal from "../createTagModal/createTagModal";
 import SideNav from "../sideNav/sidenav";
 import Fab from "../fab/fab";
 
-import { Hidden, Drawer } from "@material-ui/core";
+import { Drawer } from "@material-ui/core";
 import MainAppBar from "../mainAppBar/mainAppBar";
 import Paper from "../paper/paper";
 import DeleteNoteDialog from "../deleteNoteDialog/deleteNoteDialog";
 import RenameNoteDialog from "../noteRenameDialog/noteRenameDialog";
 import NoteList from "../noteList/noteList";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
-import { useScreenSize } from "../../helpers/useScreenSize";
+import { useScreenWidth } from "../../helpers/customHooks/useScreenWidth";
+import { useScreenHeight } from "../../helpers/customHooks/useScreenHeight";
 
 const Main = props => {
-  const scrSize = useScreenSize();
+  const scrWidth600up = useScreenWidth();
+  const scrHeight600up = useScreenHeight();
+
   const [mobileOpen, setMobileOpen] = React.useState(false); //Sidenav Drawer on small screens
 
   function handleDrawerToggle() {
@@ -35,7 +38,7 @@ const Main = props => {
   }
 
   const { container } = props;
-  const drawerWidth = scrSize ? 60 : 240;
+  const drawerWidth = scrWidth600up && scrHeight600up ? 60 : 240;
 
   const useStyles = makeStyles(theme => ({
     root: {
@@ -52,7 +55,9 @@ const Main = props => {
       marginBottom: "1rem",
       [theme.breakpoints.up("sm")]: {
         width: `calc(100% - ${drawerWidth}px)`
-      }
+      },
+      maxWidth: "calc(100vw - 16px)"
+      //shrink Appbar for the small screens so it wont overflow (16px = <Paper>'s padding left,right)
     },
     menuButton: {
       marginRight: theme.spacing(2),
@@ -132,7 +137,7 @@ const Main = props => {
   });
 
   const toggleDrawer = (drawer, open) => {
-    if (!scrSize) setMobileOpen(false); //if in small screen close the main drawer
+    if (!scrWidth600up || !scrHeight600up) setMobileOpen(false); //if in small screen close the main drawer
     if (!drawer) {
       //close all drawers
       setDrawerState({
@@ -240,10 +245,11 @@ const Main = props => {
     };
   }, [props.history.location.pathname, appState.activeNote, dispatch]);
 
+  console.log(!scrWidth600up || !scrHeight600up);
   return (
     <main className={classes.main_section}>
-      <nav className={classes.drawer} aria-label="mailbox folders">
-        <Hidden smUp implementation="js">
+      <nav className={classes.drawer} aria-label="navigation">
+        {(!scrWidth600up || !scrHeight600up) && (
           <Drawer
             container={container}
             variant="temporary"
@@ -268,8 +274,8 @@ const Main = props => {
               openDeleteDialog={openDeleteDialog}
             />
           </Drawer>
-        </Hidden>
-        <Hidden xsDown implementation="js">
+        )}
+        {scrWidth600up && scrHeight600up && (
           <Drawer
             classes={{
               paper: classes.drawerPaper
@@ -288,7 +294,7 @@ const Main = props => {
               openDeleteDialog={openDeleteDialog}
             />
           </Drawer>
-        </Hidden>
+        )}
       </nav>
 
       <Paper>
