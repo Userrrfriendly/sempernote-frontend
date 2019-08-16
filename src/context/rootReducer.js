@@ -37,10 +37,11 @@ const logIn = (token, userId, state) => {
 };
 
 const fetchUserData = (action, state) => {
+  const sortedNotebooks = sortByTitleAsc(action.notebooks, "name");
   return {
     ...state,
     userName: action.userName,
-    notebooks: action.notebooks,
+    notebooks: sortedNotebooks,
     tags: action.tags,
     notes: action.notes,
     trash: action.trash,
@@ -230,10 +231,16 @@ const moveNotetoNotebook = (action, state) => {
   );
   // merge the updated previous & newNotebooks with all the notebooks
   newNotebooks.push(updatedNotebook[0], oldNotebook[0]);
+  const sortedNotebooks = sortByTitleAsc(newNotebooks, "name");
   const activeNote =
     state.activeNote._id === action.noteID ? updatedNote : state.activeNote;
 
-  return { ...state, activeNote, notes: updatedNotes, notebooks: newNotebooks };
+  return {
+    ...state,
+    activeNote,
+    notes: updatedNotes,
+    notebooks: sortedNotebooks
+  };
 };
 
 const noteRemoveFavorite = (action, state) => {
@@ -498,10 +505,10 @@ const deleteTag = (action, state) => {
 export const rootReducer = (state, action) => {
   switch (action.type) {
     case LOG_IN:
-      console.log(action);
+      console.log(action.type);
       return logIn(action.token, action.userId, state);
     case FETCH_USER_DATA:
-      console.log(action);
+      console.log(action.type);
       return fetchUserData(action, state);
     case CREATE_NOTEBOOK:
       console.log(action);

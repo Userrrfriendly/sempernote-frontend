@@ -1,90 +1,222 @@
-import React, { useState, useEffect, useContext } from "react";
-import Select, { components } from "react-select";
-// import "./selec.css";
-import { LibraryBooksRounded } from "@material-ui/icons";
-import { Tooltip } from "@material-ui/core/";
-import { sortByTitleAsc } from "../../helpers/helpers";
-import StateContext from "../../context/StateContext";
-import DispatchContext from "../../context/DispatchContext";
-import { moveNoteToNotebookReq } from "../../requests/requests";
+import React, { useContext, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
+import {
+  InputLabel,
+  MenuItem,
+  FormControl,
+  Select,
+  Checkbox,
+  Typography,
+  useMediaQuery,
+  IconButton,
+  Tooltip,
+  Menu
+} from "@material-ui/core";
+
+import { LibraryBooksRounded } from "@material-ui/icons";
+import { OutlinedInput } from "@material-ui/core";
+
+import DispatchContext from "../../context/DispatchContext";
+import StateContext from "../../context/StateContext";
+import { moveNoteToNotebookReq } from "../../requests/requests";
+import { MOVE_NOTE_TO_NOTEBOOK } from "../../context/rootReducer";
 
 const useStyles = makeStyles(theme => ({
-  select_notebook: {
-    minWidth: "12rem",
-    flexGrow: "1",
-    maxWidth: "20rem",
-    /* override Quill's toolbar z-index:1 */
-    zIndex: "2"
+  root: {
+    display: "flex",
+    flexWrap: "wrap"
+  },
+  formControl: {
+    minWidth: 200,
+    maxWidth: 300,
+    margin: "0 8px",
+    "@media (min-width:1500px) ": {
+      maxWidth: "400px"
+    }
+  },
+  input: {
+    padding: "10px 14px",
+    paddingRight: "14px"
+  },
+  select: {
+    height: "50px",
+    backgroundColor: "#fff"
+  },
+  notebook_typography: {
+    marginRight: "2rem"
+  },
+  icon: {
+    margin: "0 6px"
   }
 }));
 
-/**Change Icon on React-Select dropdown
- * https://github.com/JedWatson/react-select/issues/3493
- */
-const DropdownIndicator = props => {
-  return (
-    <components.DropdownIndicator {...props}>
-      <Tooltip title="Change Notebook">
-        <LibraryBooksRounded style={{ color: "#202020" }} />
-      </Tooltip>
-    </components.DropdownIndicator>
-  );
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250
+    }
+  }
 };
 
-const SelectNotebook = props => {
+export default function SelectNotebook() {
+  const matches = useMediaQuery("(max-width:1279px)"); //determines wether the 'Select Tag' will be rendered as icon or as select
+
   const appState = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
+  const [notebooks, setNotebooks] = useState([]);
+  const inputLabel = React.useRef(null);
+  const [labelWidth, setLabelWidth] = useState(0);
+  React.useEffect(() => {
+    if (!matches) setLabelWidth(inputLabel.current.offsetWidth);
+  }, [matches]);
+
   const classes = useStyles();
-  const [selectedOption, setSelectedOption] = useState(null);
-  const [options, setOptions] = useState(
-    sortByTitleAsc(appState.notebooks, "name").map(book => {
-      return { value: book._id, label: book.name };
-    })
-  );
+  const [selectedNotebook, setSelectedNotebook] = useState([]);
+
+  function handleChange(event, args) {
+    //args === the element that was clicked (id can be retrieved from key property)
+    const notebookID = args.key;
+    if (selectedNotebook !== notebookID) {
+      moveNoteToNotebookReq(
+        appState.activeNote._id,
+        notebookID,
+        appState.token
+      ).then(r => console.log(r));
+
+      dispatch({
+        type: MOVE_NOTE_TO_NOTEBOOK,
+        noteID: appState.activeNote._id,
+        newNotebookID: notebookID,
+        previousNotebookID: appState.activeNote.notebook._id
+      });
+    }
+    setSelectedNotebook(event.target.value);
+  }
 
   useEffect(() => {
-    setOptions(
-      sortByTitleAsc(appState.notebooks, "name").map(book => {
-        return { value: book._id, label: book.name };
-      })
-    );
+    setSelectedNotebook(appState.activeNote.notebook._id);
+  }, [appState.activeNote]);
+
+  useEffect(() => {
+    const updatedNotebooks = appState.notebooks.map(book => {
+      return {
+        name: book.name,
+        id: book._id
+      };
+    });
+    setNotebooks(updatedNotebooks);
   }, [appState.notebooks]);
 
-  useEffect(() => {
-    const selectedIndex = options.findIndex(
-      option => option.value === appState.activeNote.notebook._id
-    );
-    setSelectedOption(options[selectedIndex]);
-  }, [appState.activeNote, options]);
+  //menu
+  const [anchorEl, setAnchorEl] = React.useState(null);
 
-  const handleChange = selectedOption => {
-    setSelectedOption(selectedOption);
+  function openNotebookMenu(event, id) {
+    setAnchorEl(event.currentTarget);
+  }
 
-    moveNoteToNotebookReq(
-      appState.activeNote._id,
-      selectedOption.value,
-      appState.token
-    ).then(r => console.log(r));
+  function handleNotebookMenuClose(e) {
+    setAnchorEl(null);
+  }
 
-    dispatch({
-      type: "MOVE_NOTE_TO_NOTEBOOK",
-      noteID: appState.activeNote._id,
-      newNotebookID: selectedOption.value,
-      previousNotebookID: appState.activeNote.notebook._id
-    });
-  };
+  function handleNotebookMenuClick(event, notebookID) {
+    if (selectedNotebook !== notebookID) {
+      moveNoteToNotebookReq(
+        appState.activeNote._id,
+        notebookID,
+        appState.token
+      ).then(r => console.log(r));
+
+      dispatch({
+        type: MOVE_NOTE_TO_NOTEBOOK,
+        noteID: appState.activeNote._id,
+        newNotebookID: notebookID,
+        previousNotebookID: appState.activeNote.notebook._id
+      });
+      setSelectedNotebook(notebookID);
+    }
+  }
+  //end menu
 
   return (
-    <Select
-      isDisabled={appState.activeNote.trash}
-      className={classes.select_notebook}
-      value={selectedOption}
-      onChange={handleChange}
-      options={options}
-      components={{ DropdownIndicator }}
-    />
-  );
-};
+    <div className={classes.root}>
+      {matches ? (
+        <>
+          <Tooltip title="Change Notebook">
+            <IconButton
+              aria-haspopup="true"
+              color="inherit"
+              onClick={openNotebookMenu}
+            >
+              <LibraryBooksRounded />
+            </IconButton>
+          </Tooltip>
+          <Menu
+            elevation={1}
+            anchorEl={anchorEl}
+            keepMounted
+            open={Boolean(anchorEl)}
+            onClose={handleNotebookMenuClose}
+          >
+            {appState.notebooks.map(book => (
+              <MenuItem
+                key={book._id}
+                value={book._id}
+                onClick={e => handleNotebookMenuClick.bind(this, e, book._id)()}
+              >
+                <Checkbox
+                  color="default"
+                  checked={selectedNotebook.includes(book._id)}
+                />
+                <Typography variant="inherit" noWrap>
+                  {book.name}
+                </Typography>
+              </MenuItem>
+            ))}
+          </Menu>
+        </>
+      ) : (
+        <FormControl variant="outlined" className={classes.formControl}>
+          <InputLabel ref={inputLabel} htmlFor="select-notebook">
+            Notebook
+          </InputLabel>
 
-export default SelectNotebook;
+          <Select
+            classes={{ icon: classes.icon }}
+            className={classes.select}
+            IconComponent={LibraryBooksRounded}
+            value={selectedNotebook}
+            onChange={handleChange}
+            input={
+              <OutlinedInput
+                classes={{ input: classes.input }}
+                labelWidth={labelWidth}
+                id="select-notebook"
+              />
+            }
+            renderValue={selected => (
+              <Typography className={classes.notebook_typography} noWrap={true}>
+                {notebooks.find(book => book.id === selected).name}
+              </Typography>
+            )}
+            MenuProps={MenuProps}
+          >
+            {appState.notebooks.map(book => (
+              <MenuItem key={book._id} value={book._id}>
+                <Checkbox
+                  color="default"
+                  checked={selectedNotebook.includes(book._id)}
+                />
+                <Typography variant="inherit" noWrap>
+                  {book.name}
+                </Typography>
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      )}
+    </div>
+  );
+}

@@ -13,7 +13,8 @@ import {
   Tooltip,
   TextField,
   ClickAwayListener,
-  InputAdornment
+  InputAdornment,
+  useMediaQuery
 } from "@material-ui/core/";
 import {
   DeleteRounded,
@@ -49,9 +50,6 @@ import { useScreenHeight } from "../../helpers/customHooks/useScreenHeight";
 const useStyles = makeStyles(theme => ({
   menuButton: {
     marginRight: theme.spacing(2)
-    // [theme.breakpoints.up("sm")]: {
-    //   display: "none"
-    // }
   },
   root: {
     flexGrow: 1,
@@ -77,6 +75,19 @@ const useStyles = makeStyles(theme => ({
     overflow: "hidden",
     whiteSpace: "wrap",
     textOverflow: "ellipsis"
+  },
+  title_sm: {
+    overflow: "hidden",
+    whiteSpace: "wrap",
+    textOverflow: "ellipsis",
+    fontSize: "0.8rem"
+  },
+  toolbar: {
+    flexFlow: "column",
+    alignItems: "center"
+  },
+  toolbar_large: {
+    alignItems: "center"
   }
 }));
 
@@ -87,8 +98,9 @@ const AdapterLink = React.forwardRef((props, ref) => (
 ));
 
 const MainAppBar = props => {
-  const scrHeight600up = useScreenHeight();
-
+  const scrHeigth600Up = useScreenHeight();
+  const scrWidth630Down = useMediaQuery("(max-width:630px)");
+  const scrWidth900Up = useMediaQuery("(min-width:900px)");
   const scrWidth600up = useScreenWidth();
   const appState = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
@@ -264,17 +276,24 @@ const MainAppBar = props => {
                 ? { justifyContent: "space-between" }
                 : { justifyContent: "flex-start" }
             }
+            className={
+              appState.activeNote && scrWidth630Down ? classes.toolbar : ""
+            }
           >
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              edge="start"
-              onClick={props.handleDrawerToggle}
-              className={classes.menuButton}
-              style={scrWidth600up && scrHeight600up ? { display: "none" } : {}}
-            >
-              <MenuRounded />
-            </IconButton>
+            {!appState.activeNote && (
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                edge="start"
+                onClick={props.handleDrawerToggle}
+                className={classes.menuButton}
+                style={
+                  scrWidth600up && scrHeigth600Up ? { display: "none" } : {}
+                }
+              >
+                <MenuRounded />
+              </IconButton>
+            )}
             {renameNoteOpen &&
             appState.activeNote &&
             !appState.activeNote.trash ? (
@@ -317,7 +336,7 @@ const MainAppBar = props => {
                     ? classes.title_container_expanden_note
                     : classes.title_container
                 }
-                style={!scrWidth600up ? { maxWidth: "85%" } : {}}
+                style={!scrWidth600up ? { maxWidth: "95%" } : {}}
               >
                 <Typography
                   onClick={
@@ -328,8 +347,13 @@ const MainAppBar = props => {
                   variant={title && title.length > 20 ? "subtitle1" : "h6"}
                   component="h1"
                   color="inherit"
-                  className={classes.title}
+                  className={
+                    title && title.length > 20 && !scrWidth900Up
+                      ? classes.title_sm
+                      : classes.title
+                  }
                   style={titleStyle()}
+                  align={scrWidth630Down ? "center" : "left"}
                 >
                   {appState.activeNote ? formatTitle(title) : title}
                 </Typography>
@@ -345,60 +369,70 @@ const MainAppBar = props => {
             {/* RENDER A REGULAR NOTE (not TRASH) */}
             {appState.activeNote && !appState.activeNote.trash && (
               <>
-                <Tooltip title="Back">
-                  <IconButton
-                    className={classes.arrow}
-                    aria-haspopup="true"
-                    color="inherit"
-                    component={AdapterLink}
-                    to="/main/"
-                    onClick={() => {
-                      handleClickAway();
-                      dispatch({
-                        type: SET_ACTIVE_NOTE,
-                        note: null
-                      });
-                    }}
+                <div
+                  style={{ flexFlow: "row", display: "flex", flexShrink: 0 }}
+                >
+                  <Tooltip title="Back">
+                    <IconButton
+                      className={scrWidth630Down ? {} : classes.arrow}
+                      aria-haspopup="true"
+                      color="inherit"
+                      component={AdapterLink}
+                      to="/main/"
+                      onClick={() => {
+                        handleClickAway();
+                        dispatch({
+                          type: SET_ACTIVE_NOTE,
+                          note: null
+                        });
+                      }}
+                    >
+                      <ArrowBack />
+                    </IconButton>
+                  </Tooltip>
+
+                  <SelectNotebook />
+
+                  <SelectTag />
+
+                  <Tooltip title="Save changes">
+                    <IconButton
+                      color="inherit"
+                      onClick={props.handleManualSave}
+                    >
+                      <SaveRounded />
+                    </IconButton>
+                  </Tooltip>
+
+                  <Tooltip
+                    title={
+                      appState.activeNote.favorite
+                        ? "Remove from Favorites"
+                        : "Add to Favorites"
+                    }
                   >
-                    <ArrowBack />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Save changes">
-                  <IconButton color="inherit" onClick={props.handleManualSave}>
-                    <SaveRounded />
-                  </IconButton>
-                </Tooltip>
+                    <IconButton onClick={noteToggleFavorite} color="inherit">
+                      <StarRounded
+                        style={
+                          appState.activeNote.favorite ? { color: "gold" } : {}
+                        }
+                      />
+                    </IconButton>
+                  </Tooltip>
 
-                <SelectNotebook />
-
-                <SelectTag />
-
-                <Tooltip title="Favorites">
-                  <IconButton onClick={noteToggleFavorite} color="inherit">
-                    <StarRounded
-                      style={
-                        appState.activeNote.favorite ? { color: "gold" } : {}
-                      }
-                    />
-                  </IconButton>
-                </Tooltip>
-                {/* <Tooltip title="Note info">
-                  <IconButton aria-haspopup="true" color="inherit">
-                    <Info />
-                  </IconButton>
-                </Tooltip> */}
-                <Tooltip title="Delete Note">
-                  <IconButton
-                    aria-haspopup="true"
-                    color="inherit"
-                    onClick={props.openDeleteDialog.bind(
-                      this,
-                      appState.activeNote
-                    )}
-                  >
-                    <DeleteRounded />
-                  </IconButton>
-                </Tooltip>
+                  <Tooltip title="Delete Note">
+                    <IconButton
+                      aria-haspopup="true"
+                      color="inherit"
+                      onClick={props.openDeleteDialog.bind(
+                        this,
+                        appState.activeNote
+                      )}
+                    >
+                      <DeleteRounded />
+                    </IconButton>
+                  </Tooltip>
+                </div>
               </>
             )}
             {/* RENDER TRASHED NOTE */}
@@ -438,12 +472,6 @@ const MainAppBar = props => {
                     <DeleteForeverRounded style={{ color: "red" }} />
                   </IconButton>
                 </Tooltip>
-
-                {/* <Tooltip title="Note info">
-                  <IconButton aria-haspopup="true" color="inherit">
-                    <Info />
-                  </IconButton>
-                </Tooltip> */}
 
                 <Tooltip title="Restore Note">
                   <IconButton

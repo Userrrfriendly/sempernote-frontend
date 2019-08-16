@@ -105,7 +105,7 @@ const HeaderActions = props => {
       <IconButton
         aria-haspopup="true"
         color="inherit"
-        title="Add to Favorites"
+        title={note.favorite ? "Remove from Favorites" : "Add to Favorites"}
         onClick={props.toggleFavorite}
       >
         {note && note.favorite ? (

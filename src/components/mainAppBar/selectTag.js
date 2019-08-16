@@ -1,132 +1,265 @@
-import React, { useEffect, useState, useContext } from "react";
-import Select, { components } from "react-select";
-// import "./selec.css";
+import React, { useContext, useEffect, useState, useRef } from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import InputLabel from "@material-ui/core/InputLabel";
+import {
+  MenuItem,
+  FormControl,
+  Select,
+  Checkbox,
+  Typography,
+  OutlinedInput,
+  useMediaQuery,
+  IconButton,
+  Tooltip,
+  Menu
+} from "@material-ui/core";
 import { StyleRounded } from "@material-ui/icons";
-import { Tooltip } from "@material-ui/core/";
-import { find as _find } from "lodash";
+import TagChip from "./tagChip";
+
 import DispatchContext from "../../context/DispatchContext";
 import StateContext from "../../context/StateContext";
 import { assignTagReq, unAssignTagReq } from "../../requests/requests";
 import { ASSIGN_TAG, UNASSIGN_TAG } from "../../context/rootReducer";
-// import makeAnimated from "react-select/animated";
-import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles(theme => ({
-  select_tag: {
-    minWidth: "13rem",
-    flexGrow: "1",
-    maxWidth: "30rem",
-    marginLeft: "1rem",
-    /* override Quill's toolbar z-index:1 */
-    zIndex: "2"
-    /* if i change the height it will drift upwards */
-    /* height: 3rem; */
-    /* max-height: 64px; */
+  root: {
+    display: "flex",
+    flexShrink: 0
+  },
+  formControl: {
+    margin: "0 8px",
+    flexShrink: 0,
+    "@media (min-width:1280px) ": {
+      maxWidth: 350,
+      minWidth: 200
+    },
+    "@media (min-width:1500px) ": {
+      maxWidth: "600px"
+    }
+  },
+  chips: {
+    display: "flex",
+    flexWrap: "wrap",
+    marginRight: "1.2rem",
+    maxHeight: "2rem"
+  },
+
+  input: {
+    padding: "10px 14px",
+    paddingRight: "14px"
+  },
+  select: {
+    height: "50px",
+    backgroundColor: "#fff"
+  },
+  tag_counter: {
+    padding: "6px",
+    borderRadius: "16px",
+    margin: "0 10px",
+    width: "20px",
+    height: "20px",
+    border: "1px #e0e0e0 solid",
+    textAlign: "center"
+  },
+  icon: {
+    margin: "0 6px"
   }
 }));
 
-/**Change Icon on React-Select dropdown
- * https://github.com/JedWatson/react-select/issues/3493
- */
-const DropdownIndicator = props => {
-  return (
-    <components.DropdownIndicator {...props}>
-      <Tooltip title="Edit Tags">
-        <StyleRounded style={{ color: "#202020" }} />
-      </Tooltip>
-    </components.DropdownIndicator>
-  );
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250
+    }
+  }
 };
 
-/*
-* animatedComponets cause inconsistencies with height (it's smaller than the select notebook...)
-* worth retrying to implement it once I figure out how to properly target styles in react select
-
-//the component that will be animated
-const MultiValueContainer = props => {
-  return <components.DropdownIndicator {...props} />;
-};
-
-const animatedComponents = makeAnimated(DropdownIndicator, MultiValueContainer);
-*/
-
-const SelectTag = props => {
+export default function SelectTag() {
+  const matches = useMediaQuery("(max-width:1279px)"); //determines wether the 'Select Tag' will be rendered as icon or as select
   const appState = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
-  const classes = useStyles();
-  const [selectedOption, setSelectedOption] = useState(null);
-  const [options, setOptions] = useState(
-    appState.tags.map(tag => {
-      return { value: tag._id, label: tag.tagname };
-    })
-  );
-
-  //update Options if a tag was created/deleted
+  const [tags, setTags] = useState([]);
+  const inputLabel = useRef(null);
+  const [labelWidth, setLabelWidth] = useState(0);
   useEffect(() => {
-    console.log("SelectTag useEffect (updated appState.tags)");
-    const initialOptions = appState.tags.map(tag => {
-      return { value: tag._id, label: tag.tagname };
-    });
-    setOptions(initialOptions);
-  }, [appState.tags]);
+    if (!matches) setLabelWidth(inputLabel.current.offsetWidth);
+  }, [matches]);
 
-  useEffect(() => {
-    console.log("SelectTag useEffect (updated props.activeNote || options)");
-    const currentTags = options.filter(option =>
-      _find(appState.activeNote.tags, { _id: option.value })
-    );
-    setSelectedOption(currentTags);
-  }, [appState.activeNote, options]);
+  //menu
+  const [anchorEl, setAnchorEl] = React.useState(null);
 
-  const handleChange = (newSelectedOption, args) => {
-    // console.log(args);
-    setSelectedOption(newSelectedOption);
+  function openTagMenu(event, id) {
+    setAnchorEl(event.currentTarget);
+  }
 
-    if (args.action === "select-option") {
-      // console.log(
-      //   `tagID=${args.option.value} noteID=${appState.activeNote._id}`
-      // );
-      assignTagReq(
-        args.option.value,
-        appState.activeNote._id,
-        appState.token
-      ).then(r => console.log(r));
-      dispatch({
-        type: ASSIGN_TAG,
-        tagID: args.option.value,
-        noteID: appState.activeNote._id
-      });
-    } else if (args.action === "remove-value") {
-      // console.log("removing tag from note...");
-      unAssignTagReq(
-        args.removedValue.value,
-        appState.activeNote._id,
-        appState.token
-      );
+  function closeTagMenu(e) {
+    setAnchorEl(null);
+  }
+
+  function handleTagMenuItemClick(event, tagID) {
+    let updatedSelection = [...selectedTags];
+
+    if (selectedTags.includes(tagID)) {
+      unAssignTagReq(tagID, appState.activeNote._id, appState.token);
+      updatedSelection = updatedSelection.filter(id => id !== tagID);
       dispatch({
         type: UNASSIGN_TAG,
-        tagID: args.removedValue.value,
+        tagID: tagID,
+        noteID: appState.activeNote._id
+      });
+    } else {
+      updatedSelection.push(tagID);
+      assignTagReq(tagID, appState.activeNote._id, appState.token).then(r =>
+        console.log(r)
+      );
+      dispatch({
+        type: ASSIGN_TAG,
+        tagID: tagID,
         noteID: appState.activeNote._id
       });
     }
-  };
+    setSelectedTags(updatedSelection);
+  }
+  //end menu
+
+  const classes = useStyles();
+  const [selectedTags, setSelectedTags] = useState([]);
+
+  function handleChange(event, args) {
+    //args === the element that was clicked (id can be retrieved from key property)
+    const tagID = args.key;
+    if (selectedTags.includes(tagID)) {
+      unAssignTagReq(tagID, appState.activeNote._id, appState.token);
+      dispatch({
+        type: UNASSIGN_TAG,
+        tagID: tagID,
+        noteID: appState.activeNote._id
+      });
+    } else {
+      assignTagReq(tagID, appState.activeNote._id, appState.token).then(r =>
+        console.log(r)
+      );
+      dispatch({
+        type: ASSIGN_TAG,
+        tagID: tagID,
+        noteID: appState.activeNote._id
+      });
+    }
+
+    setSelectedTags(event.target.value);
+  }
+
+  useEffect(() => {
+    //display tags that are attatched to activeNote (Selected)
+    const activeNoteTags = appState.activeNote.tags.map(tag => {
+      return tag._id;
+    });
+    setSelectedTags(activeNoteTags);
+  }, [appState.activeNote]);
+
+  useEffect(() => {
+    const updatedTags = appState.tags.map(tag => {
+      return {
+        name: tag.tagname,
+        id: tag._id
+      };
+    });
+    setTags(updatedTags);
+  }, [appState.tags]);
 
   return (
-    <Select
-      // className="select-tag"
-      className={classes.select_tag}
-      value={selectedOption}
-      onChange={handleChange}
-      options={options}
-      // components={animatedComponents}
-      components={{ DropdownIndicator }}
-      isMulti
-      closeMenuOnSelect={false}
-      placeholder="Select Tags"
-      isClearable={false}
-      isDisabled={appState.activeNote.trash}
-    />
-  );
-};
+    <div className={classes.root}>
+      {matches ? (
+        // renders an <IconButton> instead of <Select>
+        <>
+          <Tooltip title="Edit Tags">
+            <IconButton
+              aria-haspopup="true"
+              color="inherit"
+              onClick={openTagMenu}
+            >
+              <StyleRounded />
+            </IconButton>
+          </Tooltip>
+          <Menu
+            elevation={1}
+            anchorEl={anchorEl}
+            keepMounted
+            open={Boolean(anchorEl)}
+            onClose={closeTagMenu}
+          >
+            {tags.map(tag => (
+              <MenuItem
+                key={tag.id}
+                value={tag.id}
+                onClick={e => handleTagMenuItemClick.bind(this, e, tag.id)()}
+              >
+                <Checkbox
+                  color="default"
+                  checked={selectedTags.includes(tag.id)}
+                />
+                <Typography variant="inherit" noWrap>
+                  {tag.name}
+                </Typography>
+              </MenuItem>
+            ))}
+          </Menu>
+        </>
+      ) : (
+        <FormControl variant="outlined" className={classes.formControl}>
+          <InputLabel ref={inputLabel} htmlFor="select-multiple-chip">
+            Tags
+          </InputLabel>
 
-export default SelectTag;
+          <Select
+            classes={{ icon: classes.icon }}
+            className={classes.select}
+            IconComponent={StyleRounded}
+            multiple
+            value={selectedTags}
+            onChange={handleChange}
+            input={
+              <OutlinedInput
+                classes={{ input: classes.input }}
+                labelWidth={labelWidth}
+                id="select-multiple-chip"
+              />
+            }
+            renderValue={selected => (
+              <div className={classes.chips}>
+                {selected.map((value, index) =>
+                  index < 3 ? (
+                    <TagChip key={value}>
+                      {tags.find(tag => tag.id === value).name}
+                    </TagChip>
+                  ) : (
+                    ""
+                  )
+                )}
+                <Typography className={classes.tag_counter} noWrap={true}>
+                  {selected.length}
+                </Typography>
+              </div>
+            )}
+            MenuProps={MenuProps}
+          >
+            {tags.map(tag => (
+              <MenuItem key={tag.id} value={tag.id}>
+                <Checkbox
+                  color="default"
+                  checked={selectedTags.includes(tag.id)}
+                />
+                <Typography variant="inherit" noWrap>
+                  {tag.name}
+                </Typography>
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      )}
+    </div>
+  );
+}

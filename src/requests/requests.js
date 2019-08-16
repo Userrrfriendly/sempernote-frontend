@@ -32,7 +32,13 @@ import {
   deleteNoteForever
 } from "../helpers/graphQLrequests";
 
-const url = "http://localhost:8000/graphql";
+// const url = "https://sempertest.herokuapp.com/graphql";
+
+const url =
+  !process.env.NODE_ENV || process.env.NODE_ENV === "development"
+    ? "http://localhost:8000/graphql"
+    : "https://sempertest.herokuapp.com/graphql";
+
 const options = {
   method: "POST",
   body: "JSON.stringify(requestBody)",
@@ -69,7 +75,7 @@ export function fetchUserDataReq(userId, token) {
       return res.json();
     })
     .then(resData => {
-      console.log(resData);
+      // console.log(resData);
       const notes = sortByDateNewestFirst(
         mergeNotes(resData.data.user.notebooks),
         "updatedAt"

@@ -18,7 +18,6 @@ const App = props => {
         {state.token && <Redirect exact from="/auth/" to="/main/" />}
         <Route path="/auth" component={AuthScreen} />
         <Route
-          // exact
           path="/main/"
           render={props => (
             <>

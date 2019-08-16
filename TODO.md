@@ -44,10 +44,6 @@
 
 **_ Backend _**
 
-- Default NoteBook:
-  - Make it immutable (user cannot rename or delete it)
-- transformTag is mistyped... tranformTag or smth
-
 - Nice2have:
   - Password Length and Validation.... maybe this should be handled at front end?
   - Password verification with email
@@ -61,7 +57,6 @@
 
 # Random
 
-- check the app by spamming component did update in every component to check for rerenders
 - https://github.com/material-components/material-components-web/issues/1912
 - https://stackoverflow.com/questions/49881826/importing-quill-to-react-app-throws-react-is-not-defined-unexpected-token-im
 - React Select inside a MaterialUI Dialog causes the dialog to overflow see:
@@ -78,9 +73,6 @@
 
 # UI Bugs:
 
-- Extremely long tag (without spaces) can underflow in drawer sneaking up to the ... button, (shorten long names?)
-  - Extremely long tag expands the appbars height and causes a slight scrolling vertical scroll
-- Select Tag can overflow-y very very badly.... need to find a way to target the coresponding div and set its max-height to ~60px
 - Edit a note -> before save is complete delete it (will return two notes one in trash and one in notes);
 
 ## Nice2Have:
@@ -95,6 +87,7 @@
 
 ## High Priority
 
+- App crashes when there is no note to render
 - Create Documentation
 
 ## Sprint
@@ -112,4 +105,6 @@
 ## Responsive UI
 
 - MoreVertical icon for Appbar on smallScreens
-- Final boss : appbar with expanded note
+- raise dialogs from expanded note (delete note etc) also delte note is not responsive on Galaxy 5
+
+

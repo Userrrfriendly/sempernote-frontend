@@ -241,11 +241,9 @@ const Main = props => {
           _id: null
         });
       }
-      console.log("back button was pressed");
     };
   }, [props.history.location.pathname, appState.activeNote, dispatch]);
 
-  console.log(!scrWidth600up || !scrHeight600up);
   return (
     <main className={classes.main_section}>
       <nav className={classes.drawer} aria-label="navigation">
