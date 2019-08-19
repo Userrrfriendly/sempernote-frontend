@@ -14,9 +14,6 @@ import {
 import CreateTagIcon from "../svgCreateTag/svgCreateTag";
 
 const styles = theme => ({
-  // root: {
-  //   height: 380
-  // },
   speedDial: {
     position: "fixed",
     bottom: theme.spacing(2),
@@ -65,8 +62,7 @@ class SpeedDialTooltipOpen extends React.Component {
 
   handleVisibility = () => {
     this.setState(state => ({
-      open: false,
-      hidden: !state.hidden
+      open: false
     }));
   };
 
@@ -78,11 +74,11 @@ class SpeedDialTooltipOpen extends React.Component {
   };
 
   handleOpen = () => {
-    if (!this.state.hidden) {
-      this.setState({
-        open: true
-      });
-    }
+    // if (!this.state.hidden) {
+    this.setState({
+      open: true
+    });
+    // }
   };
 
   handleClose = () => {
@@ -93,15 +89,13 @@ class SpeedDialTooltipOpen extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { hidden, open } = this.state;
+    const { open } = this.state;
 
     return (
       <div>
-        {/* <Button onClick={this.handleVisibility}>Toggle Speed Dial</Button> */}
         <SpeedDial
           ariaLabel="SpeedDial tooltip example"
           className={classes.speedDial}
-          hidden={hidden}
           icon={<SpeedDialIcon />}
           onBlur={this.handleClose}
           onClick={this.handleClick}

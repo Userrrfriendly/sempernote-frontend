@@ -80,9 +80,7 @@ const SideNav = props => {
         component="nav"
         style={
           scrWidth600up && scrHeight600up
-            ? // ? { width: "60px" }
-              // : { width: "240px" }
-              { width: "60px", height: "100vh" }
+            ? { width: "60px", height: "100vh" }
             : { width: "240px", height: "100vh" }
         }
         className={

@@ -126,7 +126,6 @@ const TrashDrawer = props => {
           className={classes.list_item}
           button
           onClick={props.toggleDrawer.bind(this, "trash", true)}
-          // style={{ marginBottom: "1rem" }}
         >
           <ListItemIcon>
             <DeleteSweepRounded />
