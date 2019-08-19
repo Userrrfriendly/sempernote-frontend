@@ -9,13 +9,21 @@ import {
   DialogContent,
   DialogActions,
   Dialog,
-  Button
+  Button,
+  makeStyles
 } from "@material-ui/core";
 
 import { trashNoteReq, deleteNoteForeverReq } from "../../requests/requests";
 import { TRASH_NOTE, DELETE_NOTE_FOREVER } from "../../context/rootReducer";
 
+const useStyles = makeStyles(theme => ({
+  paper: {
+    margin: "3rem 1rem"
+  }
+}));
+
 const DeleteNoteDialog = props => {
+  const classes = useStyles();
   const appState = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
 
@@ -60,7 +68,8 @@ const DeleteNoteDialog = props => {
         open={props.open}
         onClose={props.close}
         aria-labelledby="form-dialog-title"
-        style={{ minWidth: "450px" }}
+        // style={{ minWidth: "450px" }}
+        classes={{ paper: classes.paper }}
       >
         <DialogTitle id="form-dialog-title">
           {props.note.trash ? "Delete note forever " : "Move note to Trash"}

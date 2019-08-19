@@ -180,6 +180,7 @@ export default function SelectTag() {
               aria-haspopup="true"
               color="inherit"
               onClick={openTagMenu}
+              disabled={appState.activeNote.trash}
             >
               <StyleRounded />
             </IconButton>
@@ -209,7 +210,11 @@ export default function SelectTag() {
           </Menu>
         </>
       ) : (
-        <FormControl variant="outlined" className={classes.formControl}>
+        <FormControl
+          variant="outlined"
+          className={classes.formControl}
+          disabled={appState.activeNote.trash}
+        >
           <InputLabel ref={inputLabel} htmlFor="select-multiple-chip">
             Tags
           </InputLabel>

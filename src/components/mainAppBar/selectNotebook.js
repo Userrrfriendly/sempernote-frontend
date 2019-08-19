@@ -47,6 +47,9 @@ const useStyles = makeStyles(theme => ({
   },
   icon: {
     margin: "0 6px"
+  },
+  list: {
+    maxWidth: "250px"
   }
 }));
 
@@ -139,7 +142,6 @@ export default function SelectNotebook() {
     }
   }
   //end menu
-
   return (
     <div className={classes.root}>
       {matches ? (
@@ -149,6 +151,7 @@ export default function SelectNotebook() {
               aria-haspopup="true"
               color="inherit"
               onClick={openNotebookMenu}
+              disabled={appState.activeNote.trash}
             >
               <LibraryBooksRounded />
             </IconButton>
@@ -159,6 +162,7 @@ export default function SelectNotebook() {
             keepMounted
             open={Boolean(anchorEl)}
             onClose={handleNotebookMenuClose}
+            classes={{ list: classes.list }}
           >
             {appState.notebooks.map(book => (
               <MenuItem
@@ -178,7 +182,11 @@ export default function SelectNotebook() {
           </Menu>
         </>
       ) : (
-        <FormControl variant="outlined" className={classes.formControl}>
+        <FormControl
+          variant="outlined"
+          className={classes.formControl}
+          disabled={appState.activeNote.trash}
+        >
           <InputLabel ref={inputLabel} htmlFor="select-notebook">
             Notebook
           </InputLabel>

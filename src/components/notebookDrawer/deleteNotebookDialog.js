@@ -8,7 +8,8 @@ import {
   DialogContent,
   DialogActions,
   Dialog,
-  Button
+  Button,
+  makeStyles
 } from "@material-ui/core";
 
 import { notebookDeleteReq } from "../../requests/requests";
@@ -19,7 +20,15 @@ import {
 } from "../../context/rootReducer";
 import { NOTEBOOK, NOTES } from "../../context/activeUItypes";
 
+const useStyles = makeStyles(theme => ({
+  paper: {
+    margin: "3rem 1rem"
+  }
+}));
+
 export default function DeleteNotebook(props) {
+  const classes = useStyles();
+
   const appState = useContext(StateContext);
   const dispatch = useContext(DispatchContext);
   const handleDelete = () => {
@@ -63,7 +72,7 @@ export default function DeleteNotebook(props) {
         open={props.open}
         onClose={props.close}
         aria-labelledby="form-dialog-title"
-        style={{ minWidth: "450px" }}
+        classes={{ paper: classes.paper }}
       >
         <DialogTitle id="form-dialog-title">Delete Notebook</DialogTitle>
         <DialogContent>

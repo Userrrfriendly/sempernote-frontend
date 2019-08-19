@@ -6,14 +6,23 @@ import {
   DialogActions,
   Dialog,
   TextField,
-  Button
+  Button,
+  makeStyles
 } from "@material-ui/core";
 import StateContext from "../../context/StateContext";
 import DispatchContext from "../../context/DispatchContext";
 import { renameTagReq } from "../../requests/requests";
 import { RENAME_TAG } from "../../context/rootReducer";
 
+const useStyles = makeStyles(theme => ({
+  paper: {
+    margin: "3rem 1rem"
+  }
+}));
+
 export default function RenameTag(props) {
+  const classes = useStyles();
+
   const [value, setValue] = useState("");
   const [error, setError] = useState(false);
   const appState = useContext(StateContext);
@@ -64,7 +73,7 @@ export default function RenameTag(props) {
         open={props.open}
         onClose={props.close}
         aria-labelledby="form-dialog-title"
-        style={{ minWidth: "450px" }}
+        classes={{ paper: classes.paper }}
       >
         <form onSubmit={handleSubmit}>
           <DialogTitle id="form-dialog-title">Rename Tag</DialogTitle>

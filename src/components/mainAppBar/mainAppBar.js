@@ -88,6 +88,11 @@ const useStyles = makeStyles(theme => ({
   },
   toolbar_large: {
     alignItems: "center"
+  },
+  icon_container: {
+    flexFlow: "row",
+    display: "flex",
+    flexShrink: 0
   }
 }));
 
@@ -369,9 +374,7 @@ const MainAppBar = props => {
             {/* RENDER A REGULAR NOTE (not TRASH) */}
             {appState.activeNote && !appState.activeNote.trash && (
               <>
-                <div
-                  style={{ flexFlow: "row", display: "flex", flexShrink: 0 }}
-                >
+                <div className={classes.icon_container}>
                   <Tooltip title="Back">
                     <IconButton
                       className={scrWidth630Down ? {} : classes.arrow}
@@ -438,50 +441,55 @@ const MainAppBar = props => {
             {/* RENDER TRASHED NOTE */}
             {appState.activeNote && appState.activeNote.trash && (
               <>
-                <Tooltip title="Back">
-                  <IconButton
-                    className={classes.arrow}
-                    aria-haspopup="true"
-                    color="inherit"
-                    component={AdapterLink}
-                    to="/main/"
-                    onClick={() => {
-                      dispatch({
-                        type: SET_ACTIVE_NOTE,
-                        note: null
-                      });
-                    }}
-                  >
-                    <ArrowBack />
-                  </IconButton>
-                </Tooltip>
+                <div className={classes.icon_container}>
+                  <Tooltip title="Back">
+                    <IconButton
+                      className={classes.arrow}
+                      aria-haspopup="true"
+                      color="inherit"
+                      component={AdapterLink}
+                      to="/main/"
+                      onClick={() => {
+                        dispatch({
+                          type: SET_ACTIVE_NOTE,
+                          note: null
+                        });
+                      }}
+                    >
+                      <ArrowBack />
+                    </IconButton>
+                  </Tooltip>
 
-                <SelectNotebook />
+                  <SelectNotebook />
 
-                <SelectTag />
+                  <SelectTag />
 
-                <Tooltip title="Permanent Delete">
-                  <IconButton
-                    aria-haspopup="true"
-                    color="inherit"
-                    onClick={props.openDeleteDialog.bind(
-                      this,
-                      appState.activeNote
-                    )}
-                  >
-                    <DeleteForeverRounded style={{ color: "red" }} />
-                  </IconButton>
-                </Tooltip>
+                  <Tooltip title="Permanent Delete">
+                    <IconButton
+                      aria-haspopup="true"
+                      color="inherit"
+                      onClick={props.openDeleteDialog.bind(
+                        this,
+                        appState.activeNote
+                      )}
+                    >
+                      <DeleteForeverRounded style={{ color: "red" }} />
+                    </IconButton>
+                  </Tooltip>
 
-                <Tooltip title="Restore Note">
-                  <IconButton
-                    aria-haspopup="true"
-                    color="inherit"
-                    onClick={props.restoreNote.bind(this, appState.activeNote)}
-                  >
-                    <RestoreFromTrash style={{ color: "green" }} />
-                  </IconButton>
-                </Tooltip>
+                  <Tooltip title="Restore Note">
+                    <IconButton
+                      aria-haspopup="true"
+                      color="inherit"
+                      onClick={props.restoreNote.bind(
+                        this,
+                        appState.activeNote
+                      )}
+                    >
+                      <RestoreFromTrash style={{ color: "green" }} />
+                    </IconButton>
+                  </Tooltip>
+                </div>
               </>
             )}
           </Toolbar>

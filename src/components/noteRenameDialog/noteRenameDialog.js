@@ -8,12 +8,20 @@ import {
   DialogActions,
   Dialog,
   TextField,
-  Button
+  Button,
+  makeStyles
 } from "@material-ui/core";
 import { RENAME_NOTE } from "../../context/rootReducer";
 import { renameNoteReq } from "../../requests/requests";
 
+const useStyles = makeStyles(theme => ({
+  paper: {
+    margin: "3rem 1rem"
+  }
+}));
+
 export default function RenameNoteDialog(props) {
+  const classes = useStyles();
   const [value, setValue] = useState("");
   const [error, setError] = useState(false);
   const appState = useContext(StateContext);
@@ -71,7 +79,7 @@ export default function RenameNoteDialog(props) {
         open={props.open}
         onClose={props.close}
         aria-labelledby="form-dialog-title"
-        style={{ minWidth: "450px" }}
+        classes={{ paper: classes.paper }}
       >
         <form onSubmit={handleSubmit}>
           <DialogTitle id="form-dialog-title">Rename note</DialogTitle>
