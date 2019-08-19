@@ -1,7 +1,6 @@
 import {
   simplifyNotebooks,
   mergeNotes,
-  // selectNotebook,
   sortByDateNewestFirst,
   filterTrash
 } from "../helpers/helpers";
@@ -32,12 +31,12 @@ import {
   deleteNoteForever
 } from "../helpers/graphQLrequests";
 
-// const url = "https://sempertest.herokuapp.com/graphql";
+const url = "https://sempernote-backend-api.herokuapp.com/graphql";
 
-const url =
-  !process.env.NODE_ENV || process.env.NODE_ENV === "development"
-    ? "http://localhost:8000/graphql"
-    : "https://sempertest.herokuapp.com/graphql";
+// const url =
+//   !process.env.NODE_ENV || process.env.NODE_ENV === "development"
+//     ? "http://localhost:8000/graphql"
+//     : "https://sempernote-backend-api.herokuapp.com/graphql";
 
 const options = {
   method: "POST",
@@ -75,7 +74,6 @@ export function fetchUserDataReq(userId, token) {
       return res.json();
     })
     .then(resData => {
-      // console.log(resData);
       const notes = sortByDateNewestFirst(
         mergeNotes(resData.data.user.notebooks),
         "updatedAt"

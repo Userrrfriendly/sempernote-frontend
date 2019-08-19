@@ -50,10 +50,12 @@ const FavoritesDrawer = props => {
     root: {
       display: "flex"
     },
+    list_item: {
+      marginBottom: scrWidth600up ? "1rem" : "0.25rem"
+    },
     drawer: {
       width: drawerWidth,
-      flexShrink: 0,
-      overflowX: "hidden"
+      flexShrink: 0
     },
     drawerPaper: {
       width: drawerWidth,
@@ -220,7 +222,6 @@ const FavoritesDrawer = props => {
           button
           selected={props.listSelected}
           onClick={props.toggleDrawer.bind(this, "favorites", true)}
-          style={{ marginBottom: "1rem" }}
         >
           <ListItemIcon>
             <StarRounded />

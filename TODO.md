@@ -107,4 +107,8 @@
 - MoreVertical icon for Appbar on smallScreens
 - raise dialogs from expanded note (delete note etc) also delte note is not responsive on Galaxy 5
 
+# in backend documentation mention that the scripts in package.json should be changed to start: "nodemon app.js"
 
+    "start": "nodemon app.js"
+
+# Remove graphiQL from production

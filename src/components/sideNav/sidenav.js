@@ -34,8 +34,7 @@ const SideNav = props => {
   const useStyles = makeStyles(theme => ({
     root: {
       backgroundColor: theme.palette.background.paper,
-      height: "auto",
-      minHeight: "100vh",
+      heigth: "100vh",
       position: "fixed",
       top: "0",
       boxShadow:
@@ -43,10 +42,10 @@ const SideNav = props => {
       zIndex: 1301 //override the drawers zIndex
     },
     list_item: {
-      marginBottom: "1rem"
+      marginBottom: scrWidth600up ? "1rem" : "0.25rem"
     },
     hr: {
-      margin: "2rem 0"
+      margin: scrWidth600up ? "2rem 0" : "1rem 0"
     },
     smallScreen: {
       color: "black",
@@ -81,8 +80,10 @@ const SideNav = props => {
         component="nav"
         style={
           scrWidth600up && scrHeight600up
-            ? { width: "60px" }
-            : { width: "240px" }
+            ? // ? { width: "60px" }
+              // : { width: "240px" }
+              { width: "60px", height: "100vh" }
+            : { width: "240px", height: "100vh" }
         }
         className={
           scrWidth600up && scrHeight600up
@@ -92,7 +93,7 @@ const SideNav = props => {
       >
         <Tooltip title="Create Note" placement="right">
           <ListItem
-            style={{ marginTop: "2rem" }}
+            style={{ marginTop: scrWidth600up ? "2rem" : "0.75rem" }}
             className={classes.list_item}
             onClick={openCreateNoteModal}
             button

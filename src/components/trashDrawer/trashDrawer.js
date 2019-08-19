@@ -34,7 +34,9 @@ const TrashDrawer = props => {
     root: {
       display: "flex"
     },
-
+    list_item: {
+      marginBottom: scrWidth600up ? "1rem" : "0.25rem"
+    },
     drawer: {
       width: drawerWidth,
       flexShrink: 0
@@ -124,7 +126,7 @@ const TrashDrawer = props => {
           className={classes.list_item}
           button
           onClick={props.toggleDrawer.bind(this, "trash", true)}
-          style={{ marginBottom: "1rem" }}
+          // style={{ marginBottom: "1rem" }}
         >
           <ListItemIcon>
             <DeleteSweepRounded />

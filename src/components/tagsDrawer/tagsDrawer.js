@@ -49,10 +49,12 @@ const TagDrawer = props => {
     root: {
       display: "flex"
     },
+    list_item: {
+      marginBottom: scrWidth600up ? "1rem" : "0.25rem"
+    },
     drawer: {
       width: drawerWidth,
-      flexShrink: 0,
-      overflowX: "hidden"
+      flexShrink: 0
     },
     drawerPaper: {
       width: drawerWidth,
@@ -79,7 +81,8 @@ const TagDrawer = props => {
       marginTop: "8px"
     },
     textField: {
-      margin: "8px 8px 16px"
+      margin: "8px 8px 16px",
+      minHeight: "56px"
     }
   }));
 
@@ -176,7 +179,6 @@ const TagDrawer = props => {
           button
           selected={props.listSelected}
           onClick={props.toggleDrawer.bind(this, "tags", true)}
-          style={{ marginBottom: "1rem" }}
         >
           <ListItemIcon>
             <StyleRounded />

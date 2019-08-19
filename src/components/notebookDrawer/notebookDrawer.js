@@ -49,6 +49,9 @@ export default function NotebookDrawer(props) {
     root: {
       display: "flex"
     },
+    list_item: {
+      marginBottom: scrWidth600up ? "1rem" : "0.25rem"
+    },
     drawer: {
       width: drawerWidth,
       flexShrink: 0
@@ -76,7 +79,8 @@ export default function NotebookDrawer(props) {
       marginTop: "8px"
     },
     textField: {
-      margin: "8px 8px 16px"
+      margin: "8px 8px 16px",
+      minHeight: "56px"
     }
   }));
 
@@ -185,7 +189,6 @@ export default function NotebookDrawer(props) {
           button
           selected={props.listSelected}
           onClick={props.toggleDrawer.bind(this, "notebooks", true)}
-          style={{ marginBottom: "1rem" }}
         >
           <ListItemIcon>
             <LibraryBooksRounded />
