@@ -43,7 +43,9 @@ const useStyles = makeStyles({
     wordWrap: "break-word",
     cursor: "pointer",
     "&:hover": {
-      backgroundColor: "#eeeeee"
+      backgroundColor: "#eeeeee",
+      boxShadow:
+        "0px 5px 5px -3px rgba(0,0,0,0.2), 0px 8px 10px 1px rgba(0,0,0,0.14), 0px 3px 14px 2px rgba(0,0,0,0.12)"
     }
   },
   media: {
@@ -121,7 +123,6 @@ const HeaderActions = props => {
 
 const NoteListItem = props => {
   const classes = useStyles();
-  const [raised, setRaised] = useState(false);
   const scrWidth600up = useScreenWidth();
   const mediumScreen = useMediaQuery("(min-width:900px)");
   const appState = useContext(StateContext);
@@ -148,10 +149,6 @@ const NoteListItem = props => {
    * appends the note that returned as response from the server (which now has the correct note._id)
    * the notes are filtered by date of creation so the new note will be the first one in appState.notes
    * */
-
-  const toggleRaised = () => {
-    setRaised(!raised);
-  };
 
   const previewText = str => {
     const parsedDelta = new Delta(JSON.parse(str));
@@ -181,13 +178,7 @@ const NoteListItem = props => {
 
   return (
     <>
-      <Card
-        onClick={props.expandNote}
-        onMouseOver={toggleRaised}
-        onMouseOut={toggleRaised}
-        raised={raised}
-        className={classes.card}
-      >
+      <Card onClick={props.expandNote} className={classes.card}>
         <CardHeader
           classes={{
             title: classes.title,
