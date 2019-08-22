@@ -78,7 +78,9 @@ const SearchDrawer = props => {
       marginTop: "8px"
     },
     textField: {
-      margin: "8px 8px 16px"
+      margin: "8px 8px 16px",
+      minHeight: "56px",
+      width: "95%"
     }
   }));
 
@@ -237,12 +239,11 @@ const SearchDrawer = props => {
             </IconButton>
           </div>
         </div>
-        <form onSubmit={deepSearch} style={{ display: "flex" }}>
+        <form onSubmit={deepSearch}>
           <TextField
             autoFocus
             label="Search Notes"
             className={classes.textField}
-            style={{ width: "100%" }}
             value={search}
             onChange={handleSearch}
             placeholder="Search..."

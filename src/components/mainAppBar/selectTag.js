@@ -154,10 +154,12 @@ export default function SelectTag() {
 
   useEffect(() => {
     //display tags that are attatched to activeNote (Selected)
-    const activeNoteTags = appState.activeNote.tags.map(tag => {
-      return tag._id;
-    });
-    setSelectedTags(activeNoteTags);
+    if (appState.activeNote) {
+      const activeNoteTags = appState.activeNote.tags.map(tag => {
+        return tag._id;
+      });
+      setSelectedTags(activeNoteTags);
+    }
   }, [appState.activeNote]);
 
   useEffect(() => {

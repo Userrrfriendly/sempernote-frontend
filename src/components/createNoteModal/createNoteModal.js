@@ -110,6 +110,8 @@ const CreateNoteModal = props => {
       body: JSON.stringify('"{"ops":[{"insert":"\\n"}]}"'),
       createdAt: "",
       temp: true,
+      favorite: false,
+      tags: [],
       notebook: {
         ...selectNotebook(props.notebooks, selectedNotebook.value)[0]
       }

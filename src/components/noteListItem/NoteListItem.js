@@ -74,7 +74,6 @@ const useStyles = makeStyles({
 const HeaderActions = props => {
   const appState = useContext(StateContext);
   const note = appState.notes.filter(note => note._id === props.noteID)[0];
-
   const confirmDelete = (note, e) => {
     e.stopPropagation();
     //  1)Grabs the id of the note  2)opens the confirm delete dialog
@@ -105,7 +104,9 @@ const HeaderActions = props => {
       <IconButton
         aria-haspopup="true"
         color="inherit"
-        title={note.favorite ? "Remove from Favorites" : "Add to Favorites"}
+        title={
+          note && note.favorite ? "Remove from Favorites" : "Add to Favorites"
+        }
         onClick={props.toggleFavorite}
       >
         {note && note.favorite ? (
@@ -137,7 +138,16 @@ const NoteListItem = props => {
     setAnchorEl(null);
   }
   //end menu
-  const note = appState.notes.filter(note => note._id === props.id)[0];
+
+  const noteTemp = appState.notes.filter(note => note._id === props.id)[0];
+  const note = noteTemp ? noteTemp : appState.notes[0];
+  /** noteTemp will be undefined when a new note is created:
+   * CREATE_NOTE reducer runs --> creates a temporary note with a temporary note._id that is the notes name
+   * SET_ACTIVE_NOTE reducer runs --> sets the newly created note as active note (note expands)
+   * SYNC_NEW_NOTE reducer runs --> filters out the temporary note and
+   * appends the note that returned as response from the server (which now has the correct note._id)
+   * the notes are filtered by date of creation so the new note will be the first one in appState.notes
+   * */
 
   const toggleRaised = () => {
     setRaised(!raised);
