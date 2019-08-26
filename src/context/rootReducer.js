@@ -31,6 +31,7 @@ export const RENAME_TAG = "RENAME_TAG";
 export const DELETE_TAG = "DELETE_TAG";
 export const RESTORE_NOTE = "RESTORE_NOTE";
 export const DELETE_NOTE_FOREVER = "DELETE_NOTE_FOREVER";
+export const MAKE_TOAST = "MAKE_TOAST";
 
 const logIn = (token, userId, state) => {
   return { ...state, token: token, userId: userId };
@@ -502,6 +503,14 @@ const deleteTag = (action, state) => {
   return { ...state, tags, notes, activeNote, trash };
 };
 
+const triggerToast = (action, state) => {
+  const toast = {
+    message: action.message,
+    variant: action.variant
+  };
+  return { ...state, toast };
+};
+
 export const rootReducer = (state, action) => {
   switch (action.type) {
     case LOG_IN:
@@ -580,6 +589,9 @@ export const rootReducer = (state, action) => {
     case DELETE_NOTE_FOREVER:
       console.log(action);
       return deleteNoteForever(action, state);
+    case MAKE_TOAST:
+      console.log(action);
+      return triggerToast(action, state);
     default:
       return state;
   }

@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import Modal from "react-modal";
 import { Typography, TextField, Button } from "@material-ui/core";
-import { CREATE_NOTEBOOK } from "../../context/rootReducer";
+import { CREATE_NOTEBOOK, MAKE_TOAST } from "../../context/rootReducer";
 import DispatchContext from "../../context/DispatchContext";
 import { createNotebookReq } from "../../requests/requests";
 
@@ -60,6 +60,11 @@ const CreateNotebookModal = props => {
           dispatch({
             type: CREATE_NOTEBOOK,
             notebook: res
+          });
+          dispatch({
+            type: MAKE_TOAST,
+            message: `Created Notebook ${state.value}`,
+            variant: "success"
           });
         });
       };

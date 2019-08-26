@@ -6,7 +6,8 @@ import StateContext from "../../context/StateContext";
 import {
   SET_ACTIVE_NOTE,
   UPDATE_NOTE_BODY,
-  RESTORE_NOTE
+  RESTORE_NOTE,
+  MAKE_TOAST
 } from "../../context/rootReducer";
 import { updateNoteBodyReq, restoreNoteReq } from "../../requests/requests";
 
@@ -206,6 +207,11 @@ const Main = props => {
       type: RESTORE_NOTE,
       note: note
     });
+    dispatch({
+      type: MAKE_TOAST,
+      message: `Restored '${note.title}'`,
+      variant: "success"
+    });
   };
 
   //Update noteBody - defined here, and passed as props to <ExpandedNote/>  which is a class component and cant use hooks
@@ -218,6 +224,13 @@ const Main = props => {
     });
   };
 
+  const toast = () => {
+    dispatch({
+      type: MAKE_TOAST,
+      message: `Cannot Edit a note that is in Trash.`,
+      variant: "error"
+    });
+  };
   /** manualSave is passed as props to ExpandedNote if it is true it will:
    * trigger autosave.flush()
    * trigger manualSaveDisable()
@@ -335,6 +348,7 @@ const Main = props => {
                       updateNoteBody={updateNoteBody}
                       manualSave={manualSave}
                       manualSaveDisable={manualSaveDisable}
+                      toast={toast}
                     />
                   )}
                 </>

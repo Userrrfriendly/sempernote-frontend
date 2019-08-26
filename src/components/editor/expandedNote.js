@@ -170,7 +170,11 @@ class ExpandedNote extends Component {
           appbar
         </div> */}
         <div ref={this.containerRef} className="editor-container">
-          <div ref={this.editorRef} className="editor z-depth-3" />
+          <div
+            ref={this.editorRef}
+            className="editor z-depth-3"
+            onClick={this.props.note.trash ? this.props.toast : () => {}}
+          />
 
           {/* THE BUTTONS ARE USED ONLY IN DEBUGGING  */}
           {/* <button className="btn" onClick={this.getDelta}>

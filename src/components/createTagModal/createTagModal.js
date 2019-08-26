@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import Modal from "react-modal";
 import { Typography, TextField, Button } from "@material-ui/core";
-import { CREATE_TAG } from "../../context/rootReducer";
+import { CREATE_TAG, MAKE_TOAST } from "../../context/rootReducer";
 import DispatchContext from "../../context/DispatchContext";
 import { createTagReq } from "../../requests/requests";
 
@@ -57,6 +57,11 @@ const CreateTagModal = props => {
           dispatch({
             type: CREATE_TAG,
             tag
+          });
+          dispatch({
+            type: MAKE_TOAST,
+            message: `Created Tag ${state.value}`,
+            variant: "success"
           });
         });
       };

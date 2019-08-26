@@ -16,7 +16,8 @@ import { notebookDeleteReq } from "../../requests/requests";
 import {
   DELETE_NOTEBOOK,
   SET_ACTIVE_NOTE,
-  SET_NOTE_FILTER
+  SET_NOTE_FILTER,
+  MAKE_TOAST
 } from "../../context/rootReducer";
 import { NOTEBOOK, NOTES } from "../../context/activeUItypes";
 
@@ -33,12 +34,25 @@ export default function DeleteNotebook(props) {
   const dispatch = useContext(DispatchContext);
   const handleDelete = () => {
     props.close();
+    //if the user tries to delete default notebook notify him that this action is not allowed and return
+    if (props.notebook._id === appState.defaultNotebook._id) {
+      dispatch({
+        type: MAKE_TOAST,
+        message: `Cannot Delete Default Notebook`,
+        variant: "error"
+      });
+      return;
+    }
+
     notebookDeleteReq(props.notebook._id, appState.token).then(r => {
-      if (r && r.name === "Error") {
-        console.log("failed to Delete!");
-        console.log(r.message);
+      if (r && r.name === "TypeError" && r.message === "Failed to fetch") {
+        dispatch({
+          type: MAKE_TOAST,
+          message: `Failed to fetch from server, check your internet connection`,
+          variant: "error"
+        });
+        return;
       }
-      console.log(r);
     });
     //if the user has filtered the notes by notebooks(to-be-deleted-notebook) reset noteFilter to ALL_NOTES
     if (

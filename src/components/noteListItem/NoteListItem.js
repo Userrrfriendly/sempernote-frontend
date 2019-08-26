@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useContext } from "react";
 import moment from "moment";
 import Delta from "quill-delta";
 import {
@@ -241,7 +241,7 @@ const NoteListItem = props => {
             closeNoteMenu();
           }}
         >
-          {note.favorite ? "Remove from Favorites" : "Add to Favorites"}
+          {note && note.favorite ? "Remove from Favorites" : "Add to Favorites"}
         </MenuItem>
         <MenuItem
           onClick={e => {

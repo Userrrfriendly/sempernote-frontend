@@ -19,7 +19,7 @@ import { Visibility, VisibilityOff } from "@material-ui/icons/";
 
 import DispatchContext from "../../context/DispatchContext";
 import StateContext from "../../context/StateContext";
-import { LOG_IN, FETCH_USER_DATA } from "../../context/rootReducer";
+import { LOG_IN, FETCH_USER_DATA, MAKE_TOAST } from "../../context/rootReducer";
 import { fetchUserDataReq, logInReq, signUpReq } from "../../requests/requests";
 
 const useStyles = makeStyles(theme => ({
@@ -107,19 +107,39 @@ const AuthScreen = () => {
     const { email, password, username } = state;
     if (!state.logIn) {
       //SUBMIT SIGN UP
-      signUpReq(username, email, password).then(res => {
-        if (res.data.createUser) {
-          setState({ ...state, logIn: true, password: "" });
-        } else if (res.errors) {
-          setState({ ...state, failedSignUp: true });
-        }
-      });
+      signUpReq(username, email, password)
+        .then(res => {
+          if (res.data.createUser) {
+            setState({ ...state, logIn: true, password: "" });
+            // console.log
+            dispatch({
+              type: MAKE_TOAST,
+              message: `User ${res.data.createUser.username} created successfully`,
+              variant: "success"
+            });
+          } else if (res.errors) {
+            setState({ ...state, failedSignUp: true });
+          }
+        })
+        .catch(err => {
+          dispatch({
+            type: MAKE_TOAST,
+            message: "Failed to connect. Check your internet connection",
+            variant: "error"
+          });
+        });
     } else {
       //SUBMIT LOG IN
       logInReq(email, password)
         .then(r => {
-          if (r.name === "Error") {
+          if (r.message === "500Internal Server Error") {
             setState({ ...state, failedLogIn: true });
+          } else if (r.message === "Failed to fetch") {
+            dispatch({
+              type: MAKE_TOAST,
+              message: "Failed to connect. Check your internet connection",
+              variant: "error"
+            });
           } else if (r.token) {
             dispatch({
               type: LOG_IN,
@@ -144,7 +164,9 @@ const AuthScreen = () => {
             });
           }
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+          console.log(err);
+        });
     }
   };
 
@@ -221,8 +243,6 @@ const AuthScreen = () => {
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton
-                        // edge="end"
-                        // size="small"
                         aria-label="Toggle password visibility"
                         onClick={handleClickShowPassword}
                       >
@@ -253,7 +273,7 @@ const AuthScreen = () => {
                 color="primary"
                 className={classes.submit}
               >
-                Sign In
+                {state.logIn ? "Login " : "Sign Up "}
               </Button>
               <Grid container>
                 <Grid item xs>

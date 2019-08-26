@@ -14,7 +14,11 @@ import {
 } from "@material-ui/core";
 
 import { trashNoteReq, deleteNoteForeverReq } from "../../requests/requests";
-import { TRASH_NOTE, DELETE_NOTE_FOREVER } from "../../context/rootReducer";
+import {
+  TRASH_NOTE,
+  DELETE_NOTE_FOREVER,
+  MAKE_TOAST
+} from "../../context/rootReducer";
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -43,6 +47,11 @@ const DeleteNoteDialog = props => {
         type: TRASH_NOTE,
         note: props.note
       });
+      dispatch({
+        type: MAKE_TOAST,
+        message: `Moved note '${props.note.title}' to trash`,
+        variant: "success"
+      });
     } else {
       //note is TRASH -> delete note forever
       deleteNoteForeverReq(props.note, appState.token).then(r => {
@@ -54,6 +63,11 @@ const DeleteNoteDialog = props => {
       dispatch({
         type: DELETE_NOTE_FOREVER,
         note: props.note
+      });
+      dispatch({
+        type: MAKE_TOAST,
+        message: `Deleted Note '${props.note.title}'`,
+        variant: "success"
       });
     }
     //if the deleted note is opened -> redirect to /main/
@@ -68,7 +82,6 @@ const DeleteNoteDialog = props => {
         open={props.open}
         onClose={props.close}
         aria-labelledby="form-dialog-title"
-        // style={{ minWidth: "450px" }}
         classes={{ paper: classes.paper }}
       >
         <DialogTitle id="form-dialog-title">

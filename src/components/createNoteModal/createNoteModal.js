@@ -9,7 +9,8 @@ import { selectNotebook } from "../../helpers/helpers";
 import {
   CREATE_NOTE,
   SET_ACTIVE_NOTE,
-  SYNC_NEW_NOTE
+  SYNC_NEW_NOTE,
+  MAKE_TOAST
 } from "../../context/rootReducer";
 import { pushNoteToServerReq } from "../../requests/requests";
 
@@ -143,11 +144,22 @@ const CreateNoteModal = props => {
             type: SYNC_NEW_NOTE,
             note: res
           });
+          dispatch({
+            type: MAKE_TOAST,
+            message: `Note ${newNote.title} created successfully`,
+            variant: "success"
+          });
         })
       )
       .then(setTitle(""))
       .then(props.closeModal())
-      .catch(error => console.log(error));
+      .catch(error => {
+        dispatch({
+          type: MAKE_TOAST,
+          message: error,
+          variant: "error"
+        });
+      });
   };
 
   return (

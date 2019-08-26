@@ -14,7 +14,8 @@ export default function Store(props) {
     trash: null,
     activeNote: null,
     defaultNotebook: null,
-    tags: null
+    tags: null,
+    toast: { message: null, variant: null }
   };
 
   const [state, dispatch] = useReducer(rootReducer, initialState);

@@ -6,6 +6,7 @@ import ErrorRoute from "./components/ErrorRoute/errorRoute";
 import AuthScreen from "./components/authScreen/authscreen";
 
 import StateContext from "./context/StateContext";
+import Toast from "./components/toast_notification/toast";
 
 const App = props => {
   const state = useContext(StateContext);
@@ -27,6 +28,7 @@ const App = props => {
         />
         <Route component={ErrorRoute} />
       </Switch>
+      <Toast />
     </div>
   );
 };
