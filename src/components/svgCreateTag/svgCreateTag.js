@@ -1,8 +1,8 @@
 import React from "react";
 import SvgIcon from "@material-ui/core/SvgIcon";
 
-const AddTagIcon = () => (
-  <SvgIcon>
+const AddTagIcon = props => (
+  <SvgIcon style={props && props.styles ? props.styles : {}}>
     <path
       stroke="null"
       d="m18.463206,5.058214c-0.453562,-0.642546 -1.209498,-1.058311 -2.053627,-1.058311l-13.858831,0.012599c-1.385883,0 -2.519787,1.121305 -2.519787,2.507188l0,12.598937c0,1.385883 1.133904,2.507188 2.519787,2.507188l13.858831,0.012599c0.844129,0 1.600065,-0.415765 2.053627,-1.058311l5.505735,-7.760945l-5.505735,-7.760945z"

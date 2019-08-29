@@ -111,7 +111,6 @@ const AuthScreen = () => {
         .then(res => {
           if (res.data.createUser) {
             setState({ ...state, logIn: true, password: "" });
-            // console.log
             dispatch({
               type: MAKE_TOAST,
               message: `User ${res.data.createUser.username} created successfully`,

@@ -4,12 +4,6 @@ import Delta from "quill-delta";
 import "./quillSnow.css";
 import { debounce, isEqual } from "lodash";
 
-// const style = {
-//   width: "100%",
-//   boxSizing: "inherit",
-//   color: "red"
-// };
-
 class ExpandedNote extends Component {
   constructor(props) {
     super(props);
@@ -35,7 +29,7 @@ class ExpandedNote extends Component {
       [{ header: [1, 2, 3, 4, false] }],
       [{ font: [] }],
       [{ align: [] }],
-
+      // ["image", "link"],
       ["clean"] // remove formatting button
     ];
 
@@ -165,10 +159,6 @@ class ExpandedNote extends Component {
   render() {
     return (
       <>
-        {/* <div className="editor_bar" style={style}>
-          {" "}
-          appbar
-        </div> */}
         <div ref={this.containerRef} className="editor-container">
           <div
             ref={this.editorRef}

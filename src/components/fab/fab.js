@@ -1,127 +1,84 @@
 import React from "react";
-import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
-import SpeedDial from "@material-ui/lab/SpeedDial";
-import SpeedDialIcon from "@material-ui/lab/SpeedDialIcon";
-import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
 import {
   LibraryAddRounded,
   NoteAddRounded,
   StarRounded,
   LibraryBooksRounded,
-  StyleRounded
+  StyleRounded,
+  Add
 } from "@material-ui/icons";
+import { makeStyles } from "@material-ui/core/styles";
+
 import CreateTagIcon from "../svgCreateTag/svgCreateTag";
+import { Fab, Action } from "react-tiny-fab";
+import "react-tiny-fab/dist/styles.css";
 
-const styles = theme => ({
-  speedDial: {
-    position: "fixed",
-    bottom: theme.spacing(2),
-    right: theme.spacing(3)
+const useStyles = makeStyles(theme => ({
+  action_btn_background: {
+    backgroundColor: "#000"
+  },
+  action_btn_icon: {
+    color: "#000"
   }
-});
+}));
 
-class SpeedDialTooltipOpen extends React.Component {
-  state = {
-    open: false,
-    hidden: false
-  };
+const FAB = props => {
+  const position = { bottom: 0, right: 0, zIndex: "1200" };
+  const mainButtonStyles = { backgroundColor: "#1976d2" };
+  const classes = useStyles();
+  return (
+    <Fab
+      mainButtonStyles={mainButtonStyles}
+      position={position}
+      icon={<Add />}
+      event="click"
+    >
+      <Action
+        text="Create Note"
+        style={{ backgroundColor: "#ffffff" }}
+        onClick={props.createNote}
+      >
+        <NoteAddRounded className={classes.action_btn_icon} />
+      </Action>
+      <Action
+        text="Create Notebook"
+        onClick={props.createNotebook}
+        style={{ backgroundColor: "#ffffff" }}
+      >
+        <LibraryAddRounded className={classes.action_btn_icon} />
+      </Action>
 
-  actions = [
-    {
-      icon: <NoteAddRounded />,
-      name: "Create Note",
-      callback: this.props.createNote
-    },
-    {
-      icon: <LibraryAddRounded />,
-      name: "Create Notebook",
-      callback: this.props.createNotebook
-    },
-    {
-      icon: <CreateTagIcon />,
-      name: "Create Tag",
-      callback: this.props.createTag
-    },
-    {
-      icon: <StarRounded />,
-      name: "Favorites",
-      callback: this.props.toggleDrawer.bind(this, "favorites", true)
-    },
-    {
-      icon: <LibraryBooksRounded />,
-      name: "Notebooks",
-      callback: this.props.toggleDrawer.bind(this, "notebooks", true)
-    },
-    {
-      icon: <StyleRounded />,
-      name: "Tags",
-      callback: this.props.toggleDrawer.bind(this, "tags", true)
-    }
-  ];
+      <Action
+        text="Create Tag"
+        onClick={props.createTag}
+        style={{ backgroundColor: "#ffffff" }}
+      >
+        <CreateTagIcon styles={{ color: "#000" }} />
+      </Action>
 
-  handleVisibility = () => {
-    this.setState(state => ({
-      open: false
-    }));
-  };
-
-  handleClick = async cb => {
-    await this.setState(state => ({
-      open: !state.open
-    }));
-    // cb();
-  };
-
-  handleOpen = () => {
-    // if (!this.state.hidden) {
-    this.setState({
-      open: true
-    });
-    // }
-  };
-
-  handleClose = () => {
-    this.setState({
-      open: false
-    });
-  };
-
-  render() {
-    const { classes } = this.props;
-    const { open } = this.state;
-
-    return (
-      <div>
-        <SpeedDial
-          ariaLabel="SpeedDial tooltip example"
-          className={classes.speedDial}
-          icon={<SpeedDialIcon />}
-          onBlur={this.handleClose}
-          onClick={this.handleClick}
-          onClose={this.handleClose}
-          onFocus={this.handleOpen}
-          onMouseEnter={this.handleOpen}
-          onMouseLeave={this.handleClose}
-          open={open}
-        >
-          {this.actions.map(action => (
-            <SpeedDialAction
-              key={action.name}
-              icon={action.icon}
-              tooltipTitle={action.name}
-              onClick={action.callback}
-              // tooltipOpen
-            />
-          ))}
-        </SpeedDial>
-      </div>
-    );
-  }
-}
-
-SpeedDialTooltipOpen.propTypes = {
-  classes: PropTypes.object.isRequired
+      <Action
+        text="Favorites"
+        style={{ backgroundColor: "#ffffff" }}
+        onClick={props.toggleDrawer.bind(this, "favorites", true)}
+      >
+        <StarRounded className={classes.action_btn_icon} />
+      </Action>
+      <Action
+        style={{ backgroundColor: "#ffffff" }}
+        text="Notebooks"
+        onClick={props.toggleDrawer.bind(this, "notebooks", true)}
+      >
+        <LibraryBooksRounded className={classes.action_btn_icon} />
+      </Action>
+      <Action
+        style={{ backgroundColor: "#ffffff" }}
+        text="Tags"
+        onClick={props.toggleDrawer.bind(this, "tags", true)}
+      >
+        <StyleRounded className={classes.action_btn_icon} />
+      </Action>
+    </Fab>
+  );
 };
 
-export default withStyles(styles)(SpeedDialTooltipOpen);
+export default FAB;

@@ -19,8 +19,8 @@ import {
   StarRounded,
   DescriptionRounded,
   LibraryBooksRounded,
-  StyleRounded,
-  RemoveCircleRounded
+  StyleRounded
+  // RemoveCircleRounded
 } from "@material-ui/icons";
 import StateContext from "../../context/StateContext";
 import DispatchContext from "../../context/DispatchContext";
@@ -102,7 +102,7 @@ const FavoritesDrawer = props => {
     return notes.concat(notebooks, tags);
   };
 
-  const [hoveredItemID, setHoveredItemID] = useState(false);
+  // const [hoveredItemID, setHoveredItemID] = useState(false);
   const [results, setResults] = useState(initialState());
   const classes = useStyles();
 
@@ -141,13 +141,13 @@ const FavoritesDrawer = props => {
     }
   };
   // const matches = useMediaQuery('(min-width:600px)');
-  const hoverIn = id => {
-    setHoveredItemID(id);
-  };
+  // const hoverIn = id => {
+  //   setHoveredItemID(id);
+  // };
 
-  const hoverOut = e => {
-    setHoveredItemID(null);
-  };
+  // const hoverOut = e => {
+  //   setHoveredItemID(null);
+  // };
 
   const previewText = str => {
     const parsedDelta = new Delta(JSON.parse(str));
@@ -271,8 +271,8 @@ const FavoritesDrawer = props => {
                   <Fragment key={result._id}>
                     <ListItem
                       button
-                      onMouseEnter={hoverIn.bind(this, result._id)}
-                      onMouseLeave={hoverOut.bind(this, result._id)}
+                      // onMouseEnter={hoverIn.bind(this, result._id)}
+                      // onMouseLeave={hoverOut.bind(this, result._id)}
                       onClick={handleFavoriteClick.bind(
                         this,
                         result._id,
@@ -305,28 +305,29 @@ const FavoritesDrawer = props => {
                               primary: classes.listItemTextTypography
                             }}
                           />
-                          {hoveredItemID === result._id && (
-                            <ListItemSecondaryAction>
-                              <Tooltip
-                                title="Remove from Favorites"
-                                placement="right"
+                          <ListItemSecondaryAction>
+                            <Tooltip
+                              title="Remove from Favorites"
+                              placement="right"
+                            >
+                              <IconButton
+                                edge="end"
+                                aria-label="More"
+                                aria-controls="long-menu"
+                                aria-haspopup="false"
+                                onClick={removeFavorite.bind(
+                                  this,
+                                  result._id,
+                                  resultType(result)
+                                )}
                               >
-                                <IconButton
-                                  edge="end"
-                                  aria-label="More"
-                                  aria-controls="long-menu"
-                                  aria-haspopup="false"
-                                  onClick={removeFavorite.bind(
-                                    this,
-                                    result._id,
-                                    resultType(result)
-                                  )}
-                                >
-                                  <RemoveCircleRounded />
-                                </IconButton>
-                              </Tooltip>
-                            </ListItemSecondaryAction>
-                          )}
+                                {/* <RemoveCircleRounded
+                                  style={{ color: "#7b0303" }}
+                                /> */}
+                                <StarRounded style={{ color: "gold" }} />
+                              </IconButton>
+                            </Tooltip>
+                          </ListItemSecondaryAction>
                         </>
                       )}
                       {/* NOTEBOOKSS: */}
@@ -356,28 +357,27 @@ const FavoritesDrawer = props => {
                               primary: classes.listItemTextTypography
                             }}
                           />
-                          {hoveredItemID === result._id && (
-                            <ListItemSecondaryAction>
-                              <Tooltip
-                                title="Remove from Favorites"
-                                placement="right"
+                          <ListItemSecondaryAction>
+                            <Tooltip
+                              title="Remove from Favorites"
+                              placement="right"
+                            >
+                              <IconButton
+                                edge="end"
+                                aria-label="More"
+                                aria-controls="long-menu"
+                                aria-haspopup="false"
+                                onClick={removeFavorite.bind(
+                                  this,
+                                  result._id,
+                                  resultType(result)
+                                )}
                               >
-                                <IconButton
-                                  edge="end"
-                                  aria-label="More"
-                                  aria-controls="long-menu"
-                                  aria-haspopup="false"
-                                  onClick={removeFavorite.bind(
-                                    this,
-                                    result._id,
-                                    resultType(result)
-                                  )}
-                                >
-                                  <RemoveCircleRounded />
-                                </IconButton>
-                              </Tooltip>
-                            </ListItemSecondaryAction>
-                          )}
+                                {/* <RemoveCircleRounded /> */}
+                                <StarRounded style={{ color: "gold" }} />
+                              </IconButton>
+                            </Tooltip>
+                          </ListItemSecondaryAction>
                         </>
                       )}
                       {/* NOTES: */}
@@ -408,28 +408,29 @@ const FavoritesDrawer = props => {
                             primary={result.title}
                             secondary={previewText(result.body)}
                           />
-                          {hoveredItemID === result._id && (
-                            <ListItemSecondaryAction>
-                              <Tooltip
-                                title="Remove from Favorites"
-                                placement="right"
+                          <ListItemSecondaryAction>
+                            <Tooltip
+                              title="Remove from Favorites"
+                              placement="right"
+                            >
+                              <IconButton
+                                edge="end"
+                                aria-label="More"
+                                aria-controls="long-menu"
+                                aria-haspopup="false"
+                                onClick={removeFavorite.bind(
+                                  this,
+                                  result,
+                                  resultType(result)
+                                )}
                               >
-                                <IconButton
-                                  edge="end"
-                                  aria-label="More"
-                                  aria-controls="long-menu"
-                                  aria-haspopup="false"
-                                  onClick={removeFavorite.bind(
-                                    this,
-                                    result,
-                                    resultType(result)
-                                  )}
-                                >
-                                  <RemoveCircleRounded />
-                                </IconButton>
-                              </Tooltip>
-                            </ListItemSecondaryAction>
-                          )}
+                                <StarRounded style={{ color: "gold" }} />
+                                {/* <RemoveCircleRounded
+                                  style={{ color: "#7b0303" }}
+                                /> */}
+                              </IconButton>
+                            </Tooltip>
+                          </ListItemSecondaryAction>
                         </>
                       )}
                     </ListItem>

@@ -1,68 +1,38 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Sempernote
 
-## Available Scripts
+A Simple Note Taking App build with [React.js](https://reactjs.org) + useContext + useReducer for state management, [Material UI](https://material-ui.com), [Quill.js](https://quilljs.com) and [Node.js](https://nodejs.org), [Express.js](https://expressjs.com), [MongoDb](https://www.mongodb.com), [GraphQl](https://graphql.org) for the backend.
+_The backend of the App is decoupled and can be found in this repository:👉 [Sempernote-Backend](https://github.com/Userrrfriendly/Sempernote-Backend)_.
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## Functionality
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+The app is a simplistic clone of evernote so once registered the user can create notes in a rich text editor. Notes are stored in notebooks(each notebook can have multiple notes). Also the user has the ability to create Tags and attatch any number of Tags to each Note. Notes, Tags and notebooks can be added to favorites for quick access.
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+## Live version of Sempernote: [https://sempernote.herokuapp.com/](https://sempernote.herokuapp.com/)
 
-### `npm test`
+## Running And Installing Locally
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- clone or download this repository
+- navigate to the root faulder and run `npm install`
+- run `npm run` to kick off the front end of the app.
+  - _Optionally_ in case you want to use a different mongoDb database:
+    - navigate to /src/requests/ and open requests.js with your editor
+    - in requests.js change the variable url to reflect your backend eg: `const url = "http://localhost:8000/graphql";`
 
-### `npm run build`
+If you want to play with the backend off the app you can find it here 👉 [Sempernote-Backend](https://github.com/Userrrfriendly/Sempernote-Backend)
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## User Stories
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+- :heavy_check_mark: The User can create a Sempernote account by registering with an email and a password
+- :heavy_check_mark: The User can login to Sempernote with his email/password
+- :heavy_check_mark: All Data is persistant and is stored online in a MongoDb database.
+- :heavy_check_mark: Once Logged in the User can create and edit Notes, Notebooks and Tags
+- :heavy_check_mark: Each Note,Notebook and Tag can be Renamed/Deleted/Added to Favorites or Removed from Favorites
+- :heavy_check_mark: Deleted Notes are moved to Trash where they can be Inspected, Restored or Permanently Deleted
+- :heavy_check_mark: Tags and Notebooks are deleted permanently
+- :heavy_check_mark: Each Note must belong to a single Notebook
+- :heavy_check_mark: Each Note can be moved from one Notebook to another
+- :heavy_check_mark: Tags can be attached to Notes
+- :heavy_check_mark: The user can sort the notes by Title, Created Date, Modified Date
+- :heavy_check_mark: When in note editing mode the content of the note is auto-saved (and uploaded to the database) each 2000 seconds after the user stops typing or presses the back or the save button
