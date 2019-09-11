@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import {
   Link,
   Grid,
@@ -18,9 +18,9 @@ import red from "@material-ui/core/colors/red";
 import { Visibility, VisibilityOff } from "@material-ui/icons/";
 
 import DispatchContext from "../../context/DispatchContext";
-import StateContext from "../../context/StateContext";
 import { LOG_IN, FETCH_USER_DATA, MAKE_TOAST } from "../../context/rootReducer";
 import { fetchUserDataReq, logInReq, signUpReq } from "../../requests/requests";
+import LinearProgress from "../loading/linearProgress";
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -70,11 +70,11 @@ const AuthScreen = () => {
     email: "",
     failedLogIn: false,
     failedSignUp: false,
-    showPassword: false
+    showPassword: false,
+    isLoading: false
   });
 
   const dispatch = useContext(DispatchContext);
-  const appState = useContext(StateContext);
 
   const toggleLogIn = () => {
     setState({ ...state, logIn: !state.logIn });
@@ -129,16 +129,18 @@ const AuthScreen = () => {
         });
     } else {
       //SUBMIT LOG IN
+      setState({ ...state, isLoading: true });
       logInReq(email, password)
         .then(r => {
           if (r.message === "500Internal Server Error") {
-            setState({ ...state, failedLogIn: true });
+            setState({ ...state, failedLogIn: true, isLoading: false });
           } else if (r.message === "Failed to fetch") {
             dispatch({
               type: MAKE_TOAST,
               message: "Failed to connect. Check your internet connection",
               variant: "error"
             });
+            setState({ ...state, isLoading: false });
           } else if (r.token) {
             dispatch({
               type: LOG_IN,
@@ -169,9 +171,6 @@ const AuthScreen = () => {
     }
   };
 
-  useEffect(() => {
-    console.log(appState);
-  }, [appState]);
   const classes = useStyles();
 
   return (
@@ -264,7 +263,7 @@ const AuthScreen = () => {
                   {"Invalid Credentials"}
                 </Typography>
               )}
-
+              {state.isLoading && <LinearProgress />}
               <Button
                 type="submit"
                 fullWidth

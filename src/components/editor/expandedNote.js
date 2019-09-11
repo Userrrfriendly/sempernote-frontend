@@ -168,15 +168,15 @@ class ExpandedNote extends Component {
 
           {/* THE BUTTONS ARE USED ONLY IN DEBUGGING  */}
           {/* <button className="btn" onClick={this.getDelta}>
-          Get Delta
-        </button>
-        <button
-          style={{ backgroundColor: "red" }}
-          className="btn"
-          onClick={this.setDelta}
-        >
-          SET Delta
-        </button> */}
+            Get Delta
+          </button>
+          <button
+            style={{ backgroundColor: "red" }}
+            className="btn"
+            onClick={this.setDelta}
+          >
+            SET Delta
+          </button> */}
         </div>
       </>
     );

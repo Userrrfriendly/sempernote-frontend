@@ -10,6 +10,7 @@ _The backend of the App is decoupled and can be found in this repository:👉 [S
 The app is a simplistic clone of evernote so once registered the user can create notes in a rich text editor. Notes are stored in notebooks(each notebook can have multiple notes). Also the user has the ability to create Tags and attatch any number of Tags to each Note. Notes, Tags and notebooks can be added to favorites for quick access.
 
 ## Live version of Sempernote: [https://sempernote.herokuapp.com/](https://sempernote.herokuapp.com/)
+:information_source: *you can skip the sign up part by logging in as guest. Simply click the 'sign in as guest' button and then the 'login' button*
 
 ## Running And Installing Locally
 
